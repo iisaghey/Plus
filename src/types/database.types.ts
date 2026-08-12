@@ -837,24 +837,30 @@ export type Database = {
       }
       user_roles: {
         Row: {
+          account_status: Database["public"]["Enums"]["account_status"]
           created_at: string
           created_by: string | null
+          email: string | null
           id: string
           role: Database["public"]["Enums"]["app_role"]
           updated_at: string
           user_id: string
         }
         Insert: {
+          account_status?: Database["public"]["Enums"]["account_status"]
           created_at?: string
           created_by?: string | null
+          email?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
           user_id: string
         }
         Update: {
+          account_status?: Database["public"]["Enums"]["account_status"]
           created_at?: string
           created_by?: string | null
+          email?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
@@ -922,11 +928,20 @@ export type Database = {
         Args: never
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      is_account_approved: { Args: never; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }
       owns_profile: { Args: { p_profile_id: string }; Returns: boolean }
+      set_account_status: {
+        Args: {
+          p_status: Database["public"]["Enums"]["account_status"]
+          p_user_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
+      account_status: "pending" | "approved" | "rejected"
       app_role:
         | "super_admin"
         | "admin"

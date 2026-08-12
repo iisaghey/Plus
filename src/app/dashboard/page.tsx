@@ -1,9 +1,18 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { ShieldCheck, PenSquare, ExternalLink, Sparkles } from "lucide-react";
+import {
+  ShieldCheck,
+  PenSquare,
+  ExternalLink,
+  Sparkles,
+  Hourglass,
+  XCircle,
+  LayoutDashboard,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "@/components/profile/sign-out-button";
+import { SubmitVerificationButton } from "@/components/profile/submit-verification-button";
 import { LinkButton } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -19,6 +28,8 @@ const COMPLETION_FIELDS = [
   "photo_url",
 ] as const;
 
+const STAFF_ROLES = ["super_admin", "admin", "editor", "verifier"];
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   const {
@@ -26,11 +37,17 @@ export default async function DashboardPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const [{ data: userRole }, { data: profile }] = await Promise.all([
+    supabase
+      .from("user_roles")
+      .select("role, account_status")
+      .eq("user_id", user.id)
+      .maybeSingle(),
+    supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle(),
+  ]);
+
+  const isStaff = Boolean(userRole && STAFF_ROLES.includes(userRole.role));
+  const accountStatus = userRole?.account_status ?? "pending";
 
   const completion = profile
     ? Math.round(
@@ -58,7 +75,59 @@ export default async function DashboardPage() {
         <SignOutButton />
       </div>
 
-      {!profile ? (
+      {isStaff && (
+        <Link
+          href="/admin"
+          className="mt-6 flex items-center justify-between rounded-2xl border border-teal/30 bg-teal/5 p-4 transition-colors hover:bg-teal/10"
+        >
+          <div className="flex items-center gap-3">
+            <LayoutDashboard className="h-5 w-5 text-teal" />
+            <div>
+              <p className="text-sm font-semibold text-navy">Staff Panel</p>
+              <p className="text-xs text-slate">
+                Review account approvals and profile verifications.
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-semibold text-teal">Open →</span>
+        </Link>
+      )}
+
+      {!isStaff && accountStatus === "pending" && (
+        <div className="mt-10 rounded-2xl border border-dashed border-gold/40 bg-gold/5 p-10 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">
+            <Hourglass className="h-6 w-6" />
+          </div>
+          <h1 className="mt-4 font-heading text-xl font-bold text-navy">
+            Your account is pending approval
+          </h1>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate">
+            A member of our team reviews new accounts before you can create a
+            profile. This is usually quick — check back soon.
+          </p>
+        </div>
+      )}
+
+      {!isStaff && accountStatus === "rejected" && (
+        <div className="mt-10 rounded-2xl border border-dashed border-red-200 bg-red-50 p-10 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-red-100 text-red-600">
+            <XCircle className="h-6 w-6" />
+          </div>
+          <h1 className="mt-4 font-heading text-xl font-bold text-navy">
+            Your account was not approved
+          </h1>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate">
+            Contact our support team if you believe this was a mistake.
+          </p>
+          <div className="mt-6">
+            <LinkButton href="/contact" variant="outline" size="md">
+              Contact Support
+            </LinkButton>
+          </div>
+        </div>
+      )}
+
+      {(isStaff || accountStatus === "approved") && !profile && (
         <div className="mt-10 rounded-2xl border border-dashed border-mist p-10 text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">
             <Sparkles className="h-6 w-6" />
@@ -77,7 +146,9 @@ export default async function DashboardPage() {
             </LinkButton>
           </div>
         </div>
-      ) : (
+      )}
+
+      {(isStaff || accountStatus === "approved") && profile && (
         <div className="mt-10 space-y-6">
           <div className="rounded-2xl border border-mist p-6">
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -101,6 +172,11 @@ export default async function DashboardPage() {
                     {profile.verification_status === "verified" && (
                       <Badge variant="verified" size="sm">
                         Verified
+                      </Badge>
+                    )}
+                    {profile.verification_status === "pending" && (
+                      <Badge variant="pending" size="sm">
+                        Verification Pending
                       </Badge>
                     )}
                   </div>
@@ -144,6 +220,18 @@ export default async function DashboardPage() {
                 </p>
               )}
             </div>
+
+            {(profile.verification_status === "unverified" ||
+              profile.verification_status === "rejected") && (
+              <div className="mt-6 flex items-center justify-between rounded-xl bg-offwhite p-4">
+                <p className="text-xs text-slate">
+                  {profile.verification_status === "rejected"
+                    ? "Your last verification request was not approved. You can submit again."
+                    : "Ready to earn a verified badge? Submit your profile for review."}
+                </p>
+                <SubmitVerificationButton profileId={profile.id} />
+              </div>
+            )}
           </div>
 
           <div className="rounded-2xl border border-dashed border-mist p-8 text-center">

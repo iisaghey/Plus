@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createProfile, updateProfile } from "@/lib/actions/profile";
 import { ProfileForm } from "@/components/profile/profile-form";
 
+const STAFF_ROLES = ["super_admin", "admin", "editor", "verifier"];
+
 export default async function DashboardProfilePage() {
   const supabase = await createClient();
   const {
@@ -10,12 +12,16 @@ export default async function DashboardProfilePage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [{ data: profile }, { data: categories }, { data: organizations }] =
+  const [{ data: userRole }, { data: profile }, { data: categories }, { data: organizations }] =
     await Promise.all([
+      supabase.from("user_roles").select("role, account_status").eq("user_id", user.id).maybeSingle(),
       supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle(),
       supabase.from("categories").select("id, name").eq("status", "active").order("name"),
       supabase.from("organizations").select("id, name").eq("status", "active").order("name"),
     ]);
+
+  const isStaff = Boolean(userRole && STAFF_ROLES.includes(userRole.role));
+  if (!isStaff && userRole?.account_status !== "approved") redirect("/dashboard");
 
   const action = profile
     ? updateProfile.bind(null, profile.id)
