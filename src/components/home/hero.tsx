@@ -41,17 +41,8 @@ export function Hero({
           className="mt-6 text-balance font-heading text-4xl font-extrabold leading-[1.1] text-white sm:text-5xl lg:text-6xl animate-fade-up"
           style={{ animationDelay: "80ms" }}
         >
-          Every Leader Has a Story.
+          Your Leadership. Your Identity. Your Legacy.
         </h1>
-
-        <p
-          className="mx-auto mt-6 max-w-2xl text-balance text-base leading-relaxed text-white/70 sm:text-lg animate-fade-up"
-          style={{ animationDelay: "160ms" }}
-        >
-          Discover verified digital profiles, leadership histories,
-          achievements, official activities, speeches, media, and
-          professional legacies &mdash; all in one trusted platform.
-        </p>
 
         <form
           onSubmit={onSubmit}
