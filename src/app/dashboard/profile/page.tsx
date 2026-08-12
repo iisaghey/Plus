@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createProfile, updateProfile } from "@/lib/actions/profile";
 import { ProfileForm } from "@/components/profile/profile-form";
 
-const STAFF_ROLES = ["super_admin", "admin", "editor", "verifier"];
+const STAFF_ROLES = ["super_admin", "admin", "editor", "staff"];
 
 export default async function DashboardProfilePage() {
   const supabase = await createClient();
@@ -24,7 +24,7 @@ export default async function DashboardProfilePage() {
   if (!isStaff && userRole?.account_status !== "approved") redirect("/dashboard");
 
   const action = profile
-    ? updateProfile.bind(null, profile.id)
+    ? updateProfile.bind(null, profile.id, "/dashboard")
     : createProfile;
 
   return (

@@ -87,6 +87,7 @@ export async function createProfile(
 
 export async function updateProfile(
   profileId: string,
+  redirectTo: string,
   _prevState: ProfileFormState,
   formData: FormData
 ): Promise<ProfileFormState> {
@@ -99,13 +100,59 @@ export async function updateProfile(
   const values = readFields(formData);
   if (!values.full_name) return { error: "Full name is required." };
 
+  // No user_id filter here: RLS (can_edit_profile) is the source of truth for
+  // who may edit this row -- the owner, or Editor/Admin/Super Admin, or Staff
+  // assigned to it. Adding an owner-only filter here would silently no-op
+  // for staff editing someone else's assigned profile.
   const { error } = await supabase
     .from("profiles")
     .update({ ...values, full_name: values.full_name })
-    .eq("id", profileId)
-    .eq("user_id", user.id);
+    .eq("id", profileId);
 
   if (error) return { error: error.message };
 
-  redirect("/dashboard");
+  redirect(redirectTo);
+}
+
+export async function createStaffDraft(
+  _prevState: ProfileFormState,
+  formData: FormData
+): Promise<ProfileFormState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "You must be signed in." };
+
+  const { data: userRole } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!userRole || !["staff", "editor", "admin", "super_admin"].includes(userRole.role)) {
+    return { error: "Only staff can create profile drafts." };
+  }
+
+  const values = readFields(formData);
+  if (!values.full_name) return { error: "Full name is required." };
+
+  const slug = await uniqueSlug(supabase, values.full_name);
+
+  const { data: created, error } = await supabase
+    .from("profiles")
+    .insert({
+      ...values,
+      full_name: values.full_name,
+      slug,
+      user_id: null,
+      created_by: user.id,
+      assigned_staff_id: userRole.role === "staff" ? user.id : null,
+      workflow_status: "draft",
+    })
+    .select("id")
+    .single();
+
+  if (error) return { error: error.message };
+
+  redirect(`/staff/profiles/${created.id}`);
 }

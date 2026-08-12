@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { logAuditEvent } from "@/lib/actions/audit";
 import type { Enums } from "@/types/database.types";
 
 async function requireStaff() {
@@ -9,8 +10,15 @@ async function requireStaff() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { supabase, user: null };
-  return { supabase, user };
+  if (!user) return { supabase, user: null, role: null };
+
+  const { data: userRole } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  return { supabase, user, role: userRole?.role ?? null };
 }
 
 export async function setAccountStatus(
@@ -36,8 +44,11 @@ export async function decideVerification(
   approve: boolean,
   notes?: string
 ) {
-  const { supabase, user } = await requireStaff();
+  const { supabase, user, role } = await requireStaff();
   if (!user) return { error: "You must be signed in." };
+  if (role !== "admin" && role !== "super_admin") {
+    return { error: "Only Admins can verify profiles." };
+  }
 
   const status: Enums<"verification_status"> = approve
     ? "verified"
@@ -62,9 +73,19 @@ export async function decideVerification(
     .update({
       verification_status: status,
       verified_at: approve ? now : null,
+      ...(approve ? { workflow_status: "verified" } : {}),
     })
     .eq("id", profileId);
   if (profileError) return { error: profileError.message };
+
+  await logAuditEvent(supabase, {
+    actorId: user.id,
+    actorRole: role,
+    action: approve ? "verify_profile" : "reject_verification",
+    entityType: "profile",
+    entityId: profileId,
+    newValue: { notes },
+  });
 
   revalidatePath("/admin/verification");
   return { success: true };
