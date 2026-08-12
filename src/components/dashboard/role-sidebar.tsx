@@ -40,7 +40,7 @@ export function RoleSidebar({
             </span>
           ) : (
             <Link
-              key={href}
+              key={label}
               href={href}
               target={href.startsWith("http") ? "_blank" : undefined}
               rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
