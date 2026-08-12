@@ -1,26 +1,114 @@
 @import "tailwindcss";
 
 :root {
+  /* Primary */
+  --color-navy: #0b1f3a;
+  --color-royal: #123c69;
+  --color-teal: #007c83;
+  --color-aqoonsi: #0a6e8a;
+
+  /* Accent */
+  --color-gold: #c9a227;
+  --color-sky: #38bdf8;
+  --color-emerald: #10b981;
+
+  /* Neutral */
+  --color-offwhite: #f8fafc;
+  --color-mist: #e2e8f0;
+  --color-slate: #64748b;
+  --color-ink: #0f172a;
+
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: var(--color-ink);
 }
 
 @theme inline {
+  --color-navy: var(--color-navy);
+  --color-royal: var(--color-royal);
+  --color-teal: var(--color-teal);
+  --color-aqoonsi: var(--color-aqoonsi);
+  --color-gold: var(--color-gold);
+  --color-sky: var(--color-sky);
+  --color-emerald: var(--color-emerald);
+  --color-offwhite: var(--color-offwhite);
+  --color-mist: var(--color-mist);
+  --color-slate: var(--color-slate);
+  --color-ink: var(--color-ink);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --font-heading: var(--font-jakarta);
+  --font-body: var(--font-inter);
+  --font-accent: var(--font-dm-sans);
+
+  --animate-fade-up: fade-up 0.6s ease-out both;
+  --animate-gradient: gradient-shift 12s ease infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes gradient-shift {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--color-teal);
+  color: white;
+}
+
+/* Thin, elegant scrollbar in keeping with the premium aesthetic */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-offwhite);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-mist);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-slate);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 42px 42px;
 }
