@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { MapPin, Building2, Globe, Linkedin, Twitter } from "lucide-react";
+import { MapPin, Building2, Globe } from "lucide-react";
+import { LinkedinIcon, TwitterIcon } from "@/components/ui/social-icons";
 import { Badge } from "@/components/ui/badge";
 import { ShareButton } from "./share-button";
 import { ProfileQrCode } from "./profile-qr-code";
@@ -90,7 +91,7 @@ export function ProfileHeader({ profile }: { profile: ProfileWithRelations }) {
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-mist text-slate hover:border-teal hover:text-teal"
                 aria-label="LinkedIn"
               >
-                <Linkedin className="h-4 w-4" />
+                <LinkedinIcon className="h-4 w-4" />
               </a>
             )}
             {social.twitter && (
@@ -101,7 +102,7 @@ export function ProfileHeader({ profile }: { profile: ProfileWithRelations }) {
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-mist text-slate hover:border-teal hover:text-teal"
                 aria-label="Twitter / X"
               >
-                <Twitter className="h-4 w-4" />
+                <TwitterIcon className="h-4 w-4" />
               </a>
             )}
             {profile.website && (

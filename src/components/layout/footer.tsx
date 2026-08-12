@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { Logo } from "./logo";
-import { Facebook, Linkedin, Twitter, Youtube } from "lucide-react";
+import {
+  FacebookIcon,
+  LinkedinIcon,
+  TwitterIcon,
+  YoutubeIcon,
+} from "@/components/ui/social-icons";
 
 const COLUMNS = [
   {
@@ -29,10 +34,10 @@ const COLUMNS = [
 ];
 
 const SOCIALS = [
-  { href: "#", label: "Facebook", icon: Facebook },
-  { href: "#", label: "LinkedIn", icon: Linkedin },
-  { href: "#", label: "Twitter / X", icon: Twitter },
-  { href: "#", label: "YouTube", icon: Youtube },
+  { href: "#", label: "Facebook", icon: FacebookIcon },
+  { href: "#", label: "LinkedIn", icon: LinkedinIcon },
+  { href: "#", label: "Twitter / X", icon: TwitterIcon },
+  { href: "#", label: "YouTube", icon: YoutubeIcon },
 ];
 
 export function Footer() {
