@@ -1,4 +1,18 @@
 import { createClient } from "@/lib/supabase/server";
+import type { Enums } from "@/types/database.types";
+
+const VERIFICATION_STATUSES: Enums<"verification_status">[] = [
+  "unverified",
+  "pending",
+  "verified",
+  "rejected",
+];
+
+function isVerificationStatus(
+  value: string
+): value is Enums<"verification_status"> {
+  return (VERIFICATION_STATUSES as string[]).includes(value);
+}
 
 const CARD_SELECT = `
   id, slug, full_name, preferred_title, current_position, country, location,
@@ -67,6 +81,94 @@ export async function getPlatformStats() {
     verifiedProfiles: verified ?? 0,
     organizations: orgs ?? 0,
   };
+}
+
+export type ProfileSearchParams = {
+  q?: string;
+  category?: string;
+  country?: string;
+  verification?: string;
+  sort?: string;
+};
+
+export async function searchProfiles(params: ProfileSearchParams) {
+  const supabase = await createClient();
+
+  let categoryIds: string[] = [];
+  if (params.category) {
+    const slugs = params.category.split(",").map((s) => s.trim()).filter(Boolean);
+    const { data: categories } = await supabase
+      .from("categories")
+      .select("id")
+      .in("slug", slugs);
+    categoryIds = (categories ?? []).map((c) => c.id);
+    if (categoryIds.length === 0) return [];
+  }
+
+  let query = supabase
+    .from("profiles")
+    .select(CARD_SELECT, { count: "exact" })
+    .eq("is_public", true)
+    .eq("status", "active");
+
+  if (params.q) {
+    const term = params.q.replace(/[%_]/g, "");
+    query = query.or(
+      `full_name.ilike.%${term}%,current_position.ilike.%${term}%,profession.ilike.%${term}%`
+    );
+  }
+  if (categoryIds.length > 0) {
+    query = query.in("category_id", categoryIds);
+  }
+  if (params.country) {
+    query = query.eq("country", params.country);
+  }
+  if (params.verification && isVerificationStatus(params.verification)) {
+    query = query.eq("verification_status", params.verification);
+  }
+
+  switch (params.sort) {
+    case "name":
+      query = query.order("full_name", { ascending: true });
+      break;
+    case "recent":
+      query = query.order("created_at", { ascending: false });
+      break;
+    default:
+      query = query.order("view_count", { ascending: false });
+  }
+
+  const { data } = await query.limit(60);
+  return data ?? [];
+}
+
+export async function getFilterOptions() {
+  const supabase = await createClient();
+  const [{ data: categories }, { data: countries }] = await Promise.all([
+    supabase.from("categories").select("name, slug").eq("status", "active").order("name"),
+    supabase
+      .from("profiles")
+      .select("country")
+      .eq("is_public", true)
+      .eq("status", "active")
+      .not("country", "is", null),
+  ]);
+
+  const uniqueCountries = Array.from(
+    new Set((countries ?? []).map((c) => c.country).filter(Boolean))
+  ).sort() as string[];
+
+  return { categories: categories ?? [], countries: uniqueCountries };
+}
+
+export async function getOrganizations() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("organizations")
+    .select("id, name, type, country, description, logo_url")
+    .eq("status", "active")
+    .order("name");
+  return data ?? [];
 }
 
 export async function getProfileBySlug(slug: string) {
