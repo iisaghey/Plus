@@ -13,6 +13,15 @@ export function formatMonthYear(date: string | null | undefined) {
   });
 }
 
+export function slugify(input: string) {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
 export function formatDateRange(
   start: string | null | undefined,
   end: string | null | undefined,
