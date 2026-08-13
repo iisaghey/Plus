@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   getUsersByRole,
   getAllProfilesForAssignment,
@@ -30,8 +31,12 @@ export default async function AdminTeamPage() {
         <div className="mt-3 space-y-2">
           {team.length === 0 ? (
             <p className="rounded-xl border border-dashed border-mist py-8 text-center text-sm text-slate">
-              No Staff or Editor accounts yet. Promote an approved user below,
-              or from Account Approvals once they sign up.
+              No Staff or Editor accounts yet. Promote an approved user's
+              role from{" "}
+              <Link href="/admin/users" className="font-semibold text-teal hover:underline">
+                Users
+              </Link>
+              {" "}— they'll appear here once promoted.
             </p>
           ) : (
             team.map((t) => (
