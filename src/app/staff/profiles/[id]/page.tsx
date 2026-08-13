@@ -2,6 +2,7 @@ import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { updateProfile } from "@/lib/actions/profile";
 import { ProfileForm } from "@/components/profile/profile-form";
+import { CareerTimelineEditor } from "@/components/profile/career-timeline-editor";
 import { SubmitReviewButton } from "@/components/dashboard/submit-review-button";
 import { Badge } from "@/components/ui/badge";
 
@@ -15,11 +16,12 @@ export default async function StaffEditProfilePage(
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [{ data: profile }, { data: categories }, { data: organizations }] =
+  const [{ data: profile }, { data: categories }, { data: organizations }, { data: careerTimeline }] =
     await Promise.all([
       supabase.from("profiles").select("*").eq("id", id).maybeSingle(),
       supabase.from("categories").select("id, name").eq("status", "active").order("name"),
       supabase.from("organizations").select("id, name").eq("status", "active").order("name"),
+      supabase.from("career_timeline").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
     ]);
 
   if (!profile) notFound();
@@ -48,6 +50,10 @@ export default async function StaffEditProfilePage(
           organizations={organizations ?? []}
           submitLabel="Save Changes"
         />
+      </div>
+
+      <div className="mt-8">
+        <CareerTimelineEditor profileId={profile.id} entries={careerTimeline ?? []} />
       </div>
 
       {["draft", "in_progress", "changes_required"].includes(

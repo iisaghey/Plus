@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createProfile, updateProfile } from "@/lib/actions/profile";
 import { ProfileForm } from "@/components/profile/profile-form";
+import { CareerTimelineEditor } from "@/components/profile/career-timeline-editor";
 
 const STAFF_ROLES = ["super_admin", "admin", "editor", "staff"];
 
@@ -22,6 +23,15 @@ export default async function DashboardProfilePage() {
 
   const isStaff = Boolean(userRole && STAFF_ROLES.includes(userRole.role));
   if (!isStaff && userRole?.account_status !== "approved") redirect("/dashboard");
+
+  const { data: careerTimeline } = profile
+    ? await supabase
+        .from("career_timeline")
+        .select("*")
+        .eq("profile_id", profile.id)
+        .eq("status", "active")
+        .order("sort_order")
+    : { data: null };
 
   const action = profile
     ? updateProfile.bind(null, profile.id, "/dashboard")
@@ -47,6 +57,15 @@ export default async function DashboardProfilePage() {
           submitLabel={profile ? "Save Changes" : "Create Profile"}
         />
       </div>
+
+      {profile && (
+        <div className="mt-8">
+          <CareerTimelineEditor
+            profileId={profile.id}
+            entries={careerTimeline ?? []}
+          />
+        </div>
+      )}
     </div>
   );
 }
