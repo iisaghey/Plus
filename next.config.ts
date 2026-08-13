@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "fastly.picsum.photos" },
       {
         protocol: "https",
-        hostname: "bvvgeytgpeeegwcbdvst.supabase.co",
+        hostname: "gknrmgzlndohbluenxwt.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
     ],
