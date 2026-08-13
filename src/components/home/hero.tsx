@@ -2,7 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, ShieldCheck, ArrowRight, SlidersHorizontal } from "lucide-react";
+import {
+  Search,
+  ShieldCheck,
+  ArrowRight,
+  SlidersHorizontal,
+  Fingerprint,
+  BadgeCheck,
+  Lock,
+  QrCode,
+  ScanFace,
+} from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
 
 export function Hero({
@@ -29,20 +39,40 @@ export function Hero({
         }}
       />
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.15]" />
+
+      {/* Decorative security/verification iconography, faint and non-interactive */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden text-white">
+        <ShieldCheck className="absolute left-[6%] top-[18%] h-20 w-20 -rotate-12 opacity-[0.07] sm:h-28 sm:w-28" />
+        <Fingerprint className="absolute right-[8%] top-[12%] h-24 w-24 rotate-6 opacity-[0.07] sm:h-32 sm:w-32" />
+        <BadgeCheck className="absolute left-[12%] bottom-[14%] h-16 w-16 rotate-6 text-sky opacity-[0.08] sm:h-20 sm:w-20" />
+        <Lock className="absolute right-[14%] bottom-[20%] h-14 w-14 -rotate-6 opacity-[0.07] sm:h-16 sm:w-16" />
+        <QrCode className="absolute left-[3%] bottom-[36%] hidden h-16 w-16 opacity-[0.06] lg:block" />
+        <ScanFace className="absolute right-[4%] bottom-[38%] hidden h-16 w-16 opacity-[0.06] lg:block" />
+      </div>
+
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-navy to-transparent" />
 
       <div className="relative mx-auto max-w-5xl px-4 pb-20 pt-24 text-center sm:px-6 sm:pt-32 lg:px-8">
         <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 font-accent text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm animate-fade-up">
           <ShieldCheck className="h-3.5 w-3.5" />
-          Trusted Digital Identity Platform
+          Digital Leadership Identity Platform
         </div>
 
         <h1
-          className="mt-6 text-balance font-heading text-4xl font-extrabold leading-[1.1] text-white sm:text-5xl lg:text-6xl animate-fade-up"
+          className="mt-6 text-balance text-center font-heading text-3xl font-extrabold leading-[1.15] text-white sm:text-4xl lg:text-5xl animate-fade-up"
           style={{ animationDelay: "80ms" }}
         >
-          Your Leadership. Your Identity. Your Legacy.
+          Your Leadership | Your Identity | Your Legacy.
         </h1>
+
+        <p
+          className="mx-auto mt-6 max-w-2xl text-balance text-base leading-relaxed text-white/70 sm:text-lg animate-fade-up"
+          style={{ animationDelay: "160ms" }}
+        >
+          Build, manage, and preserve your leadership profile, bringing your
+          identity, career, achievements, activities, media, and official
+          records together in one digital home.
+        </p>
 
         <form
           onSubmit={onSubmit}
