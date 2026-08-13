@@ -25,7 +25,7 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "AqoonsiPlus | Every Leader Has a Story",
+    default: "AqoonsiPlus | Your Leadership. Your Identity. Your Legacy.",
     template: "%s | AqoonsiPlus",
   },
   description:
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     "digital legacy",
   ],
   openGraph: {
-    title: "AqoonsiPlus | Every Leader Has a Story",
+    title: "AqoonsiPlus | Your Leadership. Your Identity. Your Legacy.",
     description:
       "Discover verified digital profiles, leadership histories, achievements, and professional legacies in one trusted platform.",
     siteName: "AqoonsiPlus",

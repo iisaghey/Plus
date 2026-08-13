@@ -48,7 +48,7 @@ export function Footer() {
           <div>
             <Logo light />
             <p className="mt-4 max-w-xs font-heading text-lg font-semibold text-white/90">
-              &ldquo;Every Leader Has a Story.&rdquo;
+              &ldquo;Your Leadership. Your Identity. Your Legacy.&rdquo;
             </p>
             <p className="mt-2 max-w-xs text-sm leading-relaxed text-white/50">
               A trusted digital identity and leadership archive platform for
