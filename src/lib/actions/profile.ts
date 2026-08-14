@@ -22,6 +22,7 @@ const FIELDS = [
   "email",
   "website",
   "photo_url",
+  "cover_url",
 ] as const;
 
 function readFields(formData: FormData) {

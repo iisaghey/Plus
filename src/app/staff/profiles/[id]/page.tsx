@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { updateProfile } from "@/lib/actions/profile";
 import { ProfileForm } from "@/components/profile/profile-form";
 import { CareerTimelineEditor } from "@/components/profile/career-timeline-editor";
+import { AchievementsEditor } from "@/components/profile/achievements-editor";
+import { MediaEditor } from "@/components/profile/media-editor";
+import { DocumentsEditor } from "@/components/profile/documents-editor";
 import { SubmitReviewButton } from "@/components/dashboard/submit-review-button";
 import { Badge } from "@/components/ui/badge";
 
@@ -16,13 +19,23 @@ export default async function StaffEditProfilePage(
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [{ data: profile }, { data: categories }, { data: organizations }, { data: careerTimeline }] =
-    await Promise.all([
-      supabase.from("profiles").select("*").eq("id", id).maybeSingle(),
-      supabase.from("categories").select("id, name").eq("status", "active").order("name"),
-      supabase.from("organizations").select("id, name").eq("status", "active").order("name"),
-      supabase.from("career_timeline").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
-    ]);
+  const [
+    { data: profile },
+    { data: categories },
+    { data: organizations },
+    { data: careerTimeline },
+    { data: achievements },
+    { data: media },
+    { data: documents },
+  ] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", id).maybeSingle(),
+    supabase.from("categories").select("id, name").eq("status", "active").order("name"),
+    supabase.from("organizations").select("id, name").eq("status", "active").order("name"),
+    supabase.from("career_timeline").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
+    supabase.from("achievements").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
+    supabase.from("media").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
+    supabase.from("documents").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
+  ]);
 
   if (!profile) notFound();
 
@@ -52,8 +65,11 @@ export default async function StaffEditProfilePage(
         />
       </div>
 
-      <div className="mt-8">
+      <div className="mt-8 space-y-8">
         <CareerTimelineEditor profileId={profile.id} entries={careerTimeline ?? []} />
+        <AchievementsEditor profileId={profile.id} entries={achievements ?? []} />
+        <MediaEditor profileId={profile.id} entries={media ?? []} />
+        <DocumentsEditor profileId={profile.id} entries={documents ?? []} />
       </div>
 
       {["draft", "in_progress", "changes_required"].includes(

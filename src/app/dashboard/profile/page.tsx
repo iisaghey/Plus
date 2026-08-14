@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { createProfile, updateProfile } from "@/lib/actions/profile";
 import { ProfileForm } from "@/components/profile/profile-form";
 import { CareerTimelineEditor } from "@/components/profile/career-timeline-editor";
+import { AchievementsEditor } from "@/components/profile/achievements-editor";
+import { MediaEditor } from "@/components/profile/media-editor";
+import { DocumentsEditor } from "@/components/profile/documents-editor";
 
 const STAFF_ROLES = ["super_admin", "admin", "editor", "staff"];
 
@@ -24,14 +27,39 @@ export default async function DashboardProfilePage() {
   const isStaff = Boolean(userRole && STAFF_ROLES.includes(userRole.role));
   if (!isStaff && userRole?.account_status !== "approved") redirect("/dashboard");
 
-  const { data: careerTimeline } = profile
-    ? await supabase
-        .from("career_timeline")
-        .select("*")
-        .eq("profile_id", profile.id)
-        .eq("status", "active")
-        .order("sort_order")
-    : { data: null };
+  const [
+    { data: careerTimeline },
+    { data: achievements },
+    { data: media },
+    { data: documents },
+  ] = profile
+    ? await Promise.all([
+        supabase
+          .from("career_timeline")
+          .select("*")
+          .eq("profile_id", profile.id)
+          .eq("status", "active")
+          .order("sort_order"),
+        supabase
+          .from("achievements")
+          .select("*")
+          .eq("profile_id", profile.id)
+          .eq("status", "active")
+          .order("sort_order"),
+        supabase
+          .from("media")
+          .select("*")
+          .eq("profile_id", profile.id)
+          .eq("status", "active")
+          .order("sort_order"),
+        supabase
+          .from("documents")
+          .select("*")
+          .eq("profile_id", profile.id)
+          .eq("status", "active")
+          .order("sort_order"),
+      ])
+    : [{ data: null }, { data: null }, { data: null }, { data: null }];
 
   const action = profile
     ? updateProfile.bind(null, profile.id, "/dashboard")
@@ -59,11 +87,14 @@ export default async function DashboardProfilePage() {
       </div>
 
       {profile && (
-        <div className="mt-8">
+        <div className="mt-8 space-y-8">
           <CareerTimelineEditor
             profileId={profile.id}
             entries={careerTimeline ?? []}
           />
+          <AchievementsEditor profileId={profile.id} entries={achievements ?? []} />
+          <MediaEditor profileId={profile.id} entries={media ?? []} />
+          <DocumentsEditor profileId={profile.id} entries={documents ?? []} />
         </div>
       )}
     </div>

@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ImageUploadField } from "@/components/profile/image-upload-field";
 import type { ProfileFormState } from "@/lib/actions/profile";
 import type { Tables } from "@/types/database.types";
 
@@ -61,8 +62,32 @@ export function ProfileForm({
         <Field label="Nationality" name="nationality" defaultValue={profile?.nationality ?? ""} />
         <Field label="Email" name="email" type="email" defaultValue={profile?.email ?? ""} />
         <Field label="Website" name="website" type="url" placeholder="https://" defaultValue={profile?.website ?? ""} />
-        <Field label="Photo URL" name="photo_url" type="url" placeholder="https://" defaultValue={profile?.photo_url ?? ""} />
       </div>
+
+      {profile ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <ImageUploadField
+            name="photo_url"
+            label="Profile Photo"
+            defaultValue={profile.photo_url}
+            bucket="profile-photos"
+            profileId={profile.id}
+          />
+          <ImageUploadField
+            name="cover_url"
+            label="Cover Photo"
+            defaultValue={profile.cover_url}
+            bucket="profile-photos"
+            profileId={profile.id}
+            shape="wide"
+          />
+        </div>
+      ) : (
+        <p className="rounded-xl bg-offwhite px-4 py-3 text-xs text-slate">
+          You can add a profile photo and cover image after creating your
+          profile.
+        </p>
+      )}
 
       <div>
         <label className="text-xs font-semibold uppercase tracking-wide text-slate">

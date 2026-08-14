@@ -1,0 +1,98 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+
+export type MediaFormState = {
+  error?: string;
+  success?: boolean;
+};
+
+const FIELDS = [
+  "title",
+  "category",
+  "media_type",
+  "event_date",
+  "caption",
+  "external_url",
+] as const;
+
+function readFields(formData: FormData) {
+  const values = {} as Record<(typeof FIELDS)[number], string | null>;
+  for (const field of FIELDS) {
+    const raw = formData.get(field);
+    const value = typeof raw === "string" ? raw.trim() : "";
+    values[field] = value === "" ? null : value;
+  }
+  return values;
+}
+
+function revalidateProfilePages(profileId: string) {
+  revalidatePath("/dashboard/profile");
+  revalidatePath(`/staff/profiles/${profileId}`);
+}
+
+export async function createMediaItem(
+  profileId: string,
+  _prevState: MediaFormState,
+  formData: FormData
+): Promise<MediaFormState> {
+  const supabase = await createClient();
+  const values = readFields(formData);
+  if (!values.media_type) return { error: "Media type is required." };
+  if (!values.external_url) return { error: "Please upload a file or add a link." };
+
+  const { count } = await supabase
+    .from("media")
+    .select("*", { count: "exact", head: true })
+    .eq("profile_id", profileId);
+
+  const { error } = await supabase.from("media").insert({
+    profile_id: profileId,
+    ...values,
+    media_type: values.media_type,
+    is_featured: formData.get("is_featured") === "on",
+    sort_order: count ?? 0,
+  });
+
+  if (error) return { error: error.message };
+
+  revalidateProfilePages(profileId);
+  return { success: true };
+}
+
+export async function updateMediaItem(
+  entryId: string,
+  profileId: string,
+  _prevState: MediaFormState,
+  formData: FormData
+): Promise<MediaFormState> {
+  const supabase = await createClient();
+  const values = readFields(formData);
+  if (!values.media_type) return { error: "Media type is required." };
+  if (!values.external_url) return { error: "Please upload a file or add a link." };
+
+  const { error } = await supabase
+    .from("media")
+    .update({
+      ...values,
+      media_type: values.media_type,
+      is_featured: formData.get("is_featured") === "on",
+    })
+    .eq("id", entryId);
+
+  if (error) return { error: error.message };
+
+  revalidateProfilePages(profileId);
+  return { success: true };
+}
+
+export async function deleteMediaItem(entryId: string, profileId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("media").delete().eq("id", entryId);
+
+  if (error) return { error: error.message };
+
+  revalidateProfilePages(profileId);
+  return { success: true };
+}
