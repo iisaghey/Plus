@@ -6,6 +6,11 @@ import { CareerTimelineEditor } from "@/components/profile/career-timeline-edito
 import { AchievementsEditor } from "@/components/profile/achievements-editor";
 import { MediaEditor } from "@/components/profile/media-editor";
 import { DocumentsEditor } from "@/components/profile/documents-editor";
+import { BiographyEditor } from "@/components/profile/biography-editor";
+import { PositionsEditor } from "@/components/profile/positions-editor";
+import { ActivitiesEditor } from "@/components/profile/activities-editor";
+import { TravelEditor } from "@/components/profile/travel-editor";
+import { SpeechesEditor } from "@/components/profile/speeches-editor";
 
 const STAFF_ROLES = ["super_admin", "admin", "editor", "staff"];
 
@@ -32,6 +37,11 @@ export default async function DashboardProfilePage() {
     { data: achievements },
     { data: media },
     { data: documents },
+    { data: biography },
+    { data: positions },
+    { data: activities },
+    { data: travel },
+    { data: speeches },
   ] = profile
     ? await Promise.all([
         supabase
@@ -58,8 +68,43 @@ export default async function DashboardProfilePage() {
           .eq("profile_id", profile.id)
           .eq("status", "active")
           .order("sort_order"),
+        supabase.from("biographies").select("*").eq("profile_id", profile.id).maybeSingle(),
+        supabase
+          .from("government_positions")
+          .select("*")
+          .eq("profile_id", profile.id)
+          .eq("status", "active")
+          .order("sort_order"),
+        supabase
+          .from("official_activities")
+          .select("*")
+          .eq("profile_id", profile.id)
+          .eq("status", "active")
+          .order("sort_order"),
+        supabase
+          .from("official_travel")
+          .select("*")
+          .eq("profile_id", profile.id)
+          .eq("status", "active")
+          .order("sort_order"),
+        supabase
+          .from("speeches")
+          .select("*")
+          .eq("profile_id", profile.id)
+          .eq("status", "active")
+          .order("sort_order"),
       ])
-    : [{ data: null }, { data: null }, { data: null }, { data: null }];
+    : [
+        { data: null },
+        { data: null },
+        { data: null },
+        { data: null },
+        { data: null },
+        { data: null },
+        { data: null },
+        { data: null },
+        { data: null },
+      ];
 
   const action = profile
     ? updateProfile.bind(null, profile.id, "/dashboard")
@@ -88,11 +133,16 @@ export default async function DashboardProfilePage() {
 
       {profile && (
         <div className="mt-8 space-y-8">
+          <BiographyEditor profileId={profile.id} biography={biography ?? null} />
           <CareerTimelineEditor
             profileId={profile.id}
             entries={careerTimeline ?? []}
           />
+          <PositionsEditor profileId={profile.id} entries={positions ?? []} />
           <AchievementsEditor profileId={profile.id} entries={achievements ?? []} />
+          <ActivitiesEditor profileId={profile.id} entries={activities ?? []} />
+          <TravelEditor profileId={profile.id} entries={travel ?? []} />
+          <SpeechesEditor profileId={profile.id} entries={speeches ?? []} />
           <MediaEditor profileId={profile.id} entries={media ?? []} />
           <DocumentsEditor profileId={profile.id} entries={documents ?? []} />
         </div>
