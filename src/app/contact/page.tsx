@@ -5,6 +5,7 @@ import {
   FacebookIcon,
   TwitterIcon,
   TikTokIcon,
+  LinkedinIcon,
 } from "@/components/ui/social-icons";
 
 export const metadata: Metadata = {
@@ -44,6 +45,13 @@ const CONTACTS = [
     icon: TikTokIcon,
     label: "TikTok",
     value: "@aqoonsiplus",
+    external: true,
+  },
+  {
+    href: "https://www.linkedin.com/feed/",
+    icon: LinkedinIcon,
+    label: "LinkedIn",
+    value: "AqoonsiPlus",
     external: true,
   },
   {
