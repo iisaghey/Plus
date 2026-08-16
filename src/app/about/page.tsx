@@ -9,7 +9,7 @@ import { OurValues } from "@/components/home/our-values";
 const TEAM = [
   {
     name: "Mohamedqadar Dahir Abdi",
-    role: "CEO",
+    role: "Chief Executive Officer",
     company: "AqoonsiPlus Platform",
     photo: "/team-mohamedqadar.jpg",
   },
