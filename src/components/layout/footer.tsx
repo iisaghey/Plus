@@ -46,7 +46,7 @@ const SOCIALS = [
     label: "TikTok",
     icon: TikTokIcon,
   },
-  { href: "https://www.linkedin.com/feed/", label: "LinkedIn", icon: LinkedinIcon },
+  { href: "https://www.linkedin.com/in/aqoonsi-plus-b2267642a/", label: "LinkedIn", icon: LinkedinIcon },
 ];
 
 export function Footer() {

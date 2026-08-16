@@ -48,7 +48,7 @@ const CONTACTS = [
     external: true,
   },
   {
-    href: "https://www.linkedin.com/feed/",
+    href: "https://www.linkedin.com/in/aqoonsi-plus-b2267642a/",
     icon: LinkedinIcon,
     label: "LinkedIn",
     value: "AqoonsiPlus",
