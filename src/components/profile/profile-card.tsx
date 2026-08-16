@@ -29,7 +29,7 @@ export function ProfileCard({ profile }: { profile: ProfileCardData }) {
                 alt={profile.full_name}
                 width={80}
                 height={80}
-                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-110"
               />
             ) : null}
           </div>
