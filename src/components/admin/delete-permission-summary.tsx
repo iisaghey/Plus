@@ -23,7 +23,7 @@ function deleteStatus(
   if (deletePermanentScope === "all") {
     return { icon: CheckCircle2, label: "Full delete authority", tone: "success" };
   }
-  if (deleteScope === "all" || deleteScope === "limited" || deletePermanentScope === "limited") {
+  if (deletePermanentScope === "limited") {
     return {
       icon: AlertTriangle,
       label: "Can request/delete limited content",
