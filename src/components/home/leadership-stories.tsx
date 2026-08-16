@@ -11,10 +11,13 @@ export async function LeadershipStories() {
   const { data: bios } = await supabase
     .from("biographies")
     .select(
-      `summary, profiles!inner ( slug, full_name, current_position, photo_url, is_public, status )`
+      `summary, profiles!inner ( slug, full_name, current_position, photo_url, is_public, status, workflow_status, hidden_at, deleted_at )`
     )
     .eq("profiles.is_public", true)
     .eq("profiles.status", "active")
+    .eq("profiles.workflow_status", "published")
+    .is("profiles.hidden_at", null)
+    .is("profiles.deleted_at", null)
     .not("summary", "is", null)
     .limit(3);
 

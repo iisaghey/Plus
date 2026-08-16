@@ -21,13 +21,20 @@ const CARD_SELECT = `
   categories ( name, slug )
 `;
 
-export async function getFeaturedProfiles(limit = 6) {
-  const supabase = await createClient();
-  const { data } = await supabase
+function publicProfilesQuery(supabase: Awaited<ReturnType<typeof createClient>>) {
+  return supabase
     .from("profiles")
     .select(CARD_SELECT)
     .eq("is_public", true)
     .eq("status", "active")
+    .eq("workflow_status", "published")
+    .is("hidden_at", null)
+    .is("deleted_at", null);
+}
+
+export async function getFeaturedProfiles(limit = 6) {
+  const supabase = await createClient();
+  const { data } = await publicProfilesQuery(supabase)
     .order("view_count", { ascending: false })
     .limit(limit);
   return data ?? [];
@@ -35,11 +42,7 @@ export async function getFeaturedProfiles(limit = 6) {
 
 export async function getRecentProfiles(limit = 8) {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("profiles")
-    .select(CARD_SELECT)
-    .eq("is_public", true)
-    .eq("status", "active")
+  const { data } = await publicProfilesQuery(supabase)
     .order("created_at", { ascending: false })
     .limit(limit);
   return data ?? [];
@@ -47,11 +50,7 @@ export async function getRecentProfiles(limit = 8) {
 
 export async function getVerifiedProfiles(limit = 8) {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("profiles")
-    .select(CARD_SELECT)
-    .eq("is_public", true)
-    .eq("status", "active")
+  const { data } = await publicProfilesQuery(supabase)
     .eq("verification_status", "verified")
     .order("verified_at", { ascending: false })
     .limit(limit);
@@ -60,17 +59,20 @@ export async function getVerifiedProfiles(limit = 8) {
 
 export async function getPlatformStats() {
   const supabase = await createClient();
+  const publicScope = () =>
+    supabase
+      .from("profiles")
+      .select("*", { count: "exact", head: true })
+      .eq("is_public", true)
+      .eq("status", "active")
+      .eq("workflow_status", "published")
+      .is("hidden_at", null)
+      .is("deleted_at", null);
+
   const [{ count: total }, { count: verified }, { count: orgs }] =
     await Promise.all([
-      supabase
-        .from("profiles")
-        .select("*", { count: "exact", head: true })
-        .eq("is_public", true)
-        .eq("status", "active"),
-      supabase
-        .from("profiles")
-        .select("*", { count: "exact", head: true })
-        .eq("verification_status", "verified"),
+      publicScope(),
+      publicScope().eq("verification_status", "verified"),
       supabase
         .from("organizations")
         .select("*", { count: "exact", head: true })
@@ -109,7 +111,10 @@ export async function searchProfiles(params: ProfileSearchParams) {
     .from("profiles")
     .select(CARD_SELECT, { count: "exact" })
     .eq("is_public", true)
-    .eq("status", "active");
+    .eq("status", "active")
+    .eq("workflow_status", "published")
+    .is("hidden_at", null)
+    .is("deleted_at", null);
 
   if (params.q) {
     const term = params.q.replace(/[%_]/g, "");
@@ -151,6 +156,9 @@ export async function getFilterOptions() {
       .select("country")
       .eq("is_public", true)
       .eq("status", "active")
+      .eq("workflow_status", "published")
+      .is("hidden_at", null)
+      .is("deleted_at", null)
       .not("country", "is", null),
   ]);
 
