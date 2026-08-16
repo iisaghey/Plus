@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Menu, X, ShieldCheck, Search } from "lucide-react";
+import { Menu, X, Search } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
@@ -18,6 +18,7 @@ const NAV_LINKS = [
   { href: "/organizations", label: "Organizations" },
   { href: "/about", label: "About" },
   { href: "/verification", label: "Verification" },
+  { href: "/contact", label: "Contact Us" },
 ];
 
 export function Navbar() {
@@ -67,12 +68,8 @@ export function Navbar() {
             <Search className="h-[18px] w-[18px]" />
           </Link>
           <ThemeToggle />
-          <LinkButton href="/login" variant="ghost" size="sm">
+          <LinkButton href="/login" variant="primary" size="sm">
             Login
-          </LinkButton>
-          <LinkButton href="/create-profile" variant="primary" size="sm">
-            <ShieldCheck className="h-4 w-4" />
-            Create Profile
           </LinkButton>
         </div>
 
@@ -119,12 +116,8 @@ export function Navbar() {
                 ))}
               </nav>
               <div className="mt-4 flex flex-col gap-2 border-t border-mist pt-4">
-                <LinkButton href="/login" variant="outline" size="md" className="w-full">
+                <LinkButton href="/login" variant="primary" size="md" className="w-full">
                   Login
-                </LinkButton>
-                <LinkButton href="/create-profile" variant="primary" size="md" className="w-full">
-                  <ShieldCheck className="h-4 w-4" />
-                  Create Profile
                 </LinkButton>
               </div>
             </div>
