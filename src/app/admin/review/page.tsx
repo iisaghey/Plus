@@ -1,10 +1,16 @@
-import { getAdminReviewQueue, getPublishableProfiles } from "@/lib/data/admin";
+import {
+  getAdminReviewQueue,
+  getPublishableProfiles,
+  getPendingPublishedEdits,
+} from "@/lib/data/admin";
 import { AdminReviewRow } from "@/components/admin/admin-review-row";
+import { PublishedEditReviewRow } from "@/components/admin/published-edit-review-row";
 
 export default async function AdminReviewPage() {
-  const [reviewQueue, publishable] = await Promise.all([
+  const [reviewQueue, publishable, pendingPublishedEdits] = await Promise.all([
     getAdminReviewQueue(),
     getPublishableProfiles(),
+    getPendingPublishedEdits(),
   ]);
 
   return (
@@ -37,6 +43,34 @@ export default async function AdminReviewPage() {
                 photoUrl={p.photo_url}
                 editorialNotes={p.editorial_notes}
                 workflowStatus={p.workflow_status}
+              />
+            ))
+          )}
+        </div>
+      </div>
+
+      <div className="mt-10">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-slate">
+          Published Edits Awaiting Review ({pendingPublishedEdits.length})
+        </h2>
+        <p className="mt-1 text-xs text-slate">
+          An Editor with permission changed a live profile. It&apos;s off the public site until
+          you approve or reject the changes.
+        </p>
+        <div className="mt-3 space-y-3">
+          {pendingPublishedEdits.length === 0 ? (
+            <p className="rounded-xl border border-dashed border-mist py-10 text-center text-sm text-slate">
+              No published-profile edits pending review.
+            </p>
+          ) : (
+            pendingPublishedEdits.map((p) => (
+              <PublishedEditReviewRow
+                key={p.id}
+                profileId={p.id}
+                slug={p.slug}
+                fullName={p.full_name}
+                position={p.current_position}
+                photoUrl={p.photo_url}
               />
             ))
           )}

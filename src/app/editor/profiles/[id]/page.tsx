@@ -12,6 +12,7 @@ import { ActivitiesEditor } from "@/components/profile/activities-editor";
 import { TravelEditor } from "@/components/profile/travel-editor";
 import { SpeechesEditor } from "@/components/profile/speeches-editor";
 import { EditorDecisionRow } from "@/components/editor/editor-decision-row";
+import { EditPermissionGate } from "@/components/editor/edit-permission-gate";
 import { Badge } from "@/components/ui/badge";
 import { WORKFLOW_STATUS_VARIANT, workflowStatusLabel } from "@/lib/workflow";
 
@@ -24,6 +25,13 @@ export default async function EditorProfileEditPage(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+
+  const { data: userRole } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const role = userRole?.role ?? null;
 
   const [
     { data: profile },
@@ -55,6 +63,40 @@ export default async function EditorProfileEditPage(
 
   if (!profile) notFound();
 
+  const isPublished = profile.workflow_status === "published";
+  const isEditorRole = role === "editor";
+
+  const [{ data: activeGrant }, { data: openRequest }] = isEditorRole && isPublished
+    ? await Promise.all([
+        supabase
+          .from("edit_permission_grants")
+          .select("grant_type, allowed_fields, expires_at, used_at, revoked_at")
+          .eq("profile_id", id)
+          .eq("editor_id", user.id)
+          .is("revoked_at", null)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from("edit_permission_requests")
+          .select("status, review_notes")
+          .eq("profile_id", id)
+          .eq("editor_id", user.id)
+          .in("status", ["pending", "more_info_requested"])
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+      ])
+    : [{ data: null }, { data: null }];
+
+  const now = Date.now();
+  const grantIsActive =
+    activeGrant &&
+    (!activeGrant.expires_at || new Date(activeGrant.expires_at).getTime() > now) &&
+    (activeGrant.grant_type !== "one_time" || !activeGrant.used_at);
+
+  const locked = isEditorRole && isPublished && !grantIsActive;
+
   const action = updateProfile.bind(null, profile.id, `/editor/profiles/${profile.id}`);
 
   return (
@@ -68,8 +110,32 @@ export default async function EditorProfileEditPage(
         </Badge>
       </div>
       <p className="mt-2 text-sm text-slate">
-        As an editor you can edit this profile directly at any stage.
+        {isPublished
+          ? "This profile is live. Editors need Super Admin permission to change a published profile."
+          : "As an editor you can edit this profile directly at this stage."}
       </p>
+
+      {isEditorRole && isPublished && (
+        <EditPermissionGate
+          profileId={profile.id}
+          profileName={profile.full_name}
+          locked={locked}
+          grant={
+            grantIsActive
+              ? {
+                  grantType: activeGrant!.grant_type,
+                  expiresAt: activeGrant!.expires_at,
+                  allowedFields: activeGrant!.allowed_fields,
+                }
+              : null
+          }
+          pendingRequest={
+            openRequest
+              ? { status: openRequest.status as "pending" | "more_info_requested", reviewNotes: openRequest.review_notes }
+              : null
+          }
+        />
+      )}
 
       {profile.workflow_status === "submitted" && (
         <div className="mt-6">
@@ -95,19 +161,20 @@ export default async function EditorProfileEditPage(
           categories={categories ?? []}
           organizations={organizations ?? []}
           submitLabel="Save Changes"
+          locked={locked}
         />
       </div>
 
       <div className="mt-8 space-y-8">
-        <BiographyEditor profileId={profile.id} biography={biography ?? null} />
-        <CareerTimelineEditor profileId={profile.id} entries={careerTimeline ?? []} />
-        <PositionsEditor profileId={profile.id} entries={positions ?? []} />
-        <AchievementsEditor profileId={profile.id} entries={achievements ?? []} />
-        <ActivitiesEditor profileId={profile.id} entries={activities ?? []} />
-        <TravelEditor profileId={profile.id} entries={travel ?? []} />
-        <SpeechesEditor profileId={profile.id} entries={speeches ?? []} />
-        <MediaEditor profileId={profile.id} entries={media ?? []} />
-        <DocumentsEditor profileId={profile.id} entries={documents ?? []} />
+        <BiographyEditor profileId={profile.id} biography={biography ?? null} locked={locked} />
+        <CareerTimelineEditor profileId={profile.id} entries={careerTimeline ?? []} locked={locked} />
+        <PositionsEditor profileId={profile.id} entries={positions ?? []} locked={locked} />
+        <AchievementsEditor profileId={profile.id} entries={achievements ?? []} locked={locked} />
+        <ActivitiesEditor profileId={profile.id} entries={activities ?? []} locked={locked} />
+        <TravelEditor profileId={profile.id} entries={travel ?? []} locked={locked} />
+        <SpeechesEditor profileId={profile.id} entries={speeches ?? []} locked={locked} />
+        <MediaEditor profileId={profile.id} entries={media ?? []} locked={locked} />
+        <DocumentsEditor profileId={profile.id} entries={documents ?? []} locked={locked} />
       </div>
     </div>
   );

@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { slugify } from "@/lib/utils";
+import { logAuditEvent, notifyUser } from "@/lib/actions/audit";
 
 export type ProfileFormState = {
   error?: string;
@@ -101,6 +102,22 @@ export async function updateProfile(
   const values = readFields(formData);
   if (!values.full_name) return { error: "Full name is required." };
 
+  const { data: userRole } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  // Fetch a before-snapshot so an Editor's edit to an already-published
+  // profile can be audit-logged field-by-field -- can_edit_profile() and
+  // the enforce_editor_published_edit trigger are what actually gate/route
+  // this (blocking it without a grant, forcing workflow_status to
+  // admin_review on success); this is purely for the richer audit trail.
+  const wasPublishedEditByEditor = userRole?.role === "editor";
+  const { data: before } = wasPublishedEditByEditor
+    ? await supabase.from("profiles").select("*").eq("id", profileId).maybeSingle()
+    : { data: null };
+
   // No user_id filter here: RLS (can_edit_profile) is the source of truth for
   // who may edit this row -- the owner, or Editor/Admin/Super Admin, or Staff
   // assigned to it. Adding an owner-only filter here would silently no-op
@@ -111,6 +128,44 @@ export async function updateProfile(
     .eq("id", profileId);
 
   if (error) return { error: error.message };
+
+  if (wasPublishedEditByEditor && before?.workflow_status === "published") {
+    const changed: Record<string, string | null> = {};
+    const previous: Record<string, string | null> = {};
+    for (const field of FIELDS) {
+      const beforeValue = (before as Record<string, unknown>)[field] as
+        | string
+        | null;
+      if (beforeValue !== values[field]) {
+        previous[field] = beforeValue ?? null;
+        changed[field] = values[field];
+      }
+    }
+
+    await logAuditEvent(supabase, {
+      actorId: user.id,
+      actorRole: userRole?.role ?? null,
+      action: "edit_published_profile",
+      entityType: "profile",
+      entityId: profileId,
+      previousValue: { workflow_status: "published", ...previous },
+      newValue: { workflow_status: "admin_review", ...changed },
+    });
+
+    const { data: reviewers } = await supabase
+      .from("user_roles")
+      .select("user_id")
+      .in("role", ["admin", "super_admin"]);
+    for (const reviewer of reviewers ?? []) {
+      await notifyUser(supabase, {
+        userId: reviewer.user_id,
+        type: "published_edit_pending_review",
+        title: `Edits to a published profile are awaiting your review: ${before.full_name}`,
+        relatedProfileId: profileId,
+        actionUrl: "/admin/review",
+      });
+    }
+  }
 
   redirect(redirectTo);
 }
