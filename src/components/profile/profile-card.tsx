@@ -22,7 +22,7 @@ export function ProfileCard({ profile }: { profile: ProfileCardData }) {
       </div>
       <div className="flex flex-1 flex-col px-5 pb-5">
         <div className="-mt-10 mb-3 flex items-end justify-between">
-          <div className="h-20 w-20 overflow-hidden rounded-2xl border-4 border-white bg-mist p-1 shadow-md">
+          <div className="h-20 w-20 overflow-hidden rounded-2xl border-4 border-white bg-mist p-2.5 shadow-md">
             {profile.photo_url ? (
               <Image
                 src={profile.photo_url}

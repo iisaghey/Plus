@@ -100,7 +100,7 @@ export function EditPermissionRequestRow({ request }: { request: EditRequestRowD
     <div className="rounded-xl border border-mist p-4">
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-mist">
+          <div className="h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-mist p-1">
             {request.profile_photo && (
               <Image
                 src={request.profile_photo}
