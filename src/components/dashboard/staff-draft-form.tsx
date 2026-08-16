@@ -7,8 +7,10 @@ import type { ProfileFormState } from "@/lib/actions/profile";
 
 export function StaffDraftForm({
   action,
+  triggerLabel = "New Draft",
 }: {
   action: (state: ProfileFormState, formData: FormData) => Promise<ProfileFormState>;
+  triggerLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState<ProfileFormState, FormData>(
@@ -20,7 +22,7 @@ export function StaffDraftForm({
     return (
       <Button variant="primary" size="sm" onClick={() => setOpen(true)}>
         <Plus className="h-3.5 w-3.5" />
-        New Draft
+        {triggerLabel}
       </Button>
     );
   }

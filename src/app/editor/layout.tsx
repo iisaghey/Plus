@@ -3,10 +3,6 @@ import {
   LayoutDashboard,
   ListChecks,
   IdCard,
-  ClipboardList,
-  Images,
-  FileText,
-  Undo2,
   Bell,
   UserCog,
 } from "lucide-react";
@@ -15,12 +11,8 @@ import { RoleSidebar, type SidebarItem } from "@/components/dashboard/role-sideb
 
 const NAV: SidebarItem[] = [
   { href: "/editor", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/editor", label: "Review Queue", icon: ListChecks },
-  { href: "/profiles", label: "Profiles", icon: IdCard },
-  { href: "/editor", label: "Editorial Tasks", icon: ClipboardList },
-  { label: "Media", icon: Images, comingSoon: true },
-  { label: "Documents", icon: FileText, comingSoon: true },
-  { href: "/editor", label: "Corrections", icon: Undo2 },
+  { href: "/editor/queue", label: "Review Queue", icon: ListChecks },
+  { href: "/editor/profiles", label: "Profiles", icon: IdCard },
   { href: "/notifications", label: "Notifications", icon: Bell },
   { href: "/dashboard", label: "My Account", icon: UserCog },
 ];

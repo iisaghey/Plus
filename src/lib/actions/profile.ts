@@ -155,5 +155,6 @@ export async function createStaffDraft(
 
   if (error) return { error: error.message };
 
-  redirect(`/staff/profiles/${created.id}`);
+  const base = userRole.role === "editor" ? "/editor/profiles" : "/staff/profiles";
+  redirect(`${base}/${created.id}`);
 }
