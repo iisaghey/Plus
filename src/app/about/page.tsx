@@ -1,9 +1,19 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Target, Eye, ShieldCheck, ArrowRight } from "lucide-react";
 import { SectionLabel } from "@/components/ui/section-label";
 import { LinkButton } from "@/components/ui/button";
 import { OurValues } from "@/components/home/our-values";
+
+const TEAM = [
+  {
+    name: "Mohamedqadar Dahir Abdi",
+    role: "CEO",
+    company: "AqoonsiPlus Platform",
+    photo: "/team-mohamedqadar.jpg",
+  },
+];
 
 export const metadata: Metadata = {
   title: "About",
@@ -124,6 +134,41 @@ export default function AboutPage() {
       </section>
 
       <OurValues />
+
+      <section className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
+        <SectionLabel className="mx-auto justify-center">
+          Leadership
+        </SectionLabel>
+        <h2 className="mt-3 text-center font-heading text-3xl font-bold text-navy dark:text-white">
+          Our Team
+        </h2>
+
+        <div className="mt-12 flex flex-wrap justify-center gap-6">
+          {TEAM.map((member) => (
+            <div
+              key={member.name}
+              className="w-full max-w-xs rounded-2xl border border-mist bg-white dark:bg-offwhite p-8 text-center"
+            >
+              <div className="mx-auto h-28 w-28 overflow-hidden rounded-full ring-4 ring-teal/10">
+                <Image
+                  src={member.photo}
+                  alt={member.name}
+                  width={112}
+                  height={112}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <h3 className="mt-4 font-heading text-lg font-bold text-navy dark:text-white">
+                {member.name}
+              </h3>
+              <p className="mt-1 text-sm font-semibold text-teal">
+                {member.role}
+              </p>
+              <p className="text-xs text-slate">{member.company}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
         <h2 className="font-heading text-2xl font-bold text-navy dark:text-white sm:text-3xl">
