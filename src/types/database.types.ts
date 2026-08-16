@@ -252,6 +252,122 @@ export type Database = {
         }
         Relationships: []
       }
+      edit_permission_requests: {
+        Row: {
+          created_at: string
+          description: string | null
+          editor_id: string
+          fields_requested: string[]
+          id: string
+          profile_id: string
+          reason: string
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["edit_request_status"]
+          supporting_document_path: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          editor_id: string
+          fields_requested?: string[]
+          id?: string
+          profile_id: string
+          reason: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["edit_request_status"]
+          supporting_document_path?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          editor_id?: string
+          fields_requested?: string[]
+          id?: string
+          profile_id?: string
+          reason?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["edit_request_status"]
+          supporting_document_path?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edit_permission_requests_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      edit_permission_grants: {
+        Row: {
+          allowed_fields: string[] | null
+          created_at: string
+          editor_id: string
+          expires_at: string | null
+          grant_type: Database["public"]["Enums"]["edit_grant_type"]
+          granted_by: string
+          id: string
+          profile_id: string
+          request_id: string | null
+          revoked_at: string | null
+          snapshot_before: Json | null
+          used_at: string | null
+        }
+        Insert: {
+          allowed_fields?: string[] | null
+          created_at?: string
+          editor_id: string
+          expires_at?: string | null
+          grant_type?: Database["public"]["Enums"]["edit_grant_type"]
+          granted_by: string
+          id?: string
+          profile_id: string
+          request_id?: string | null
+          revoked_at?: string | null
+          snapshot_before?: Json | null
+          used_at?: string | null
+        }
+        Update: {
+          allowed_fields?: string[] | null
+          created_at?: string
+          editor_id?: string
+          expires_at?: string | null
+          grant_type?: Database["public"]["Enums"]["edit_grant_type"]
+          granted_by?: string
+          id?: string
+          profile_id?: string
+          request_id?: string | null
+          revoked_at?: string | null
+          snapshot_before?: Json | null
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edit_permission_grants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "edit_permission_grants_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "edit_permission_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           category: string | null
@@ -718,9 +834,13 @@ export type Database = {
           created_at: string
           created_by: string | null
           current_position: string | null
+          deleted_at: string | null
+          deleted_by: string | null
           editorial_notes: string | null
           email: string | null
           full_name: string
+          hidden_at: string | null
+          hidden_by: string | null
           id: string
           is_public: boolean
           location: string | null
@@ -752,9 +872,13 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           current_position?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           editorial_notes?: string | null
           email?: string | null
           full_name: string
+          hidden_at?: string | null
+          hidden_by?: string | null
           id?: string
           is_public?: boolean
           location?: string | null
@@ -786,9 +910,13 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           current_position?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           editorial_notes?: string | null
           email?: string | null
           full_name?: string
+          hidden_at?: string | null
+          hidden_by?: string | null
           id?: string
           is_public?: boolean
           location?: string | null
@@ -1119,6 +1247,26 @@ export type Database = {
         }
         Returns: undefined
       }
+      super_admin_set_profile_hidden: {
+        Args: { p_hidden: boolean; p_profile_id: string }
+        Returns: undefined
+      }
+      super_admin_set_profile_verified: {
+        Args: { p_profile_id: string; p_verified: boolean }
+        Returns: undefined
+      }
+      super_admin_set_profile_archived: {
+        Args: { p_archived: boolean; p_profile_id: string }
+        Returns: undefined
+      }
+      super_admin_set_profile_deleted: {
+        Args: { p_deleted: boolean; p_profile_id: string }
+        Returns: undefined
+      }
+      super_admin_permanently_delete_profile: {
+        Args: { p_profile_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       account_status: "pending" | "approved" | "rejected"
@@ -1129,6 +1277,8 @@ export type Database = {
         | "verifier"
         | "profile_owner"
         | "staff"
+      edit_grant_type: "one_time" | "time_limited" | "full"
+      edit_request_status: "pending" | "more_info_requested" | "approved" | "rejected"
       permission_scope: "none" | "assigned" | "limited" | "all"
       profile_workflow_status:
         | "draft"

@@ -88,6 +88,40 @@ export async function getAdminReviewQueue() {
   return data ?? [];
 }
 
+export async function getPendingPublishedEdits() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("profiles")
+    .select("id, slug, full_name, current_position, photo_url, workflow_status")
+    .eq("workflow_status", "admin_review")
+    .order("updated_at", { ascending: true });
+  return data ?? [];
+}
+
+export async function getEditPermissionRequests() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("edit_permission_requests")
+    .select(
+      "id, profile_id, editor_id, reason, fields_requested, description, supporting_document_path, status, review_notes, created_at, profiles ( full_name, slug, photo_url )"
+    )
+    .in("status", ["pending", "more_info_requested"])
+    .order("created_at", { ascending: true });
+
+  const requests = data ?? [];
+  const editorIds = Array.from(new Set(requests.map((r) => r.editor_id)));
+  const { data: editors } =
+    editorIds.length > 0
+      ? await supabase.from("user_roles").select("user_id, email").in("user_id", editorIds)
+      : { data: [] as { user_id: string; email: string | null }[] };
+  const editorMap = new Map((editors ?? []).map((e) => [e.user_id, e.email]));
+
+  return requests.map((r) => ({
+    ...r,
+    editor_email: editorMap.get(r.editor_id) ?? null,
+  }));
+}
+
 export async function getPublishableProfiles() {
   const supabase = await createClient();
   const { data } = await supabase
@@ -106,6 +140,53 @@ export async function getAllProfilesForAssignment() {
       "id, slug, full_name, workflow_status, assigned_staff_id, assigned_editor_id, assignment_deadline"
     )
     .order("created_at", { ascending: false });
+  return data ?? [];
+}
+
+export type ProfileLifecycleFilter =
+  | "all"
+  | "published"
+  | "draft"
+  | "hidden"
+  | "archived"
+  | "trash";
+
+const ALL_PROFILES_FIELDS =
+  "id, slug, full_name, current_position, photo_url, status, workflow_status, verification_status, hidden_at, deleted_at, updated_at";
+
+export async function getAllProfilesForSuperAdmin(
+  filter: ProfileLifecycleFilter = "all"
+) {
+  const supabase = await createClient();
+  let query = supabase
+    .from("profiles")
+    .select(ALL_PROFILES_FIELDS)
+    .order("updated_at", { ascending: false })
+    .limit(100);
+
+  switch (filter) {
+    case "published":
+      query = query.eq("workflow_status", "published").is("deleted_at", null);
+      break;
+    case "draft":
+      query = query
+        .in("workflow_status", ["draft", "in_progress"])
+        .is("deleted_at", null);
+      break;
+    case "hidden":
+      query = query.not("hidden_at", "is", null).is("deleted_at", null);
+      break;
+    case "archived":
+      query = query.eq("status", "archived").is("deleted_at", null);
+      break;
+    case "trash":
+      query = query.not("deleted_at", "is", null);
+      break;
+    default:
+      query = query.is("deleted_at", null);
+  }
+
+  const { data } = await query;
   return data ?? [];
 }
 

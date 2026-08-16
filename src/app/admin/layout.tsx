@@ -17,6 +17,8 @@ import {
   Database,
   HardDrive,
   SlidersHorizontal,
+  ShieldCheck,
+  KeyRound,
 } from "lucide-react";
 import { getStaffContext } from "@/lib/auth/staff";
 import { RoleSidebar, type SidebarItem } from "@/components/dashboard/role-sidebar";
@@ -48,6 +50,8 @@ export default async function AdminLayout({
     { href: "/admin/audit-logs", label: "Audit Logs", icon: <ScrollText className={iconClass} /> },
     ...(isSuperAdmin
       ? ([
+          { href: "/admin/profiles", label: "All Profiles", icon: <ShieldCheck className={iconClass} /> },
+          { href: "/admin/edit-requests", label: "Edit Requests", icon: <KeyRound className={iconClass} /> },
           { href: "/admin/users", label: "Users", icon: <Users className={iconClass} /> },
           { href: "/admin/roles", label: "Roles & Permissions", icon: <ShieldAlert className={iconClass} /> },
           { label: "Security", icon: <Lock className={iconClass} />, comingSoon: true },
