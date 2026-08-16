@@ -15,13 +15,14 @@ import {
   getRecentProfiles,
 } from "@/lib/data/editor";
 import { EditorHeader } from "@/components/editor/editor-header";
-import { StatCard } from "@/components/editor/stat-card";
+import { StatCard } from "@/components/dashboard/stat-card";
 import { QuickActions } from "@/components/editor/quick-actions";
 import { RecentProfilesTable } from "@/components/editor/recent-profiles-table";
 import { EditorDecisionRow } from "@/components/editor/editor-decision-row";
 import { NotificationList } from "@/components/dashboard/notification-list";
 import { Badge } from "@/components/ui/badge";
 import { WORKFLOW_STATUS_VARIANT, workflowStatusLabel } from "@/lib/workflow";
+import { StaggerGrid, StaggerItem } from "@/components/motion/stagger-grid";
 
 export default async function EditorDashboardPage() {
   const supabase = await createClient();
@@ -63,14 +64,14 @@ export default async function EditorDashboardPage() {
         <h2 className="text-xs font-semibold uppercase tracking-wide text-slate">
           Overview
         </h2>
-        <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          <StatCard label="Total Profiles" value={stats.totalProfiles} icon={Users} accent="navy" />
-          <StatCard label="Drafts" value={stats.drafts} icon={FileEdit} accent="sky" />
-          <StatCard label="Under Review" value={stats.underReview} icon={Clock} accent="gold" />
-          <StatCard label="Published" value={stats.published} icon={ShieldCheck} accent="emerald" />
-          <StatCard label="Returned" value={stats.returned} icon={Undo2} accent="gold" />
-          <StatCard label="Verified" value={stats.verifiedProfiles} icon={BadgeCheck} accent="teal" />
-        </div>
+        <StaggerGrid className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          <StaggerItem hoverLift><StatCard label="Total Profiles" value={stats.totalProfiles} icon={Users} accent="navy" /></StaggerItem>
+          <StaggerItem hoverLift><StatCard label="Drafts" value={stats.drafts} icon={FileEdit} accent="sky" /></StaggerItem>
+          <StaggerItem hoverLift><StatCard label="Under Review" value={stats.underReview} icon={Clock} accent="gold" /></StaggerItem>
+          <StaggerItem hoverLift><StatCard label="Published" value={stats.published} icon={ShieldCheck} accent="emerald" /></StaggerItem>
+          <StaggerItem hoverLift><StatCard label="Returned" value={stats.returned} icon={Undo2} accent="gold" /></StaggerItem>
+          <StaggerItem hoverLift><StatCard label="Verified" value={stats.verifiedProfiles} icon={BadgeCheck} accent="teal" /></StaggerItem>
+        </StaggerGrid>
       </div>
 
       <QuickActions />

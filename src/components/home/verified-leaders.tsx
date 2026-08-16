@@ -3,6 +3,8 @@ import { SectionLabel } from "@/components/ui/section-label";
 import { LinkButton } from "@/components/ui/button";
 import { ProfileCard } from "@/components/profile/profile-card";
 import { getVerifiedProfiles } from "@/lib/data/profiles";
+import { Reveal } from "@/components/motion/reveal";
+import { StaggerGrid, StaggerItem } from "@/components/motion/stagger-grid";
 
 export async function VerifiedLeaders() {
   const profiles = await getVerifiedProfiles(4);
@@ -11,7 +13,7 @@ export async function VerifiedLeaders() {
   return (
     <section className="bg-offwhite">
       <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
-        <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+        <Reveal className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <div>
             <SectionLabel>
               <ShieldCheck className="h-3.5 w-3.5" />
@@ -28,13 +30,15 @@ export async function VerifiedLeaders() {
           <LinkButton href="/verification" variant="outline" size="md">
             How Verification Works
           </LinkButton>
-        </div>
+        </Reveal>
 
-        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <StaggerGrid className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {profiles.map((profile) => (
-            <ProfileCard key={profile.id} profile={profile} />
+            <StaggerItem key={profile.id}>
+              <ProfileCard profile={profile} />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

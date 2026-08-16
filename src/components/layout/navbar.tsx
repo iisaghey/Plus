@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Menu, X, ShieldCheck, Search } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 import { LinkButton } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { DURATION, EASE } from "@/lib/motion";
 
 const NAV_LINKS = [
   { href: "/profiles", label: "Profiles" },
@@ -82,35 +84,53 @@ export function Navbar() {
             aria-label="Toggle menu"
             aria-expanded={open}
           >
-            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            <motion.span
+              key={open ? "close" : "open"}
+              initial={{ opacity: 0, rotate: -45 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              transition={{ duration: DURATION.fast, ease: EASE }}
+              className="flex"
+            >
+              {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </motion.span>
           </button>
         </div>
       </div>
 
-      {open && (
-        <div className="border-t border-mist bg-white px-4 py-4 lg:hidden dark:bg-offwhite">
-          <nav className="flex flex-col gap-1">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="rounded-xl px-4 py-3 text-sm font-medium text-navy hover:bg-offwhite dark:text-white"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-          <div className="mt-4 flex flex-col gap-2 border-t border-mist pt-4">
-            <LinkButton href="/login" variant="outline" size="md" className="w-full">
-              Login
-            </LinkButton>
-            <LinkButton href="/create-profile" variant="primary" size="md" className="w-full">
-              <ShieldCheck className="h-4 w-4" />
-              Create Profile
-            </LinkButton>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="overflow-hidden border-t border-mist bg-white lg:hidden dark:bg-offwhite"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: DURATION.base, ease: EASE }}
+          >
+            <div className="px-4 py-4">
+              <nav className="flex flex-col gap-1">
+                {NAV_LINKS.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="rounded-xl px-4 py-3 text-sm font-medium text-navy hover:bg-offwhite dark:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+              <div className="mt-4 flex flex-col gap-2 border-t border-mist pt-4">
+                <LinkButton href="/login" variant="outline" size="md" className="w-full">
+                  Login
+                </LinkButton>
+                <LinkButton href="/create-profile" variant="primary" size="md" className="w-full">
+                  <ShieldCheck className="h-4 w-4" />
+                  Create Profile
+                </LinkButton>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

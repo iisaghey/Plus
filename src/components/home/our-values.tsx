@@ -8,6 +8,8 @@ import {
   Archive,
 } from "lucide-react";
 import { SectionLabel } from "@/components/ui/section-label";
+import { Reveal } from "@/components/motion/reveal";
+import { StaggerGrid, StaggerItem } from "@/components/motion/stagger-grid";
 
 const VALUES = [
   {
@@ -52,20 +54,21 @@ export function OurValues() {
   return (
     <section className="bg-offwhite">
       <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
+        <Reveal className="mx-auto max-w-2xl text-center">
           <SectionLabel className="mx-auto justify-center">
             Our Values
           </SectionLabel>
           <h2 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
             The Principles Behind AqoonsiPlus
           </h2>
-        </div>
+        </Reveal>
 
-        <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <StaggerGrid className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {VALUES.map(({ icon: Icon, title, description }, i) => (
-            <div
+            <StaggerItem
               key={title}
-              className={`rounded-2xl border border-mist bg-white dark:bg-offwhite p-6 text-center transition-shadow hover:shadow-lg hover:shadow-navy/5 ${
+              hoverLift
+              className={`rounded-2xl border border-mist bg-white dark:bg-offwhite p-6 text-center transition-shadow duration-300 hover:shadow-lg hover:shadow-navy/5 ${
                 i === 6 ? "col-span-2 sm:col-span-1" : ""
               }`}
             >
@@ -78,9 +81,9 @@ export function OurValues() {
               <p className="mt-2 text-sm leading-relaxed text-slate">
                 {description}
               </p>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

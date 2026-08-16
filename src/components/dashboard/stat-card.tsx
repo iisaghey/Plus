@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AnimatedCounter } from "@/components/motion/animated-counter";
 
 const ACCENT_CLASSES = {
   teal: "bg-teal/10 text-teal",
@@ -31,7 +32,11 @@ export function StatCard({
         <Icon className="h-5 w-5" />
       </div>
       <p className="mt-4 font-heading text-2xl font-bold text-navy dark:text-white">
-        {value}
+        {typeof value === "number" ? (
+          <AnimatedCounter value={value} duration={0.9} />
+        ) : (
+          value
+        )}
       </p>
       <p className="mt-1 text-xs font-medium text-slate">{label}</p>
     </div>

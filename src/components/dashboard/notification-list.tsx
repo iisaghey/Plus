@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Bell, Circle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/types/database.types";
+import { StaggerGrid, StaggerItem } from "@/components/motion/stagger-grid";
 
 export function NotificationList({
   notifications,
@@ -33,7 +34,7 @@ export function NotificationList({
   }
 
   return (
-    <div className="space-y-2">
+    <StaggerGrid className="space-y-2" stagger={0.05}>
       {notifications.map((n) => {
         const content = (
           <div
@@ -52,20 +53,23 @@ export function NotificationList({
           </div>
         );
 
-        return n.action_url ? (
-          <Link key={n.id} href={n.action_url} onClick={() => !n.is_read && markRead(n.id)}>
-            {content}
-          </Link>
-        ) : (
-          <button
-            key={n.id}
-            onClick={() => !n.is_read && markRead(n.id)}
-            className="block w-full text-left"
-          >
-            {content}
-          </button>
+        return (
+          <StaggerItem key={n.id}>
+            {n.action_url ? (
+              <Link href={n.action_url} onClick={() => !n.is_read && markRead(n.id)}>
+                {content}
+              </Link>
+            ) : (
+              <button
+                onClick={() => !n.is_read && markRead(n.id)}
+                className="block w-full text-left"
+              >
+                {content}
+              </button>
+            )}
+          </StaggerItem>
         );
       })}
-    </div>
+    </StaggerGrid>
   );
 }

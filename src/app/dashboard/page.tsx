@@ -15,6 +15,8 @@ import { SignOutButton } from "@/components/profile/sign-out-button";
 import { SubmitVerificationButton } from "@/components/profile/submit-verification-button";
 import { LinkButton } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AnimatedCounter } from "@/components/motion/animated-counter";
+import { AnimatedProgress } from "@/components/motion/animated-progress";
 
 const COMPLETION_FIELDS = [
   "preferred_title",
@@ -227,14 +229,15 @@ export default async function DashboardPage() {
             <div className="mt-6">
               <div className="flex items-center justify-between text-xs font-medium text-slate">
                 <span>Profile Completion</span>
-                <span>{completion}%</span>
+                <span>
+                  <AnimatedCounter value={completion} suffix="%" duration={1} />
+                </span>
               </div>
-              <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-mist">
-                <div
-                  className="h-full rounded-full bg-teal transition-all"
-                  style={{ width: `${completion}%` }}
-                />
-              </div>
+              <AnimatedProgress
+                value={completion}
+                className="h-full rounded-full bg-teal"
+                trackClassName="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-mist"
+              />
               {completion < 100 && (
                 <p className="mt-2 text-xs text-slate">
                   Add a category, organization, location, and photo to

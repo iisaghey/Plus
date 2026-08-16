@@ -1,11 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, IdCard, FileEdit, Clock, Undo2, CheckCircle2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getAssignedProfiles, getStaffStats } from "@/lib/data/staff";
 import { Badge } from "@/components/ui/badge";
 import { createStaffDraft } from "@/lib/actions/profile";
 import { StaffDraftForm } from "@/components/dashboard/staff-draft-form";
+import { StatCard } from "@/components/dashboard/stat-card";
+import { StaggerGrid, StaggerItem } from "@/components/motion/stagger-grid";
 
 const STATUS_VARIANT: Record<string, "neutral" | "pending" | "verified" | "navy"> = {
   draft: "neutral",
@@ -46,22 +48,19 @@ export default async function StaffDashboardPage() {
         <StaffDraftForm action={createStaffDraft} />
       </div>
 
-      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-5">
+      <StaggerGrid className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-5">
         {[
-          { label: "Assigned", value: stats.total },
-          { label: "Drafts", value: stats.drafts },
-          { label: "Pending Review", value: stats.pendingSubmissions },
-          { label: "Returned", value: stats.returned },
-          { label: "Completed", value: stats.completed },
+          { label: "Assigned", value: stats.total, icon: IdCard, accent: "navy" as const },
+          { label: "Drafts", value: stats.drafts, icon: FileEdit, accent: "sky" as const },
+          { label: "Pending Review", value: stats.pendingSubmissions, icon: Clock, accent: "gold" as const },
+          { label: "Returned", value: stats.returned, icon: Undo2, accent: "gold" as const },
+          { label: "Completed", value: stats.completed, icon: CheckCircle2, accent: "emerald" as const },
         ].map((s) => (
-          <div key={s.label} className="rounded-2xl border border-mist p-4">
-            <p className="font-heading text-xl font-bold text-navy dark:text-white">{s.value}</p>
-            <p className="text-[11px] font-medium uppercase tracking-wide text-slate">
-              {s.label}
-            </p>
-          </div>
+          <StaggerItem key={s.label} hoverLift>
+            <StatCard label={s.label} value={s.value} icon={s.icon} accent={s.accent} />
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerGrid>
 
       <div className="mt-8 space-y-3">
         {profiles.length === 0 ? (

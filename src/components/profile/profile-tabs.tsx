@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
+import { DURATION, EASE } from "@/lib/motion";
 import {
   Trophy,
   CalendarCheck,
@@ -101,7 +103,15 @@ export function ProfileTabs(props: Props) {
         ))}
       </div>
 
-      <div className="pt-10">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={active}
+          className="pt-10"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: DURATION.fast, ease: EASE }}
+        >
         {active === "Overview" && (
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
             <div className="lg:col-span-2">
@@ -316,27 +326,40 @@ export function ProfileTabs(props: Props) {
                 ))}
               </div>
             )}
-            {lightbox && (
-              <div
-                className="fixed inset-0 z-[100] flex items-center justify-center bg-navy/90 p-6"
-                onClick={() => setLightbox(null)}
-              >
-                <button
-                  className="absolute right-6 top-6 text-white/70 hover:text-white"
+            <AnimatePresence>
+              {lightbox && (
+                <motion.div
+                  className="fixed inset-0 z-[100] flex items-center justify-center bg-navy/90 p-6"
                   onClick={() => setLightbox(null)}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: DURATION.fast, ease: EASE }}
                 >
-                  <X className="h-6 w-6" />
-                </button>
-                <div className="relative h-[70vh] w-full max-w-3xl">
-                  <Image
-                    src={lightbox}
-                    alt=""
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-              </div>
-            )}
+                  <button
+                    className="absolute right-6 top-6 text-white/70 hover:text-white"
+                    onClick={() => setLightbox(null)}
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                  <motion.div
+                    className="relative h-[70vh] w-full max-w-3xl"
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.96 }}
+                    transition={{ duration: DURATION.base, ease: EASE }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Image
+                      src={lightbox}
+                      alt=""
+                      fill
+                      className="object-contain"
+                    />
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </>
         )}
 
@@ -372,7 +395,8 @@ export function ProfileTabs(props: Props) {
         )}
 
         {active === "Timeline" && <Timeline entries={combinedTimeline} />}
-      </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
