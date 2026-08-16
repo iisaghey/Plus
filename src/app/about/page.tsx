@@ -13,6 +13,12 @@ const TEAM = [
     company: "AqoonsiPlus Platform",
     photo: "/team-mohamedqadar.jpg",
   },
+  {
+    name: "Issa Abud Hussein",
+    role: "HR & Administration Manager",
+    company: "AqoonsiPlus Platform",
+    photo: "/team-issa.jpg",
+  },
 ];
 
 export const metadata: Metadata = {
