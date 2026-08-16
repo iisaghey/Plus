@@ -50,7 +50,7 @@ export function EditorHeader({
           <Pencil className="h-3.5 w-3.5" />
           Edit Profile
         </LinkButton>
-        <StaffDraftForm action={createStaffDraft} triggerLabel="+ Create New Profile" />
+        <StaffDraftForm action={createStaffDraft} triggerLabel="Create New Profile" />
       </div>
     </div>
   );

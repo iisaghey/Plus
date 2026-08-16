@@ -38,7 +38,7 @@ export default async function EditorProfilesPage(
             Search and manage every profile on the platform.
           </p>
         </div>
-        <StaffDraftForm action={createStaffDraft} triggerLabel="+ Create New Profile" />
+        <StaffDraftForm action={createStaffDraft} triggerLabel="Create New Profile" />
       </div>
 
       <form className="mt-6 flex flex-wrap items-center gap-3" method="get">
