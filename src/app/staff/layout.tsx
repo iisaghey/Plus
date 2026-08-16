@@ -13,16 +13,18 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { RoleSidebar, type SidebarItem } from "@/components/dashboard/role-sidebar";
 
+const iconClass = "h-4 w-4";
+
 const NAV: SidebarItem[] = [
-  { href: "/staff", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/staff", label: "My Profiles", icon: IdCard },
-  { href: "/staff", label: "My Tasks", icon: ListChecks },
-  { href: "/staff", label: "Drafts", icon: FileEdit },
-  { href: "/staff", label: "Submissions", icon: Send },
-  { label: "Media", icon: Images, comingSoon: true },
-  { label: "Documents", icon: FileText, comingSoon: true },
-  { href: "/notifications", label: "Notifications", icon: Bell },
-  { href: "/dashboard", label: "My Account", icon: UserCog },
+  { href: "/staff", label: "Dashboard", icon: <LayoutDashboard className={iconClass} /> },
+  { href: "/staff", label: "My Profiles", icon: <IdCard className={iconClass} /> },
+  { href: "/staff", label: "My Tasks", icon: <ListChecks className={iconClass} /> },
+  { href: "/staff", label: "Drafts", icon: <FileEdit className={iconClass} /> },
+  { href: "/staff", label: "Submissions", icon: <Send className={iconClass} /> },
+  { label: "Media", icon: <Images className={iconClass} />, comingSoon: true },
+  { label: "Documents", icon: <FileText className={iconClass} />, comingSoon: true },
+  { href: "/notifications", label: "Notifications", icon: <Bell className={iconClass} /> },
+  { href: "/dashboard", label: "My Account", icon: <UserCog className={iconClass} /> },
 ];
 
 export default async function StaffLayout({

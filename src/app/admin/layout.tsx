@@ -31,31 +31,32 @@ export default async function AdminLayout({
   if (role !== "admin" && role !== "super_admin") redirect("/dashboard");
 
   const isSuperAdmin = role === "super_admin";
+  const iconClass = "h-4 w-4";
 
   const NAV: SidebarItem[] = [
-    { href: "/admin", label: "Overview", icon: LayoutDashboard },
-    { href: "/admin/team", label: "Profiles", icon: IdCard },
-    { href: "/admin/review", label: "Content Review", icon: BarChart3 },
-    { href: "/admin/verification", label: "Verification", icon: BadgeCheck },
-    { href: "/admin/approvals", label: "Account Approvals", icon: Users },
-    { href: "/admin/team", label: "Staff & Editors", icon: UsersRound },
-    { href: "/admin/organizations", label: "Organizations", icon: Building2 },
-    { href: "/admin/categories", label: "Categories", icon: Tags },
-    { label: "Media", icon: Images, comingSoon: true },
-    { label: "Documents", icon: FileText, comingSoon: true },
-    { label: "Reports", icon: BarChart3, comingSoon: true },
-    { href: "/admin/audit-logs", label: "Audit Logs", icon: ScrollText },
+    { href: "/admin", label: "Overview", icon: <LayoutDashboard className={iconClass} /> },
+    { href: "/admin/team", label: "Profiles", icon: <IdCard className={iconClass} /> },
+    { href: "/admin/review", label: "Content Review", icon: <BarChart3 className={iconClass} /> },
+    { href: "/admin/verification", label: "Verification", icon: <BadgeCheck className={iconClass} /> },
+    { href: "/admin/approvals", label: "Account Approvals", icon: <Users className={iconClass} /> },
+    { href: "/admin/team", label: "Staff & Editors", icon: <UsersRound className={iconClass} /> },
+    { href: "/admin/organizations", label: "Organizations", icon: <Building2 className={iconClass} /> },
+    { href: "/admin/categories", label: "Categories", icon: <Tags className={iconClass} /> },
+    { label: "Media", icon: <Images className={iconClass} />, comingSoon: true },
+    { label: "Documents", icon: <FileText className={iconClass} />, comingSoon: true },
+    { label: "Reports", icon: <BarChart3 className={iconClass} />, comingSoon: true },
+    { href: "/admin/audit-logs", label: "Audit Logs", icon: <ScrollText className={iconClass} /> },
     ...(isSuperAdmin
       ? ([
-          { href: "/admin/users", label: "Users", icon: Users },
-          { href: "/admin/roles", label: "Roles & Permissions", icon: ShieldAlert },
-          { label: "Security", icon: Lock, comingSoon: true },
-          { label: "System Settings", icon: Settings, comingSoon: true },
-          { href: "https://supabase.com/dashboard", label: "Database", icon: Database },
-          { href: "https://supabase.com/dashboard", label: "Storage", icon: HardDrive },
-          { label: "Platform Configuration", icon: SlidersHorizontal, comingSoon: true },
+          { href: "/admin/users", label: "Users", icon: <Users className={iconClass} /> },
+          { href: "/admin/roles", label: "Roles & Permissions", icon: <ShieldAlert className={iconClass} /> },
+          { label: "Security", icon: <Lock className={iconClass} />, comingSoon: true },
+          { label: "System Settings", icon: <Settings className={iconClass} />, comingSoon: true },
+          { href: "https://supabase.com/dashboard", label: "Database", icon: <Database className={iconClass} /> },
+          { href: "https://supabase.com/dashboard", label: "Storage", icon: <HardDrive className={iconClass} /> },
+          { label: "Platform Configuration", icon: <SlidersHorizontal className={iconClass} />, comingSoon: true },
         ] satisfies SidebarItem[])
-      : [{ label: "Settings", icon: Settings, comingSoon: true }]),
+      : [{ label: "Settings", icon: <Settings className={iconClass} />, comingSoon: true }]),
   ];
 
   return (

@@ -4,12 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 
 export type SidebarItem = {
   href?: string;
   label: string;
-  icon: LucideIcon;
+  icon: ReactNode;
   comingSoon?: boolean;
 };
 
@@ -30,7 +30,7 @@ export function RoleSidebar({
       </div>
       <p className="mt-1 text-xs text-slate">{roleLabel}</p>
       <nav className="mt-4 flex flex-col gap-1">
-        {items.map(({ href, label, icon: Icon, comingSoon }) => {
+        {items.map(({ href, label, icon, comingSoon }) => {
           const isActive = Boolean(href) && !comingSoon && pathname === href;
           return comingSoon || !href ? (
             <span
@@ -39,7 +39,7 @@ export function RoleSidebar({
               title="Coming soon"
             >
               <span className="flex items-center gap-2">
-                <Icon className="h-4 w-4" />
+                {icon}
                 {label}
               </span>
               <span className="text-[10px] uppercase tracking-wide">Soon</span>
@@ -57,7 +57,7 @@ export function RoleSidebar({
                   : "text-navy dark:text-white hover:bg-offwhite"
               )}
             >
-              <Icon className="h-4 w-4" />
+              {icon}
               {label}
             </Link>
           );

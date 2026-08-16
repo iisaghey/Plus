@@ -9,12 +9,14 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { RoleSidebar, type SidebarItem } from "@/components/dashboard/role-sidebar";
 
+const iconClass = "h-4 w-4";
+
 const NAV: SidebarItem[] = [
-  { href: "/editor", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/editor/queue", label: "Review Queue", icon: ListChecks },
-  { href: "/editor/profiles", label: "Profiles", icon: IdCard },
-  { href: "/notifications", label: "Notifications", icon: Bell },
-  { href: "/dashboard", label: "My Account", icon: UserCog },
+  { href: "/editor", label: "Dashboard", icon: <LayoutDashboard className={iconClass} /> },
+  { href: "/editor/queue", label: "Review Queue", icon: <ListChecks className={iconClass} /> },
+  { href: "/editor/profiles", label: "Profiles", icon: <IdCard className={iconClass} /> },
+  { href: "/notifications", label: "Notifications", icon: <Bell className={iconClass} /> },
+  { href: "/dashboard", label: "My Account", icon: <UserCog className={iconClass} /> },
 ];
 
 export default async function EditorLayout({
