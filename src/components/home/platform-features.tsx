@@ -1,63 +1,69 @@
 import {
   IdCard,
+  User,
   BookOpenText,
+  GraduationCap,
   GitBranch,
   Landmark,
-  Trophy,
   CalendarCheck,
   Plane,
   Mic,
   Images,
   FileText,
-  QrCode,
+  Trophy,
+  Phone,
+  Share2,
   ShieldCheck,
-  RefreshCcw,
-  Vault,
-  Briefcase,
-  Archive,
-  Building2,
+  QrCode,
+  Link2,
 } from "lucide-react";
 import { SectionLabel } from "@/components/ui/section-label";
+import { Reveal } from "@/components/motion/reveal";
+import { StaggerGrid, StaggerItem } from "@/components/motion/stagger-grid";
 
 const FEATURES = [
   { icon: IdCard, title: "Digital Leadership Profile" },
-  { icon: BookOpenText, title: "Biography Writing" },
-  { icon: GitBranch, title: "Career & Leadership Timeline" },
-  { icon: Landmark, title: "Government Position Archive" },
-  { icon: Trophy, title: "Achievement Documentation" },
-  { icon: CalendarCheck, title: "Official Activities Management" },
-  { icon: Plane, title: "Official Travel Archive" },
-  { icon: Mic, title: "Speech Archive" },
-  { icon: Images, title: "Media Management" },
-  { icon: FileText, title: "Document Management" },
-  { icon: QrCode, title: "QR Code Profile" },
+  { icon: User, title: "Personal Information" },
+  { icon: BookOpenText, title: "Biography" },
+  { icon: GraduationCap, title: "Education" },
+  { icon: GitBranch, title: "Career & Leadership Journey" },
+  { icon: Landmark, title: "Government Positions" },
+  { icon: CalendarCheck, title: "Official Activities & Meetings" },
+  { icon: Plane, title: "Official Travels" },
+  { icon: Mic, title: "Speeches & Public Communications" },
+  { icon: Images, title: "Media & Gallery" },
+  { icon: FileText, title: "Documents & Records" },
+  { icon: Trophy, title: "Achievements & Awards" },
+  { icon: Phone, title: "Contact Information" },
+  { icon: Share2, title: "Official Social Media" },
   { icon: ShieldCheck, title: "Verified Profile" },
-  { icon: RefreshCcw, title: "Profile Updates" },
-  { icon: Vault, title: "Secure Digital Archive" },
-  { icon: Briefcase, title: "Leadership Portfolio" },
-  { icon: Archive, title: "Digital Legacy Preservation" },
-  { icon: Building2, title: "Professional Digital Presence" },
+  { icon: QrCode, title: "Unique QR Code" },
+  { icon: Link2, title: "Public Profile Link" },
 ];
 
 export function PlatformFeatures() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
-      <div className="mx-auto max-w-2xl text-center">
+      <Reveal className="mx-auto max-w-2xl text-center">
         <SectionLabel className="mx-auto justify-center">
           Platform Features
         </SectionLabel>
         <h2 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
-          Everything a Digital Legacy Needs
+          Everything Your Leadership Profile Needs
         </h2>
         <p className="mt-3 text-slate">
-          Seventeen dedicated modules keep every profile complete, organized,
-          and ready to present.
+          A complete set of features designed to organize, present, verify,
+          and preserve your leadership identity, journey, achievements, and
+          official records.
         </p>
-      </div>
+      </Reveal>
 
-      <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      <StaggerGrid
+        stagger={0.035}
+        className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
+      >
         {FEATURES.map(({ icon: Icon, title }, i) => (
-          <div
+          <StaggerItem
             key={title}
             className="group flex items-start gap-3 rounded-2xl border border-mist p-4 transition-colors hover:border-teal/30 hover:bg-offwhite"
           >
@@ -72,9 +78,9 @@ export function PlatformFeatures() {
                 {title}
               </p>
             </div>
-          </div>
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerGrid>
     </section>
   );
 }

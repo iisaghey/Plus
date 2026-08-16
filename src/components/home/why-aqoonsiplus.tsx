@@ -1,49 +1,44 @@
 import {
-  ShieldCheck,
-  IdCard,
-  Lock,
-  History,
-  SearchCheck,
-  Landmark,
+  LayoutGrid,
+  BadgeCheck,
+  Share2,
+  RefreshCcw,
+  Archive,
 } from "lucide-react";
 import { SectionLabel } from "@/components/ui/section-label";
+import { Reveal } from "@/components/motion/reveal";
+import { StaggerGrid, StaggerItem } from "@/components/motion/stagger-grid";
 
 const REASONS = [
   {
-    icon: ShieldCheck,
-    title: "Verified Information",
+    icon: LayoutGrid,
+    title: "All Your Leadership Information in One Place",
     description:
-      "Every profile passes a structured verification process before being marked as trusted.",
+      "AqoonsiPlus brings your important leadership information together in one organized digital profile. Your biography, education, career history, government positions, activities, travels, speeches, media, documents, and achievements are structured into clear sections that are easy to access.",
   },
   {
-    icon: IdCard,
-    title: "Professional Digital Identity",
+    icon: BadgeCheck,
+    title: "Present Your Leadership Professionally",
     description:
-      "A single, authoritative digital identity for leaders and professionals worldwide.",
+      "AqoonsiPlus provides a professional digital profile that presents your identity, career history, leadership experience, positions, achievements, and activities in a clear and structured format.",
   },
   {
-    icon: Lock,
-    title: "Secure Archives",
+    icon: Share2,
+    title: "Your Profile, Easy to Access and Share",
     description:
-      "Documents and sensitive records are protected with granular, role-based access controls.",
+      "Your AqoonsiPlus profile can be accessed through a Public Profile Link and a Unique QR Code, making it easier to find and share your professional information when needed.",
   },
   {
-    icon: History,
-    title: "Leadership History",
+    icon: RefreshCcw,
+    title: "Keep Your Leadership Profile Current",
     description:
-      "Full career, government, and leadership timelines preserved in one organized record.",
+      "Your leadership journey continues to develop. AqoonsiPlus allows new information such as positions, achievements, activities, travels, speeches, media, and documents to be added as they become available.",
   },
   {
-    icon: SearchCheck,
-    title: "Advanced Search",
+    icon: Archive,
+    title: "Preserve Your Leadership Journey",
     description:
-      "Find leaders and professionals by position, institution, country, or industry in seconds.",
-  },
-  {
-    icon: Landmark,
-    title: "Digital Legacy",
-    description:
-      "Achievements and contributions preserved securely for future generations to reference.",
+      "AqoonsiPlus helps organize and preserve your leadership information, from education and career history to government positions, activities, achievements, and official records.",
   },
 ];
 
@@ -51,20 +46,21 @@ export function WhyAqoonsiPlus() {
   return (
     <section className="bg-offwhite">
       <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
+        <Reveal className="mx-auto max-w-2xl text-center">
           <SectionLabel className="mx-auto justify-center">
             Why AqoonsiPlus?
           </SectionLabel>
           <h2 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
             Built for Trust, Designed for Legacy
           </h2>
-        </div>
+        </Reveal>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <StaggerGrid className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {REASONS.map(({ icon: Icon, title, description }) => (
-            <div
+            <StaggerItem
               key={title}
-              className="rounded-2xl border border-mist bg-white dark:bg-offwhite p-6 transition-shadow hover:shadow-lg hover:shadow-navy/5"
+              hoverLift
+              className="rounded-2xl border border-mist bg-white dark:bg-offwhite p-6 transition-shadow duration-300 hover:shadow-lg hover:shadow-navy/5"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-navy/5 text-teal">
                 <Icon className="h-5 w-5" />
@@ -75,9 +71,9 @@ export function WhyAqoonsiPlus() {
               <p className="mt-2 text-sm leading-relaxed text-slate">
                 {description}
               </p>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

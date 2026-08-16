@@ -15,6 +15,7 @@ const COLUMNS = [
       { href: "/profiles", label: "Profiles" },
       { href: "/verification", label: "Verification" },
       { href: "/search", label: "Advanced Search" },
+      { href: "/about#how-it-works", label: "How It Works" },
     ],
   },
   {
@@ -51,8 +52,8 @@ export function Footer() {
               &ldquo;Your Leadership. Your Identity. Your Legacy.&rdquo;
             </p>
             <p className="mt-2 max-w-xs text-sm leading-relaxed text-white/50">
-              A trusted digital identity and leadership archive platform for
-              individuals, professionals, and public figures worldwide.
+              A digital leadership identity and profile management platform
+              for political leaders and public officials.
             </p>
             <div className="mt-6 flex items-center gap-2">
               {SOCIALS.map(({ href, label, icon: Icon }) => (

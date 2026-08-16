@@ -1,24 +1,25 @@
-import { Archive, Lock, Users, Infinity as InfinityIcon } from "lucide-react";
+import { Archive, Lock, QrCode, RefreshCcw } from "lucide-react";
 import { SectionLabel } from "@/components/ui/section-label";
+import { Reveal } from "@/components/motion/reveal";
 
 const POINTS = [
   {
     icon: Lock,
-    title: "Secured Beyond a Lifetime",
+    title: "Securely Organized",
     description:
-      "Records, documents, and media are stored in secure, access-controlled archives built to last.",
+      "Your profile information, documents, and media are organized within a structured digital profile with appropriate access controls.",
   },
   {
-    icon: Users,
-    title: "Accessible to Future Generations",
+    icon: QrCode,
+    title: "Accessible When Needed",
     description:
-      "Family, institutions, and researchers can reference a verified public record long into the future.",
+      "Your public profile can be accessed through a dedicated profile link and unique QR code, making your professional information easier to find and share.",
   },
   {
-    icon: InfinityIcon,
-    title: "Continuously Preserved",
+    icon: RefreshCcw,
+    title: "Continuously Updated",
     description:
-      "Profiles remain part of the permanent archive, independent of any single platform or administration.",
+      "As new positions, achievements, activities, speeches, media, and documents become available, your profile can be updated to reflect your ongoing leadership journey.",
   },
 ];
 
@@ -26,17 +27,17 @@ export function DigitalLegacy() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
       <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-        <div>
+        <Reveal>
           <SectionLabel>Digital Legacy</SectionLabel>
           <h2 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
-            Preserving Leadership History for Future Generations
+            Preserving Leadership History for the Future
           </h2>
           <p className="mt-4 leading-relaxed text-slate">
-            AqoonsiPlus exists to make sure a leader&apos;s work outlives the
-            moment it happened. Every biography, timeline entry, achievement,
-            and document becomes part of a permanent, verified digital
-            record &mdash; preserved securely and presented with the dignity
-            a life of public service deserves.
+            AqoonsiPlus helps organize and preserve a leader&apos;s
+            professional journey, achievements, activities, media, and
+            official records in one structured digital profile. Each profile
+            is designed to remain accessible, organized, and updatable as the
+            leader&apos;s journey continues.
           </p>
 
           <dl className="mt-8 space-y-6">
@@ -56,9 +57,9 @@ export function DigitalLegacy() {
               </div>
             ))}
           </dl>
-        </div>
+        </Reveal>
 
-        <div className="relative">
+        <Reveal delay={0.1} className="relative">
           <div className="absolute -inset-6 -z-10 rounded-[2.5rem] bg-gradient-to-br from-teal/10 via-transparent to-gold/10" />
           <div className="rounded-[2rem] border border-mist bg-white dark:bg-offwhite p-8 shadow-xl shadow-navy/5">
             <div className="flex items-center gap-3">
@@ -69,15 +70,15 @@ export function DigitalLegacy() {
                 <p className="font-heading text-lg font-bold text-navy dark:text-white">
                   Digital Legacy Archive
                 </p>
-                <p className="text-xs text-slate">Permanent &middot; Verified &middot; Secure</p>
+                <p className="text-xs text-slate">Preserved &middot; Verified &middot; Secure</p>
               </div>
             </div>
             <div className="mt-6 space-y-3">
               {[
-                "Biography & career record",
-                "Government position history",
-                "Achievements & recognitions",
-                "Speeches, media & documents",
+                "Biography & Career History",
+                "Government Positions & Leadership Journey",
+                "Achievements & Recognition",
+                "Speeches, Media & Documents",
               ].map((item) => (
                 <div
                   key={item}
@@ -89,7 +90,7 @@ export function DigitalLegacy() {
               ))}
             </div>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

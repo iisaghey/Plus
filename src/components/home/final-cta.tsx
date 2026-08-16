@@ -1,5 +1,6 @@
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
+import { Reveal } from "@/components/motion/reveal";
 
 export function FinalCta() {
   return (
@@ -13,7 +14,7 @@ export function FinalCta() {
       />
       <div className="absolute inset-0 bg-grid-pattern opacity-10" />
 
-      <div className="relative mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 sm:py-28 lg:px-8">
+      <Reveal className="relative mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 sm:py-28 lg:px-8">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-gold">
           <ShieldCheck className="h-7 w-7" />
         </div>
@@ -21,8 +22,9 @@ export function FinalCta() {
           Build Your Digital Legacy.
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-balance text-white/70">
-          Join AqoonsiPlus and preserve your leadership story, achievements,
-          and professional record on a platform built for trust.
+          Build your AqoonsiPlus digital profile and preserve your leadership
+          journey, achievements, and professional record in one trusted
+          digital home.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <LinkButton href="/create-profile" variant="gold" size="lg">
@@ -33,7 +35,7 @@ export function FinalCta() {
             Explore Profiles
           </LinkButton>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

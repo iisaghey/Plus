@@ -17,12 +17,26 @@ export default async function OrganizationsPage() {
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
       <SectionLabel>Organizations</SectionLabel>
       <h1 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
-        Institutions & Organizations
+        Government Institutions
       </h1>
       <p className="mt-3 max-w-xl text-slate">
-        Government institutions, companies, and organizations whose leaders
-        and representatives maintain profiles on AqoonsiPlus.
+        Explore government institutions and public bodies connected to the
+        leadership profiles on AqoonsiPlus.
       </p>
+
+      <div className="mt-5 flex flex-wrap gap-2">
+        {[
+          "Federal Government Institutions",
+          "Federal Member State Institutions",
+          "Regional & Local Government",
+          "Ministries & Government Offices",
+          "Public Authorities & Agencies",
+        ].map((label) => (
+          <Badge key={label} variant="neutral" size="sm">
+            {label}
+          </Badge>
+        ))}
+      </div>
 
       <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {organizations.map((org) => (

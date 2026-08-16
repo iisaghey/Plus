@@ -14,6 +14,7 @@ import {
   ScanFace,
 } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
+import { AnimatedCounter } from "@/components/motion/animated-counter";
 
 export function Hero({
   stats,
@@ -55,23 +56,24 @@ export function Hero({
       <div className="relative mx-auto max-w-5xl px-4 pb-20 pt-24 text-center sm:px-6 sm:pt-32 lg:px-8">
         <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 font-accent text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm animate-fade-up">
           <ShieldCheck className="h-3.5 w-3.5" />
-          Digital Leadership Identity Platform
+          Built for Somali Political Leaders and Public Officials
         </div>
 
         <h1
           className="mt-6 text-balance text-center font-heading text-3xl font-extrabold leading-[1.15] text-white sm:text-4xl lg:text-5xl animate-fade-up"
           style={{ animationDelay: "80ms" }}
         >
-          Your Leadership | Your Identity | Your Legacy.
+          Your Leadership. Your Identity. Your Legacy.
         </h1>
 
         <p
           className="mx-auto mt-6 max-w-2xl text-balance text-base leading-relaxed text-white/70 sm:text-lg animate-fade-up"
           style={{ animationDelay: "160ms" }}
         >
-          Build, manage, and preserve your leadership profile, bringing your
-          identity, career, achievements, activities, media, and official
-          records together in one digital home.
+          Build, manage, and preserve your leadership profile with
+          AqoonsiPlus. Bring your identity, career, achievements, activities,
+          media, and official records together in one professional digital
+          home.
         </p>
 
         <form
@@ -130,7 +132,7 @@ export function Hero({
                 {stat.label}
               </dt>
               <dd className="mt-1 font-heading text-2xl font-bold text-white sm:text-3xl">
-                {stat.value.toLocaleString()}+
+                <AnimatedCounter value={stat.value} suffix="+" />
               </dd>
             </div>
           ))}
