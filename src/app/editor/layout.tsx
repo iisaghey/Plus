@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { RoleSidebar, type SidebarItem } from "@/components/dashboard/role-sidebar";
+import { StaffDraftForm } from "@/components/dashboard/staff-draft-form";
+import { createStaffDraft } from "@/lib/actions/profile";
 
 const iconClass = "h-4 w-4";
 
@@ -41,8 +43,9 @@ export default async function EditorLayout({
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-12 sm:px-6 lg:flex-row lg:px-8">
-      <aside className="lg:w-56 lg:shrink-0">
+      <aside className="lg:w-56 lg:shrink-0 flex flex-col gap-4">
         <RoleSidebar roleLabel="Editor" items={NAV} />
+        <StaffDraftForm action={createStaffDraft} triggerLabel="+ Create New Profile" />
       </aside>
       <div className="min-w-0 flex-1">{children}</div>
     </div>
