@@ -92,7 +92,7 @@ export function PermissionMatrix({
                 .filter((p) => p.category === category)
                 .map((perm) => (
                   <tr key={perm.key}>
-                    <td className="px-4 py-2.5 text-navy">{perm.label}</td>
+                    <td className="px-4 py-2.5 text-navy dark:text-white">{perm.label}</td>
                     {roles.map((r) => {
                       const scope = scopeFor(r.key, perm.key);
                       return (
@@ -105,7 +105,7 @@ export function PermissionMatrix({
                                 handleChange(r.key, perm.key, e.target.value as Enums<"permission_scope">)
                               }
                               className={cn(
-                                "rounded-md border border-mist bg-white px-1.5 py-1 text-xs focus:border-teal focus:outline-none",
+                                "rounded-md border border-mist bg-white dark:bg-offwhite px-1.5 py-1 text-xs focus:border-teal focus:outline-none",
                                 SCOPE_COLOR[scope]
                               )}
                             >

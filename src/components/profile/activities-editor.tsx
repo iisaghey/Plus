@@ -18,9 +18,11 @@ type Entry = Tables<"official_activities">;
 export function ActivitiesEditor({
   profileId,
   entries,
+  locked = false,
 }: {
   profileId: string;
   entries: Entry[];
+  locked?: boolean;
 }) {
   const router = useRouter();
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -51,11 +53,11 @@ export function ActivitiesEditor({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <CalendarDays className="h-4 w-4 text-teal" />
-          <h2 className="font-heading text-base font-bold text-navy">
+          <h2 className="font-heading text-base font-bold text-navy dark:text-white">
             Official Activities
           </h2>
         </div>
-        {editingId === null && (
+        {editingId === null && !locked && (
           <button
             onClick={() => setEditingId("new")}
             className="flex items-center gap-1.5 rounded-full bg-teal/10 px-3 py-1.5 text-xs font-semibold text-teal hover:bg-teal/20"
@@ -97,7 +99,7 @@ export function ActivitiesEditor({
             >
               <div className="min-w-0">
                 <div className="flex flex-wrap items-baseline gap-x-2">
-                  <p className="text-sm font-semibold text-navy">{entry.title}</p>
+                  <p className="text-sm font-semibold text-navy dark:text-white">{entry.title}</p>
                   {entry.activity_date && (
                     <p className="text-xs text-slate">
                       {formatMonthYear(entry.activity_date)}
@@ -120,14 +122,15 @@ export function ActivitiesEditor({
               <div className="flex shrink-0 gap-1">
                 <button
                   onClick={() => setEditingId(entry.id)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-offwhite hover:text-navy"
+                  disabled={locked}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-offwhite hover:text-navy dark:hover:text-white disabled:pointer-events-none disabled:opacity-40"
                   aria-label="Edit"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
                 <button
                   onClick={() => handleDelete(entry.id)}
-                  disabled={pending && deletingId === entry.id}
+                  disabled={locked || (pending && deletingId === entry.id)}
                   className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
                   aria-label="Delete"
                 >
@@ -180,7 +183,7 @@ function ActivityForm({
         <p className="text-xs font-semibold uppercase tracking-wide text-teal">
           {entry ? "Edit Activity" : "New Activity"}
         </p>
-        <button type="button" onClick={onCancel} className="text-slate hover:text-navy">
+        <button type="button" onClick={onCancel} className="text-slate hover:text-navy dark:hover:text-white">
           <X className="h-4 w-4" />
         </button>
       </div>

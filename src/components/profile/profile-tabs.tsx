@@ -90,7 +90,7 @@ export function ProfileTabs(props: Props) {
             onClick={() => setActive(tab)}
             className={cn(
               "relative shrink-0 whitespace-nowrap px-4 py-3 text-sm font-semibold transition-colors",
-              active === tab ? "text-teal" : "text-slate hover:text-navy"
+              active === tab ? "text-teal" : "text-slate hover:text-navy dark:hover:text-white"
             )}
           >
             {tab}
@@ -105,7 +105,7 @@ export function ProfileTabs(props: Props) {
         {active === "Overview" && (
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <h2 className="font-heading text-lg font-bold text-navy">
+              <h2 className="font-heading text-lg font-bold text-navy dark:text-white">
                 About
               </h2>
               <p className="mt-3 leading-relaxed text-slate">
@@ -114,7 +114,7 @@ export function ProfileTabs(props: Props) {
 
               {props.achievements.length > 0 && (
                 <div className="mt-10">
-                  <h3 className="font-heading text-base font-bold text-navy">
+                  <h3 className="font-heading text-base font-bold text-navy dark:text-white">
                     Recent Achievements
                   </h3>
                   <div className="mt-4 space-y-3">
@@ -125,7 +125,7 @@ export function ProfileTabs(props: Props) {
                       >
                         <Trophy className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
                         <div>
-                          <p className="text-sm font-semibold text-navy">
+                          <p className="text-sm font-semibold text-navy dark:text-white">
                             {a.title}
                           </p>
                           <p className="text-xs text-slate">
@@ -162,7 +162,7 @@ export function ProfileTabs(props: Props) {
 
         {active === "Biography" && (
           <div className="max-w-3xl">
-            <h2 className="font-heading text-lg font-bold text-navy">
+            <h2 className="font-heading text-lg font-bold text-navy dark:text-white">
               Biography
             </h2>
             {props.bio?.content ? (
@@ -355,7 +355,7 @@ export function ProfileTabs(props: Props) {
                   <FileText className="mt-0.5 h-4 w-4 shrink-0 text-teal" />
                 )}
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-navy">{d.title}</p>
+                  <p className="text-sm font-semibold text-navy dark:text-white">{d.title}</p>
                   <p className="text-xs text-slate">
                     {[d.category, d.issuing_organization].filter(Boolean).join(" · ")}
                     {d.document_date ? ` · ${formatMonthYear(d.document_date)}` : ""}
@@ -380,7 +380,7 @@ export function ProfileTabs(props: Props) {
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-2xl border border-mist bg-offwhite p-5">
-      <p className="font-heading text-2xl font-bold text-navy">{value}</p>
+      <p className="font-heading text-2xl font-bold text-navy dark:text-white">{value}</p>
       <p className="mt-1 text-xs font-medium uppercase tracking-wide text-slate">
         {label}
       </p>
@@ -425,7 +425,7 @@ function EntryCard({
       <Icon className={cn("mt-0.5 h-4 w-4 shrink-0", accent ?? "text-teal")} />
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-          <p className="text-sm font-semibold text-navy">{title}</p>
+          <p className="text-sm font-semibold text-navy dark:text-white">{title}</p>
           {meta && <p className="text-xs text-slate">{meta}</p>}
         </div>
         {subtitle && <p className="text-xs text-slate">{subtitle}</p>}

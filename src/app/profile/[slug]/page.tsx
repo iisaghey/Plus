@@ -50,7 +50,7 @@ export default async function ProfilePage(
   } = data;
 
   return (
-    <div className="bg-white">
+    <div className="bg-white dark:bg-offwhite">
       <ProfileHeader profile={profile} />
       <ProfileTabs
         bio={biography ?? null}

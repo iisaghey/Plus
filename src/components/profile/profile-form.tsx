@@ -18,12 +18,14 @@ export function ProfileForm({
   categories,
   organizations,
   submitLabel,
+  locked = false,
 }: {
   action: Action;
   profile?: Tables<"profiles"> | null;
   categories: { id: string; name: string }[];
   organizations: { id: string; name: string }[];
   submitLabel: string;
+  locked?: boolean;
 }) {
   const [state, formAction, pending] = useActionState<
     ProfileFormState,
@@ -38,6 +40,7 @@ export function ProfileForm({
         </div>
       )}
 
+      <fieldset disabled={locked} className="space-y-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Full Name" name="full_name" required defaultValue={profile?.full_name} />
         <Field label="Preferred Title" name="preferred_title" placeholder="Dr., Eng., Hon..." defaultValue={profile?.preferred_title ?? ""} />
@@ -106,6 +109,7 @@ export function ProfileForm({
         {pending && <Loader2 className="h-4 w-4 animate-spin" />}
         {submitLabel}
       </Button>
+      </fieldset>
     </form>
   );
 }
@@ -162,7 +166,7 @@ function SelectField({
       <select
         name={name}
         defaultValue={defaultValue ?? ""}
-        className="mt-1.5 w-full rounded-xl border border-mist bg-white px-4 py-2.5 text-sm text-ink focus:border-teal focus:outline-none"
+        className="mt-1.5 w-full rounded-xl border border-mist bg-white dark:bg-offwhite px-4 py-2.5 text-sm text-ink focus:border-teal focus:outline-none"
       >
         <option value="">None</option>
         {options.map((o) => (

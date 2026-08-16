@@ -17,7 +17,7 @@ export async function VerifiedLeaders() {
               <ShieldCheck className="h-3.5 w-3.5" />
               Verified Leaders
             </SectionLabel>
-            <h2 className="mt-3 font-heading text-3xl font-bold text-navy sm:text-4xl">
+            <h2 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
               Identity-Verified Profiles
             </h2>
             <p className="mt-3 max-w-xl text-slate">

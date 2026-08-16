@@ -9,7 +9,7 @@ export async function RecentlyAdded() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
       <SectionLabel>Recently Added</SectionLabel>
-      <h2 className="mt-3 font-heading text-3xl font-bold text-navy sm:text-4xl">
+      <h2 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
         Newest Digital Profiles
       </h2>
 

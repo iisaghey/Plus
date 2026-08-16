@@ -22,7 +22,7 @@ export default async function AdminUsersPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy">Users</h1>
+      <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">Users</h1>
       <p className="mt-1 text-sm text-slate">
         Every account on the platform. Changing a role here takes effect
         immediately.

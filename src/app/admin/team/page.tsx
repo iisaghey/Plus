@@ -17,7 +17,7 @@ export default async function AdminTeamPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy">
+      <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">
         Staff, Editors & Task Assignment
       </h1>
       <p className="mt-1 text-sm text-slate">

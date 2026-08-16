@@ -12,7 +12,7 @@ export default async function AdminAuditLogsPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy">
+      <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">
         Audit Logs
       </h1>
       <p className="mt-1 text-sm text-slate">
@@ -46,7 +46,7 @@ export default async function AdminAuditLogsPage() {
                   <td className="px-4 py-3 text-xs capitalize text-slate">
                     {log.actor_role?.replace("_", " ") ?? "—"}
                   </td>
-                  <td className="px-4 py-3 font-medium text-navy">
+                  <td className="px-4 py-3 font-medium text-navy dark:text-white">
                     {log.action.replace(/_/g, " ")}
                   </td>
                   <td className="px-4 py-3 text-xs text-slate">

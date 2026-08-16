@@ -17,7 +17,7 @@ export default async function EditorDashboardPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy">
+      <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">
         Editor Dashboard
       </h1>
       <p className="mt-1 text-sm text-slate">
@@ -59,7 +59,7 @@ export default async function EditorDashboardPage() {
                 key={p.id}
                 className="flex items-center justify-between rounded-xl border border-mist px-4 py-3"
               >
-                <p className="text-sm font-medium text-navy">{p.full_name}</p>
+                <p className="text-sm font-medium text-navy dark:text-white">{p.full_name}</p>
                 <Badge variant="neutral" size="sm">
                   {p.workflow_status.replace(/_/g, " ")}
                 </Badge>

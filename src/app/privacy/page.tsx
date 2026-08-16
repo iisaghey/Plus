@@ -33,7 +33,7 @@ export default function PrivacyPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-20 sm:px-6 lg:px-8">
       <SectionLabel>Legal</SectionLabel>
-      <h1 className="mt-3 font-heading text-3xl font-bold text-navy sm:text-4xl">
+      <h1 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
         Privacy Policy
       </h1>
       <p className="mt-3 text-sm text-slate">Last updated: January 2026</p>
@@ -41,7 +41,7 @@ export default function PrivacyPage() {
       <div className="mt-10 space-y-8">
         {SECTIONS.map((s) => (
           <div key={s.title}>
-            <h2 className="font-heading text-lg font-bold text-navy">
+            <h2 className="font-heading text-lg font-bold text-navy dark:text-white">
               {s.title}
             </h2>
             <p className="mt-2 leading-relaxed text-slate">{s.body}</p>

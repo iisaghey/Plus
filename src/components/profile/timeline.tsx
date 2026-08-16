@@ -36,12 +36,12 @@ export function Timeline({ entries }: { entries: TimelineEntry[] }) {
         >
           <span
             className={cn(
-              "absolute -left-[2.35rem] top-1 flex h-4 w-4 items-center justify-center rounded-full ring-4 ring-white",
+              "absolute -left-[2.35rem] top-1 flex h-4 w-4 items-center justify-center rounded-full ring-4 ring-white dark:ring-offwhite",
               entry.current ? "bg-emerald" : "bg-teal"
             )}
           />
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span className="font-heading text-lg font-bold text-navy">
+            <span className="font-heading text-lg font-bold text-navy dark:text-white">
               {entry.year}
             </span>
             {entry.current && (
@@ -50,12 +50,12 @@ export function Timeline({ entries }: { entries: TimelineEntry[] }) {
               </span>
             )}
             {entry.kind && (
-              <span className="rounded-full bg-navy/5 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-navy/60">
+              <span className="rounded-full bg-navy/5 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-navy/60 dark:bg-white/5 dark:text-white/70">
                 {entry.kind}
               </span>
             )}
           </div>
-          <p className="mt-1 text-[15px] font-semibold text-navy">
+          <p className="mt-1 text-[15px] font-semibold text-navy dark:text-white">
             {entry.title}
           </p>
           {(entry.subtitle || entry.location) && (

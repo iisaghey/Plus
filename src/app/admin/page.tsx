@@ -17,7 +17,7 @@ export default async function AdminOverviewPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy">Overview</h1>
+      <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">Overview</h1>
       <p className="mt-1 text-sm text-slate">
         Platform-wide statistics at a glance.
       </p>
@@ -28,7 +28,7 @@ export default async function AdminOverviewPage() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-navy/5 text-teal">
               <Icon className="h-5 w-5" />
             </div>
-            <p className="mt-3 font-heading text-2xl font-bold text-navy">
+            <p className="mt-3 font-heading text-2xl font-bold text-navy dark:text-white">
               {value}
             </p>
             <p className="text-xs font-medium uppercase tracking-wide text-slate">

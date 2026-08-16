@@ -43,7 +43,7 @@ export function NotificationList({
           >
             {!n.is_read && <Circle className="mt-1 h-2 w-2 shrink-0 fill-teal text-teal" />}
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-navy">{n.title}</p>
+              <p className="text-sm font-semibold text-navy dark:text-white">{n.title}</p>
               {n.message && <p className="mt-0.5 text-xs text-slate">{n.message}</p>}
               <p className="mt-1 text-[11px] text-slate/70">
                 {new Date(n.created_at).toLocaleString()}

@@ -12,7 +12,7 @@ export async function FeaturedProfiles() {
       <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
         <div>
           <SectionLabel>Featured Profiles</SectionLabel>
-          <h2 className="mt-3 font-heading text-3xl font-bold text-navy sm:text-4xl">
+          <h2 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
             Distinguished Digital Profiles
           </h2>
           <p className="mt-3 max-w-xl text-slate">

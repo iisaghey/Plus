@@ -83,7 +83,7 @@ export function TaxonomyManager({
               className="flex items-center justify-between rounded-xl border border-mist px-4 py-3"
             >
               <div>
-                <p className="text-sm font-medium text-navy">{item.name}</p>
+                <p className="text-sm font-medium text-navy dark:text-white">{item.name}</p>
                 {item.sub && <p className="text-xs text-slate">{item.sub}</p>}
               </div>
               <button

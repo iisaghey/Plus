@@ -11,7 +11,7 @@ export default function ContactPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6 lg:px-8">
       <SectionLabel className="mx-auto justify-center">Contact</SectionLabel>
-      <h1 className="mt-3 font-heading text-3xl font-bold text-navy sm:text-4xl">
+      <h1 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
         Get in Touch
       </h1>
       <p className="mx-auto mt-4 max-w-lg text-slate">
@@ -27,7 +27,7 @@ export default function ContactPage() {
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-navy/5 text-teal">
             <Mail className="h-5 w-5" />
           </div>
-          <p className="font-heading text-base font-bold text-navy">Email Support</p>
+          <p className="font-heading text-base font-bold text-navy dark:text-white">Email Support</p>
           <p className="text-sm text-slate">support@aqoonsiplus.example.com</p>
         </a>
 
@@ -38,7 +38,7 @@ export default function ContactPage() {
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-navy/5 text-teal">
             <MessageCircle className="h-5 w-5" />
           </div>
-          <p className="font-heading text-base font-bold text-navy">Help Center</p>
+          <p className="font-heading text-base font-bold text-navy dark:text-white">Help Center</p>
           <p className="text-sm text-slate">Browse frequently asked questions</p>
         </a>
       </div>

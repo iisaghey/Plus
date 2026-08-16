@@ -90,7 +90,7 @@ export default function VerificationPage() {
 
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-heading text-2xl font-bold text-navy sm:text-3xl">
+          <h2 className="font-heading text-2xl font-bold text-navy dark:text-white sm:text-3xl">
             What Verification Checks
           </h2>
         </div>
@@ -104,7 +104,7 @@ export default function VerificationPage() {
                 <Icon className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-heading text-base font-bold text-navy">
+                <h3 className="font-heading text-base font-bold text-navy dark:text-white">
                   {title}
                 </h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-slate">
@@ -118,14 +118,14 @@ export default function VerificationPage() {
 
       <section className="bg-offwhite">
         <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
-          <h2 className="text-center font-heading text-2xl font-bold text-navy sm:text-3xl">
+          <h2 className="text-center font-heading text-2xl font-bold text-navy dark:text-white sm:text-3xl">
             Verification Statuses
           </h2>
           <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
             {STATUSES.map((s) => (
               <div
                 key={s.label}
-                className="rounded-2xl border border-mist bg-white p-6 text-center"
+                className="rounded-2xl border border-mist bg-white dark:bg-offwhite p-6 text-center"
               >
                 <Badge variant={s.variant} size="md" className="mx-auto">
                   {s.label}
@@ -140,7 +140,7 @@ export default function VerificationPage() {
       </section>
 
       <section className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
-        <h2 className="font-heading text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="font-heading text-2xl font-bold text-navy dark:text-white sm:text-3xl">
           Ready to get verified?
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-slate">

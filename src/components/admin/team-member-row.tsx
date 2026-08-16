@@ -45,7 +45,7 @@ export function TeamMemberRow({
   return (
     <div className="flex items-center justify-between gap-4 rounded-xl border border-mist p-4">
       <div className="flex min-w-0 items-center gap-2">
-        <p className="truncate text-sm font-medium text-navy">{email ?? "Unknown"}</p>
+        <p className="truncate text-sm font-medium text-navy dark:text-white">{email ?? "Unknown"}</p>
         {accountStatus && accountStatus !== "approved" && (
           <Badge variant={accountStatus === "pending" ? "pending" : "neutral"} size="sm">
             {accountStatus}
@@ -58,7 +58,7 @@ export function TeamMemberRow({
           value={role}
           disabled={pending}
           onChange={(e) => handleChange(e.target.value as Enums<"app_role">)}
-          className="rounded-lg border border-mist bg-white px-2 py-1.5 text-xs text-navy focus:border-teal focus:outline-none"
+          className="rounded-lg border border-mist bg-white dark:bg-offwhite px-2 py-1.5 text-xs text-navy dark:text-white focus:border-teal focus:outline-none"
         >
           {assignableRoles.map((r) => (
             <option key={r} value={r}>

@@ -38,14 +38,14 @@ export default function HelpPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-20 sm:px-6 lg:px-8">
       <SectionLabel>Help Center</SectionLabel>
-      <h1 className="mt-3 font-heading text-3xl font-bold text-navy sm:text-4xl">
+      <h1 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
         Frequently Asked Questions
       </h1>
 
       <div className="mt-10 space-y-6">
         {FAQS.map((f) => (
           <div key={f.q} className="rounded-2xl border border-mist p-6">
-            <h2 className="font-heading text-base font-bold text-navy">
+            <h2 className="font-heading text-base font-bold text-navy dark:text-white">
               {f.q}
             </h2>
             <p className="mt-2 leading-relaxed text-slate">{f.a}</p>

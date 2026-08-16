@@ -55,7 +55,7 @@ export function AssignmentRow({
   return (
     <div className="grid grid-cols-1 items-center gap-3 rounded-xl border border-mist p-4 sm:grid-cols-[1.5fr_1fr_1fr_1fr_auto]">
       <div className="min-w-0">
-        <Link href={`/profile/${slug}`} target="_blank" className="truncate text-sm font-semibold text-navy hover:text-teal">
+        <Link href={`/profile/${slug}`} target="_blank" className="truncate text-sm font-semibold text-navy dark:text-white hover:text-teal">
           {fullName}
         </Link>
         <div className="mt-1">
@@ -67,7 +67,7 @@ export function AssignmentRow({
       <select
         value={staffId}
         onChange={(e) => setStaffId(e.target.value)}
-        className="rounded-lg border border-mist bg-white px-2 py-1.5 text-xs text-navy focus:border-teal focus:outline-none"
+        className="rounded-lg border border-mist bg-white dark:bg-offwhite px-2 py-1.5 text-xs text-navy dark:text-white focus:border-teal focus:outline-none"
       >
         <option value="">No staff</option>
         {staffOptions.map((s) => (
@@ -79,7 +79,7 @@ export function AssignmentRow({
       <select
         value={editorId}
         onChange={(e) => setEditorId(e.target.value)}
-        className="rounded-lg border border-mist bg-white px-2 py-1.5 text-xs text-navy focus:border-teal focus:outline-none"
+        className="rounded-lg border border-mist bg-white dark:bg-offwhite px-2 py-1.5 text-xs text-navy dark:text-white focus:border-teal focus:outline-none"
       >
         <option value="">No editor</option>
         {editorOptions.map((ed) => (
@@ -92,7 +92,7 @@ export function AssignmentRow({
         type="date"
         value={deadline}
         onChange={(e) => setDeadline(e.target.value)}
-        className="rounded-lg border border-mist bg-white px-2 py-1.5 text-xs text-navy focus:border-teal focus:outline-none"
+        className="rounded-lg border border-mist bg-white dark:bg-offwhite px-2 py-1.5 text-xs text-navy dark:text-white focus:border-teal focus:outline-none"
       />
       <button
         onClick={save}

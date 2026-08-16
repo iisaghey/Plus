@@ -50,7 +50,7 @@ export function VerificationRow({
         </div>
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <p className="truncate text-sm font-semibold text-navy">{fullName}</p>
+            <p className="truncate text-sm font-semibold text-navy dark:text-white">{fullName}</p>
             <Link
               href={`/profile/${slug}`}
               target="_blank"

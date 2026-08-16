@@ -36,7 +36,7 @@ export function ApprovalRow({
   return (
     <div className="flex items-center justify-between gap-4 rounded-xl border border-mist p-4">
       <div className="min-w-0">
-        <p className="truncate text-sm font-semibold text-navy">
+        <p className="truncate text-sm font-semibold text-navy dark:text-white">
           {email ?? "Unknown email"}
         </p>
         <p className="text-xs text-slate">

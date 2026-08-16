@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   /* Primary */
   --color-navy: #0b1f3a;
@@ -20,6 +22,22 @@
 
   --background: #ffffff;
   --foreground: var(--color-ink);
+
+  color-scheme: light;
+}
+
+/* Dark theme: neutrals flip, brand/accent colors stay put so navy panels,
+   buttons, badges, and overlays keep looking intentional in both modes. */
+.dark {
+  --color-offwhite: #101a2d;
+  --color-mist: #253247;
+  --color-slate: #93a3ba;
+  --color-ink: #e8edf5;
+
+  --background: #0a1120;
+  --foreground: var(--color-ink);
+
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -104,6 +122,15 @@ h6 {
 
 .text-balance {
   text-wrap: balance;
+}
+
+/* Native form controls don't inherit Tailwind's neutral tokens, so they need
+   an explicit dark surface or they'd stay white behind now-light text. */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--color-offwhite);
+  color: var(--color-ink);
 }
 
 .bg-grid-pattern {

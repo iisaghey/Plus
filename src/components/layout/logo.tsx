@@ -16,7 +16,7 @@ export function Logo({ light, className }: { light?: boolean; className?: string
       <span
         className={cn(
           "font-heading text-lg font-bold tracking-tight",
-          light ? "text-white" : "text-navy"
+          light ? "text-white" : "text-navy dark:text-white"
         )}
       >
         Aqoonsi<span className="text-teal">Plus</span>

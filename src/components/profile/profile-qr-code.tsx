@@ -89,16 +89,16 @@ export function ProfileQrCode({
           onClick={() => setOpen(false)}
         >
           <div
-            className="w-full max-w-xs rounded-2xl bg-white p-6 text-center shadow-2xl"
+            className="w-full max-w-xs rounded-2xl bg-white dark:bg-offwhite p-6 text-center shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
-              <p className="font-heading text-sm font-bold text-navy">
+              <p className="font-heading text-sm font-bold text-navy dark:text-white">
                 Scan to View Verified Profile
               </p>
               <button
                 onClick={() => setOpen(false)}
-                className="text-slate hover:text-navy"
+                className="text-slate hover:text-navy dark:hover:text-white"
                 aria-label="Close"
               >
                 <X className="h-4 w-4" />
@@ -117,21 +117,21 @@ export function ProfileQrCode({
             <div className="mt-5 grid grid-cols-3 gap-2">
               <button
                 onClick={handleDownload}
-                className="flex flex-col items-center gap-1 rounded-xl border border-mist py-2.5 text-xs font-medium text-navy hover:border-teal hover:text-teal"
+                className="flex flex-col items-center gap-1 rounded-xl border border-mist py-2.5 text-xs font-medium text-navy dark:text-white hover:border-teal hover:text-teal"
               >
                 <Download className="h-4 w-4" />
                 Download
               </button>
               <button
                 onClick={handleShare}
-                className="flex flex-col items-center gap-1 rounded-xl border border-mist py-2.5 text-xs font-medium text-navy hover:border-teal hover:text-teal"
+                className="flex flex-col items-center gap-1 rounded-xl border border-mist py-2.5 text-xs font-medium text-navy dark:text-white hover:border-teal hover:text-teal"
               >
                 <QrCode className="h-4 w-4" />
                 Share
               </button>
               <button
                 onClick={handlePrint}
-                className="flex flex-col items-center gap-1 rounded-xl border border-mist py-2.5 text-xs font-medium text-navy hover:border-teal hover:text-teal"
+                className="flex flex-col items-center gap-1 rounded-xl border border-mist py-2.5 text-xs font-medium text-navy dark:text-white hover:border-teal hover:text-teal"
               >
                 <Printer className="h-4 w-4" />
                 Print

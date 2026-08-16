@@ -36,7 +36,7 @@ export default async function StaffDashboardPage() {
     <div>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-navy">
+          <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">
             Staff Dashboard
           </h1>
           <p className="mt-1 text-sm text-slate">
@@ -55,7 +55,7 @@ export default async function StaffDashboardPage() {
           { label: "Completed", value: stats.completed },
         ].map((s) => (
           <div key={s.label} className="rounded-2xl border border-mist p-4">
-            <p className="font-heading text-xl font-bold text-navy">{s.value}</p>
+            <p className="font-heading text-xl font-bold text-navy dark:text-white">{s.value}</p>
             <p className="text-[11px] font-medium uppercase tracking-wide text-slate">
               {s.label}
             </p>
@@ -82,7 +82,7 @@ export default async function StaffDashboardPage() {
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-navy">{p.full_name}</p>
+                  <p className="truncate text-sm font-semibold text-navy dark:text-white">{p.full_name}</p>
                   <p className="truncate text-xs text-slate">
                     {p.current_position ?? "No position"}
                     {p.assignment_deadline ? ` · Due ${p.assignment_deadline}` : ""}

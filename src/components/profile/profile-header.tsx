@@ -58,7 +58,7 @@ export function ProfileHeader({ profile }: { profile: ProfileWithRelations }) {
                   <Badge variant="pending" size="sm">Verification Pending</Badge>
                 )}
               </div>
-              <h1 className="mt-2 font-heading text-2xl font-bold text-navy sm:text-3xl">
+              <h1 className="mt-2 font-heading text-2xl font-bold text-navy dark:text-white sm:text-3xl">
                 {profile.preferred_title ? `${profile.preferred_title} ` : ""}
                 {profile.full_name}
               </h1>

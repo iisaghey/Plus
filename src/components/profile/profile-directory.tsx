@@ -35,7 +35,7 @@ export async function ProfileDirectory({
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
       <SectionLabel>{label}</SectionLabel>
-      <h1 className="mt-3 font-heading text-3xl font-bold text-navy sm:text-4xl">
+      <h1 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
         {title}
       </h1>
       <p className="mt-3 max-w-xl text-slate">{description}</p>
@@ -54,7 +54,7 @@ export async function ProfileDirectory({
 
       {profiles.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-dashed border-mist py-20 text-center">
-          <p className="font-heading text-lg font-semibold text-navy">
+          <p className="font-heading text-lg font-semibold text-navy dark:text-white">
             No profiles match your search
           </p>
           <p className="mt-2 text-sm text-slate">

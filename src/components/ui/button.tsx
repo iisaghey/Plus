@@ -12,8 +12,8 @@ const buttonVariants = cva(
           "bg-teal text-white shadow-sm shadow-teal/20 hover:bg-aqoonsi hover:shadow-md hover:shadow-teal/25",
         navy: "bg-navy text-white hover:bg-royal shadow-sm shadow-navy/20",
         outline:
-          "border border-mist bg-white text-navy hover:border-teal hover:text-teal",
-        ghost: "text-navy hover:bg-offwhite",
+          "border border-mist bg-white text-navy hover:border-teal hover:text-teal dark:bg-offwhite dark:text-white",
+        ghost: "text-navy hover:bg-offwhite dark:text-white",
         "outline-white":
           "border border-white/30 text-white hover:bg-white/10 hover:border-white/60",
         gold: "bg-gold text-navy hover:brightness-95 shadow-sm shadow-gold/20",

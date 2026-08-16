@@ -9,9 +9,11 @@ import type { Tables } from "@/types/database.types";
 export function BiographyEditor({
   profileId,
   biography,
+  locked = false,
 }: {
   profileId: string;
   biography: Tables<"biographies"> | null;
+  locked?: boolean;
 }) {
   const action = saveBiography.bind(null, profileId);
   const [state, formAction, pending] = useActionState<BiographyFormState, FormData>(
@@ -33,7 +35,7 @@ export function BiographyEditor({
     <div className="rounded-2xl border border-mist p-6">
       <div className="flex items-center gap-2">
         <BookOpen className="h-4 w-4 text-teal" />
-        <h2 className="font-heading text-base font-bold text-navy">Biography</h2>
+        <h2 className="font-heading text-base font-bold text-navy dark:text-white">Biography</h2>
       </div>
       <p className="mt-1 text-xs text-slate">
         A longer-form biography shown on the Biography tab of the public profile.
@@ -44,6 +46,7 @@ export function BiographyEditor({
           <p className="text-xs text-red-600">{state.error}</p>
         )}
 
+        <fieldset disabled={locked} className="space-y-3">
         <div>
           <label className="text-xs font-semibold uppercase tracking-wide text-slate">
             Summary
@@ -81,6 +84,7 @@ export function BiographyEditor({
             Save Biography
           </button>
         </div>
+        </fieldset>
       </form>
     </div>
   );

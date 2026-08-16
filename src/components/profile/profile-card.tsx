@@ -15,7 +15,7 @@ export function ProfileCard({ profile }: { profile: ProfileCardData }) {
   return (
     <Link
       href={`/profile/${profile.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-mist bg-white transition-all duration-300 hover:-translate-y-1 hover:border-teal/30 hover:shadow-xl hover:shadow-navy/5"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-mist bg-white dark:bg-offwhite transition-all duration-300 hover:-translate-y-1 hover:border-teal/30 hover:shadow-xl hover:shadow-navy/5"
     >
       <div className="relative h-24 bg-gradient-to-br from-navy via-royal to-aqoonsi">
         <div className="absolute inset-0 bg-grid-pattern opacity-30" />
@@ -46,7 +46,7 @@ export function ProfileCard({ profile }: { profile: ProfileCardData }) {
             {category.name}
           </span>
         )}
-        <h3 className="mt-1 font-heading text-base font-bold text-navy group-hover:text-teal transition-colors">
+        <h3 className="mt-1 font-heading text-base font-bold text-navy dark:text-white group-hover:text-teal transition-colors">
           {profile.full_name}
         </h3>
         {profile.current_position && (

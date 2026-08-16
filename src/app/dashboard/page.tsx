@@ -69,7 +69,7 @@ export default async function DashboardPage() {
             <p className="text-xs font-medium uppercase tracking-wide text-slate">
               Signed in as
             </p>
-            <p className="text-sm font-semibold text-navy">{user.email}</p>
+            <p className="text-sm font-semibold text-navy dark:text-white">{user.email}</p>
           </div>
         </div>
         <SignOutButton />
@@ -83,7 +83,7 @@ export default async function DashboardPage() {
           <div className="flex items-center gap-3">
             <LayoutDashboard className="h-5 w-5 text-teal" />
             <div>
-              <p className="text-sm font-semibold text-navy">Staff Panel</p>
+              <p className="text-sm font-semibold text-navy dark:text-white">Staff Panel</p>
               <p className="text-xs text-slate">
                 Review account approvals and profile verifications.
               </p>
@@ -98,7 +98,7 @@ export default async function DashboardPage() {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">
             <Hourglass className="h-6 w-6" />
           </div>
-          <h1 className="mt-4 font-heading text-xl font-bold text-navy">
+          <h1 className="mt-4 font-heading text-xl font-bold text-navy dark:text-white">
             Your account is pending approval
           </h1>
           <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate">
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-red-100 text-red-600">
             <XCircle className="h-6 w-6" />
           </div>
-          <h1 className="mt-4 font-heading text-xl font-bold text-navy">
+          <h1 className="mt-4 font-heading text-xl font-bold text-navy dark:text-white">
             Your account was not approved
           </h1>
           <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate">
@@ -132,7 +132,7 @@ export default async function DashboardPage() {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">
             <Sparkles className="h-6 w-6" />
           </div>
-          <h1 className="mt-4 font-heading text-xl font-bold text-navy">
+          <h1 className="mt-4 font-heading text-xl font-bold text-navy dark:text-white">
             You haven&apos;t created your profile yet
           </h1>
           <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate">
@@ -166,7 +166,7 @@ export default async function DashboardPage() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="font-heading text-lg font-bold text-navy">
+                    <p className="font-heading text-lg font-bold text-navy dark:text-white">
                       {profile.full_name}
                     </p>
                     {profile.verification_status === "verified" && (
@@ -235,7 +235,7 @@ export default async function DashboardPage() {
           </div>
 
           <div className="rounded-2xl border border-dashed border-mist p-8 text-center">
-            <p className="text-sm font-semibold text-navy">
+            <p className="text-sm font-semibold text-navy dark:text-white">
               Career timeline, achievements, media & documents
             </p>
             <p className="mx-auto mt-1.5 max-w-md text-sm text-slate">

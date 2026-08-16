@@ -45,7 +45,7 @@ export function RoleSidebar({
               target={href.startsWith("http") ? "_blank" : undefined}
               rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
               className={cn(
-                "flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-navy hover:bg-offwhite"
+                "flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-navy dark:text-white hover:bg-offwhite"
               )}
             >
               <Icon className="h-4 w-4" />

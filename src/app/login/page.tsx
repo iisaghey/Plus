@@ -38,7 +38,7 @@ export default function LoginPage() {
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-navy/5 text-teal">
           <ShieldCheck className="h-6 w-6" />
         </div>
-        <h1 className="mt-4 font-heading text-2xl font-bold text-navy">
+        <h1 className="mt-4 font-heading text-2xl font-bold text-navy dark:text-white">
           Welcome Back
         </h1>
         <p className="mt-2 text-sm text-slate">

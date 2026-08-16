@@ -39,7 +39,7 @@ export default function AboutPage() {
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-teal/10 text-teal">
               <Target className="h-5 w-5" />
             </div>
-            <h2 className="mt-4 font-heading text-xl font-bold text-navy">
+            <h2 className="mt-4 font-heading text-xl font-bold text-navy dark:text-white">
               Our Mission
             </h2>
             <p className="mt-3 leading-relaxed text-slate">
@@ -54,7 +54,7 @@ export default function AboutPage() {
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gold/10 text-gold">
               <Eye className="h-5 w-5" />
             </div>
-            <h2 className="mt-4 font-heading text-xl font-bold text-navy">
+            <h2 className="mt-4 font-heading text-xl font-bold text-navy dark:text-white">
               Our Vision
             </h2>
             <p className="mt-3 leading-relaxed text-slate">
@@ -72,7 +72,7 @@ export default function AboutPage() {
           <SectionLabel className="mx-auto justify-center">
             How Verification Works
           </SectionLabel>
-          <h2 className="mt-3 text-center font-heading text-3xl font-bold text-navy">
+          <h2 className="mt-3 text-center font-heading text-3xl font-bold text-navy dark:text-white">
             A Structured, Human-Reviewed Process
           </h2>
 
@@ -99,12 +99,12 @@ export default function AboutPage() {
             ].map((s) => (
               <div
                 key={s.step}
-                className="rounded-2xl border border-mist bg-white p-6"
+                className="rounded-2xl border border-mist bg-white dark:bg-offwhite p-6"
               >
                 <span className="font-heading text-2xl font-bold text-gold">
                   {s.step}
                 </span>
-                <h3 className="mt-2 font-heading text-base font-bold text-navy">
+                <h3 className="mt-2 font-heading text-base font-bold text-navy dark:text-white">
                   {s.title}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate">
@@ -126,7 +126,7 @@ export default function AboutPage() {
       <OurValues />
 
       <section className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
-        <h2 className="font-heading text-2xl font-bold text-navy sm:text-3xl">
+        <h2 className="font-heading text-2xl font-bold text-navy dark:text-white sm:text-3xl">
           Ready to preserve your legacy?
         </h2>
         <div className="mt-6">

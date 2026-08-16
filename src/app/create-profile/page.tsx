@@ -48,7 +48,7 @@ export default function CreateProfilePage() {
         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald/10 text-emerald">
           <CheckCircle2 className="h-7 w-7" />
         </div>
-        <h1 className="mt-4 font-heading text-2xl font-bold text-navy">
+        <h1 className="mt-4 font-heading text-2xl font-bold text-navy dark:text-white">
           Check Your Email
         </h1>
         <p className="mt-2 text-sm text-slate">
@@ -68,7 +68,7 @@ export default function CreateProfilePage() {
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-navy/5 text-teal">
           <ShieldCheck className="h-6 w-6" />
         </div>
-        <h1 className="mt-4 font-heading text-2xl font-bold text-navy">
+        <h1 className="mt-4 font-heading text-2xl font-bold text-navy dark:text-white">
           Create Your Profile
         </h1>
         <p className="mt-2 text-sm text-slate">

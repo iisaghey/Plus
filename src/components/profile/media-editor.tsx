@@ -27,9 +27,11 @@ const MEDIA_TYPES = [
 export function MediaEditor({
   profileId,
   entries,
+  locked = false,
 }: {
   profileId: string;
   entries: Entry[];
+  locked?: boolean;
 }) {
   const router = useRouter();
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -60,9 +62,9 @@ export function MediaEditor({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <ImageIcon className="h-4 w-4 text-teal" />
-          <h2 className="font-heading text-base font-bold text-navy">Media</h2>
+          <h2 className="font-heading text-base font-bold text-navy dark:text-white">Media</h2>
         </div>
-        {editingId === null && (
+        {editingId === null && !locked && (
           <button
             onClick={() => setEditingId("new")}
             className="flex items-center gap-1.5 rounded-full bg-teal/10 px-3 py-1.5 text-xs font-semibold text-teal hover:bg-teal/20"
@@ -115,18 +117,27 @@ export function MediaEditor({
                   <p className="line-clamp-1 text-[11px] font-medium text-white">
                     {entry.title}
                   </p>
-                  <div className="flex shrink-0 gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                  <div
+                    className={
+                      locked
+                        ? "flex shrink-0 gap-0.5"
+                        : "flex shrink-0 gap-0.5 opacity-0 transition-opacity group-hover:opacity-100"
+                    }
+                  >
+                    {!locked && (
                     <button
                       onClick={() => setEditingId(entry.id)}
-                      className="flex h-6 w-6 items-center justify-center rounded bg-white/90 text-navy hover:bg-white"
+                      className="flex h-6 w-6 items-center justify-center rounded bg-white/90 text-navy dark:text-white hover:bg-white dark:bg-offwhite"
                       aria-label="Edit"
                     >
                       <Pencil className="h-3 w-3" />
                     </button>
+                    )}
+                    {!locked && (
                     <button
                       onClick={() => handleDelete(entry.id)}
                       disabled={pending && deletingId === entry.id}
-                      className="flex h-6 w-6 items-center justify-center rounded bg-white/90 text-red-600 hover:bg-white disabled:opacity-50"
+                      className="flex h-6 w-6 items-center justify-center rounded bg-white/90 text-red-600 hover:bg-white dark:bg-offwhite disabled:opacity-50"
                       aria-label="Delete"
                     >
                       {pending && deletingId === entry.id ? (
@@ -135,6 +146,7 @@ export function MediaEditor({
                         <Trash2 className="h-3 w-3" />
                       )}
                     </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -193,7 +205,7 @@ function MediaForm({
         <p className="text-xs font-semibold uppercase tracking-wide text-teal">
           {entry ? "Edit Media" : "New Media"}
         </p>
-        <button type="button" onClick={onCancel} className="text-slate hover:text-navy">
+        <button type="button" onClick={onCancel} className="text-slate hover:text-navy dark:hover:text-white">
           <X className="h-4 w-4" />
         </button>
       </div>
@@ -210,7 +222,7 @@ function MediaForm({
             name="media_type"
             value={mediaType}
             onChange={(e) => setMediaType(e.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-mist bg-white px-3 py-2 text-sm text-ink focus:border-teal focus:outline-none"
+            className="mt-1.5 w-full rounded-lg border border-mist bg-white dark:bg-offwhite px-3 py-2 text-sm text-ink focus:border-teal focus:outline-none"
           >
             {MEDIA_TYPES.map((t) => (
               <option key={t.value} value={t.value}>

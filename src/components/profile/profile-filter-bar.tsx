@@ -34,7 +34,7 @@ export function ProfileFilterBar({
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-mist bg-white p-4 sm:flex-row sm:items-center">
+    <div className="flex flex-col gap-3 rounded-2xl border border-mist bg-white dark:bg-offwhite p-4 sm:flex-row sm:items-center">
       <form onSubmit={onSearchSubmit} className="flex flex-1 items-center gap-2">
         <Search className="h-4 w-4 shrink-0 text-slate" />
         <input
@@ -49,7 +49,7 @@ export function ProfileFilterBar({
         <select
           value={searchParams.get("category") ?? ""}
           onChange={(e) => updateParam("category", e.target.value)}
-          className="rounded-xl border border-mist bg-white px-3 py-2 text-sm text-navy focus:border-teal focus:outline-none"
+          className="rounded-xl border border-mist bg-white dark:bg-offwhite px-3 py-2 text-sm text-navy dark:text-white focus:border-teal focus:outline-none"
         >
           <option value="">All Categories</option>
           {categories.map((c) => (
@@ -63,7 +63,7 @@ export function ProfileFilterBar({
       <select
         value={searchParams.get("country") ?? ""}
         onChange={(e) => updateParam("country", e.target.value)}
-        className="rounded-xl border border-mist bg-white px-3 py-2 text-sm text-navy focus:border-teal focus:outline-none"
+        className="rounded-xl border border-mist bg-white dark:bg-offwhite px-3 py-2 text-sm text-navy dark:text-white focus:border-teal focus:outline-none"
       >
         <option value="">All Countries</option>
         {countries.map((c) => (
@@ -76,7 +76,7 @@ export function ProfileFilterBar({
       <select
         value={searchParams.get("verification") ?? ""}
         onChange={(e) => updateParam("verification", e.target.value)}
-        className="rounded-xl border border-mist bg-white px-3 py-2 text-sm text-navy focus:border-teal focus:outline-none"
+        className="rounded-xl border border-mist bg-white dark:bg-offwhite px-3 py-2 text-sm text-navy dark:text-white focus:border-teal focus:outline-none"
       >
         <option value="">Any Status</option>
         <option value="verified">Verified</option>
@@ -87,7 +87,7 @@ export function ProfileFilterBar({
       <select
         value={searchParams.get("sort") ?? ""}
         onChange={(e) => updateParam("sort", e.target.value)}
-        className="rounded-xl border border-mist bg-white px-3 py-2 text-sm text-navy focus:border-teal focus:outline-none"
+        className="rounded-xl border border-mist bg-white dark:bg-offwhite px-3 py-2 text-sm text-navy dark:text-white focus:border-teal focus:outline-none"
       >
         <option value="">Most Viewed</option>
         <option value="recent">Newest</option>

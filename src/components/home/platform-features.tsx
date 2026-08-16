@@ -46,7 +46,7 @@ export function PlatformFeatures() {
         <SectionLabel className="mx-auto justify-center">
           Platform Features
         </SectionLabel>
-        <h2 className="mt-3 font-heading text-3xl font-bold text-navy sm:text-4xl">
+        <h2 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
           Everything a Digital Legacy Needs
         </h2>
         <p className="mt-3 text-slate">
@@ -68,7 +68,7 @@ export function PlatformFeatures() {
               <span className="font-accent text-[10px] font-semibold text-gold">
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <p className="text-sm font-semibold leading-snug text-navy">
+              <p className="text-sm font-semibold leading-snug text-navy dark:text-white">
                 {title}
               </p>
             </div>

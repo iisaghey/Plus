@@ -26,10 +26,10 @@ export function StaffDraftForm({
   }
 
   return (
-    <div className="w-full max-w-xs rounded-xl border border-mist bg-white p-4 shadow-lg">
+    <div className="w-full max-w-xs rounded-xl border border-mist bg-white dark:bg-offwhite p-4 shadow-lg">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold text-navy">New Profile Draft</p>
-        <button onClick={() => setOpen(false)} className="text-slate hover:text-navy">
+        <p className="text-xs font-semibold text-navy dark:text-white">New Profile Draft</p>
+        <button onClick={() => setOpen(false)} className="text-slate hover:text-navy dark:hover:text-white">
           <X className="h-3.5 w-3.5" />
         </button>
       </div>
