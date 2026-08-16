@@ -1,6 +1,7 @@
 import { getStaffContext } from "@/lib/auth/staff";
 import { getRolesMatrix } from "@/lib/data/admin";
 import { PermissionMatrix } from "@/components/admin/permission-matrix";
+import { DeletePermissionSummary } from "@/components/admin/delete-permission-summary";
 
 export default async function AdminRolesPage() {
   const { role } = await getStaffContext();
@@ -17,6 +18,10 @@ export default async function AdminRolesPage() {
           ? "Edit the permission matrix directly — changes apply immediately across the platform."
           : "Admins have read-only access to the permission matrix; only Super Admin can edit it."}
       </p>
+
+      <div className="mt-8">
+        <DeletePermissionSummary roles={roles} rolePermissions={rolePermissions} />
+      </div>
 
       <div className="mt-8">
         <PermissionMatrix
