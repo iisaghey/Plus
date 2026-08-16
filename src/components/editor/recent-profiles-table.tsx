@@ -57,7 +57,7 @@ export function RecentProfilesTable({
                             alt={p.full_name}
                             width={40}
                             height={40}
-                            className="h-full w-full object-cover"
+                            className="h-full w-full object-contain"
                           />
                         )}
                       </div>

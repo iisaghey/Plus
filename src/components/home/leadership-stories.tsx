@@ -56,7 +56,7 @@ export async function LeadershipStories() {
                         alt={profile.full_name}
                         width={44}
                         height={44}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-contain"
                       />
                     )}
                   </div>

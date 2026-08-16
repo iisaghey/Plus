@@ -107,7 +107,7 @@ export function EditPermissionRequestRow({ request }: { request: EditRequestRowD
                 alt={request.profile_name}
                 width={44}
                 height={44}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
               />
             )}
           </div>

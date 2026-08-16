@@ -177,14 +177,14 @@ export default async function DashboardPage() {
           <div className="rounded-2xl border border-mist p-6">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="h-16 w-16 overflow-hidden rounded-2xl bg-mist">
+                <div className="h-16 w-16 overflow-hidden rounded-2xl bg-mist p-1">
                   {profile.photo_url && (
                     <Image
                       src={profile.photo_url}
                       alt={profile.full_name}
                       width={64}
                       height={64}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-contain"
                     />
                   )}
                 </div>

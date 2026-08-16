@@ -17,14 +17,14 @@ export function EditorHeader({
   return (
     <div className="flex flex-col gap-4 rounded-2xl border border-mist bg-white dark:bg-offwhite p-6 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-4">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-mist">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-mist p-1">
           {photoUrl ? (
             <Image
               src={photoUrl}
               alt={name}
               width={64}
               height={64}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain"
             />
           ) : (
             <span className="font-heading text-xl font-bold text-slate">
