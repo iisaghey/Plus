@@ -28,7 +28,30 @@ const COMPLETION_FIELDS = [
   "photo_url",
 ] as const;
 
-const STAFF_ROLES = ["super_admin", "admin", "editor", "verifier"];
+const STAFF_ROLES = ["super_admin", "admin", "editor", "staff"];
+
+const PANEL_BY_ROLE: Record<string, { href: string; label: string; description: string }> = {
+  super_admin: {
+    href: "/admin",
+    label: "Admin Panel",
+    description: "Manage staff, editors, verification, and platform settings.",
+  },
+  admin: {
+    href: "/admin",
+    label: "Admin Panel",
+    description: "Review account approvals and profile verifications.",
+  },
+  editor: {
+    href: "/editor",
+    label: "Editor Panel",
+    description: "Review submitted profiles and manage content.",
+  },
+  staff: {
+    href: "/staff",
+    label: "Staff Panel",
+    description: "Build profile drafts and track your assigned tasks.",
+  },
+};
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -48,6 +71,7 @@ export default async function DashboardPage() {
 
   const isStaff = Boolean(userRole && STAFF_ROLES.includes(userRole.role));
   const accountStatus = userRole?.account_status ?? "pending";
+  const panel = userRole ? PANEL_BY_ROLE[userRole.role] : undefined;
 
   const completion = profile
     ? Math.round(
@@ -75,18 +99,16 @@ export default async function DashboardPage() {
         <SignOutButton />
       </div>
 
-      {isStaff && (
+      {isStaff && panel && (
         <Link
-          href="/admin"
+          href={panel.href}
           className="mt-6 flex items-center justify-between rounded-2xl border border-teal/30 bg-teal/5 p-4 transition-colors hover:bg-teal/10"
         >
           <div className="flex items-center gap-3">
             <LayoutDashboard className="h-5 w-5 text-teal" />
             <div>
-              <p className="text-sm font-semibold text-navy dark:text-white">Staff Panel</p>
-              <p className="text-xs text-slate">
-                Review account approvals and profile verifications.
-              </p>
+              <p className="text-sm font-semibold text-navy dark:text-white">{panel.label}</p>
+              <p className="text-xs text-slate">{panel.description}</p>
             </div>
           </div>
           <span className="text-xs font-semibold text-teal">Open →</span>
