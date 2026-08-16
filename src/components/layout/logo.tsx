@@ -6,12 +6,12 @@ export function Logo({ light, className }: { light?: boolean; className?: string
   return (
     <Link href="/" className={cn("flex items-center gap-2.5 shrink-0", className)}>
       <Image
-        src="/logo.jpg"
+        src="/logo.png"
         alt="AqoonsiPlus"
         width={34}
         height={34}
         priority
-        className="h-[34px] w-[34px] rounded-[9px] object-cover"
+        className="h-[34px] w-[34px] object-contain"
       />
       <span
         className={cn(
