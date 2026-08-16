@@ -125,12 +125,16 @@ h6 {
 }
 
 /* Native form controls don't inherit Tailwind's neutral tokens, so they need
-   an explicit dark surface or they'd stay white behind now-light text. */
-.dark input,
-.dark textarea,
-.dark select {
-  background-color: var(--color-offwhite);
-  color: var(--color-ink);
+   an explicit dark surface or they'd stay white behind now-light text. Lives
+   in @layer base so any component's own bg/text utility (e.g. a fixed-light
+   search bar meant to look the same in both themes) still wins the cascade. */
+@layer base {
+  .dark input,
+  .dark textarea,
+  .dark select {
+    background-color: var(--color-offwhite);
+    color: var(--color-ink);
+  }
 }
 
 .bg-grid-pattern {
