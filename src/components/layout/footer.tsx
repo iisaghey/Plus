@@ -2,9 +2,8 @@ import Link from "next/link";
 import { Logo } from "./logo";
 import {
   FacebookIcon,
-  LinkedinIcon,
   TwitterIcon,
-  YoutubeIcon,
+  TikTokIcon,
 } from "@/components/ui/social-icons";
 
 const COLUMNS = [
@@ -35,10 +34,17 @@ const COLUMNS = [
 ];
 
 const SOCIALS = [
-  { href: "#", label: "Facebook", icon: FacebookIcon },
-  { href: "#", label: "LinkedIn", icon: LinkedinIcon },
-  { href: "#", label: "Twitter / X", icon: TwitterIcon },
-  { href: "#", label: "YouTube", icon: YoutubeIcon },
+  {
+    href: "https://www.facebook.com/share/19RPR1MFj3/?mibextid=wwXIfr",
+    label: "Facebook",
+    icon: FacebookIcon,
+  },
+  { href: "https://x.com/aqoonsiplus", label: "Twitter / X", icon: TwitterIcon },
+  {
+    href: "https://www.tiktok.com/@aqoonsiplus?is_from_webapp=1&sender_device=pc",
+    label: "TikTok",
+    icon: TikTokIcon,
+  },
 ];
 
 export function Footer() {
@@ -60,6 +66,8 @@ export function Footer() {
                 <Link
                   key={label}
                   href={href}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
                   aria-label={label}
                   className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-sky/40 hover:text-sky"
                 >

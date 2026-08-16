@@ -31,3 +31,11 @@ export function YoutubeIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function TikTokIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M16.6 3h-3.2v12.3a2.7 2.7 0 1 1-2.1-2.63V9.4a5.9 5.9 0 1 0 5.3 5.87V9.03a7.5 7.5 0 0 0 4.4 1.4V7.2a4.3 4.3 0 0 1-4.4-4.2Z" />
+    </svg>
+  );
+}
