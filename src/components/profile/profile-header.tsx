@@ -11,7 +11,13 @@ type ProfileWithRelations = Tables<"profiles"> & {
   categories: { id: string; name: string; slug: string } | null;
 };
 
-export function ProfileHeader({ profile }: { profile: ProfileWithRelations }) {
+export function ProfileHeader({
+  profile,
+  isSuperAdmin,
+}: {
+  profile: ProfileWithRelations;
+  isSuperAdmin: boolean;
+}) {
   const social = (profile.social_links ?? {}) as Record<string, string>;
   const isVerified = profile.verification_status === "verified";
 
@@ -116,7 +122,11 @@ export function ProfileHeader({ profile }: { profile: ProfileWithRelations }) {
                 <Globe className="h-4 w-4" />
               </a>
             )}
-            <ProfileQrCode slug={profile.slug} fullName={profile.full_name} />
+            <ProfileQrCode
+              slug={profile.slug}
+              fullName={profile.full_name}
+              isSuperAdmin={isSuperAdmin}
+            />
             <ShareButton slug={profile.slug} fullName={profile.full_name} />
             {profile.email && (
               <a

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProfileBySlug } from "@/lib/data/profiles";
+import { getStaffContext } from "@/lib/auth/staff";
 import { ProfileHeader } from "@/components/profile/profile-header";
 import { ProfileTabs } from "@/components/profile/profile-tabs";
 
@@ -33,7 +34,10 @@ export default async function ProfilePage(
   props: PageProps<"/profile/[slug]">
 ) {
   const { slug } = await props.params;
-  const data = await getProfileBySlug(slug);
+  const [data, { role }] = await Promise.all([
+    getProfileBySlug(slug),
+    getStaffContext(),
+  ]);
   if (!data) notFound();
 
   const {
@@ -51,7 +55,7 @@ export default async function ProfilePage(
 
   return (
     <div className="bg-white dark:bg-offwhite">
-      <ProfileHeader profile={profile} />
+      <ProfileHeader profile={profile} isSuperAdmin={role === "super_admin"} />
       <ProfileTabs
         bio={biography ?? null}
         shortBio={profile.short_bio}
