@@ -12,7 +12,8 @@ import { ActivitiesEditor } from "@/components/profile/activities-editor";
 import { TravelEditor } from "@/components/profile/travel-editor";
 import { SpeechesEditor } from "@/components/profile/speeches-editor";
 import { isEditableByOwner } from "@/lib/workflow";
-import { Lock } from "lucide-react";
+import { Lock, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 const STAFF_ROLES = ["super_admin", "admin", "editor", "staff"];
 const UNRESTRICTED_ROLES = ["super_admin", "admin", "editor"];
@@ -131,7 +132,14 @@ export default async function DashboardProfilePage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
-      <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate transition-colors hover:text-teal"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to Dashboard
+      </Link>
+      <h1 className="mt-4 font-heading text-2xl font-bold text-navy dark:text-white">
         {profile ? "Edit Your Profile" : "Create Your Profile"}
       </h1>
       <p className="mt-2 text-sm text-slate">
@@ -180,6 +188,16 @@ export default async function DashboardProfilePage() {
           <SpeechesEditor profileId={profile.id} entries={speeches ?? []} locked={locked} />
           <MediaEditor profileId={profile.id} entries={media ?? []} locked={locked} />
           <DocumentsEditor profileId={profile.id} entries={documents ?? []} locked={locked} />
+
+          <div className="pt-2">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-slate transition-colors hover:text-teal"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Dashboard
+            </Link>
+          </div>
         </div>
       )}
     </div>
