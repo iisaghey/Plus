@@ -21,7 +21,7 @@ export function ProfileCard({ profile }: { profile: ProfileCardData }) {
         <div className="absolute inset-0 bg-grid-pattern opacity-30" />
       </div>
       <div className="flex flex-1 flex-col px-5 pb-5">
-        <div className="-mt-10 mb-3 flex items-end justify-between">
+        <div className="relative z-10 -mt-10 mb-3 flex items-end justify-between">
           <div className="h-20 w-20 overflow-hidden rounded-2xl border-4 border-white bg-mist shadow-md">
             {profile.photo_url ? (
               <Image
