@@ -259,10 +259,7 @@ export default function AboutPage() {
 
       <section className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
         <Reveal className="text-center">
-          <SectionLabel className="mx-auto justify-center">
-            Leadership
-          </SectionLabel>
-          <h2 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white">
+          <h2 className="font-heading text-3xl font-bold text-navy dark:text-white">
             Our Team
           </h2>
         </Reveal>
