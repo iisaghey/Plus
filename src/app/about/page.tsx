@@ -280,7 +280,7 @@ export default function AboutPage() {
                   alt={member.name}
                   width={112}
                   height={112}
-                  className="h-full w-full object-contain"
+                  className="h-full w-full object-cover"
                 />
               </div>
               <h3 className="mt-4 font-heading text-lg font-bold text-navy dark:text-white">
