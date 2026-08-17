@@ -15,6 +15,7 @@ export function ImageUploadField({
   bucket,
   profileId,
   shape = "square",
+  onUploaded,
 }: {
   name: string;
   label: string;
@@ -22,6 +23,7 @@ export function ImageUploadField({
   bucket: string;
   profileId: string;
   shape?: "square" | "wide";
+  onUploaded?: (url: string) => void;
 }) {
   const [url, setUrl] = useState(defaultValue ?? "");
   const [uploading, setUploading] = useState(false);
@@ -44,6 +46,7 @@ export function ImageUploadField({
     try {
       const { url: publicUrl } = await uploadPublicFile(bucket, profileId, file);
       setUrl(publicUrl);
+      onUploaded?.(publicUrl);
       toast.success("Image uploaded");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Upload failed");
@@ -92,7 +95,10 @@ export function ImageUploadField({
           {url && !uploading && (
             <button
               type="button"
-              onClick={() => setUrl("")}
+              onClick={() => {
+                setUrl("");
+                onUploaded?.("");
+              }}
               className="flex items-center gap-1 text-xs text-slate hover:text-red-600"
             >
               <X className="h-3 w-3" />

@@ -191,6 +191,7 @@ export async function createStaffDraft(
 
   const values = readFields(formData);
   if (!values.full_name) return { error: "Full name is required." };
+  if (!values.photo_url) return { error: "A profile photo is required." };
 
   const slug = await uniqueSlug(supabase, values.full_name);
 
