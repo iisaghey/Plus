@@ -75,7 +75,7 @@ export default async function StaffDashboardPage() {
               className="flex items-center justify-between gap-4 rounded-xl border border-mist p-4 hover:border-teal/30 hover:bg-offwhite"
             >
               <div className="flex min-w-0 items-center gap-3">
-                <div className="h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-mist p-1">
+                <div className="h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-mist">
                   {p.photo_url && (
                     <Image src={p.photo_url} alt={p.full_name} width={44} height={44} className="h-full w-full object-contain" />
                   )}

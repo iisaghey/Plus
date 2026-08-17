@@ -50,7 +50,7 @@ export function RecentProfilesTable({
                 <tr key={p.id} className="border-b border-mist last:border-0">
                   <td className="py-3 pr-4">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full bg-mist p-1">
+                      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full bg-mist">
                         {p.photo_url && (
                           <Image
                             src={p.photo_url}

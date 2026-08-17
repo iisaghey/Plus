@@ -274,7 +274,7 @@ export default function AboutPage() {
               hoverLift
               className="w-full max-w-xs rounded-2xl border border-mist bg-white dark:bg-offwhite p-8 text-center"
             >
-              <div className="mx-auto h-28 w-28 overflow-hidden rounded-full bg-mist p-2.5 ring-4 ring-teal/10">
+              <div className="mx-auto h-28 w-28 overflow-hidden rounded-full bg-mist ring-4 ring-teal/10">
                 <Image
                   src={member.photo}
                   alt={member.name}

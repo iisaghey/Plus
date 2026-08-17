@@ -41,7 +41,7 @@ export function EditorDecisionRow({
     <div className="rounded-xl border border-mist p-4">
       <div className="flex items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-mist p-1">
+          <div className="h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-mist">
             {photoUrl && (
               <Image src={photoUrl} alt={fullName} width={44} height={44} className="h-full w-full object-contain" />
             )}

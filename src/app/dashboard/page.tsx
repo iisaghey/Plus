@@ -177,7 +177,7 @@ export default async function DashboardPage() {
           <div className="rounded-2xl border border-mist p-6">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="h-16 w-16 overflow-hidden rounded-2xl bg-mist p-2">
+                <div className="h-16 w-16 overflow-hidden rounded-2xl bg-mist">
                   {profile.photo_url && (
                     <Image
                       src={profile.photo_url}

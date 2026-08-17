@@ -86,7 +86,7 @@ export default async function AdminAllProfilesPage(
                 <tr key={p.id}>
                   <td className="px-4 py-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full bg-mist p-1">
+                      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full bg-mist">
                         {p.photo_url && (
                           <Image
                             src={p.photo_url}

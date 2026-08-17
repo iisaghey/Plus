@@ -39,7 +39,7 @@ export function ProfileHeader({
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative -mt-16 flex flex-col gap-6 sm:-mt-20 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-            <div className="h-32 w-32 shrink-0 overflow-hidden rounded-3xl border-4 border-white bg-mist p-3 shadow-xl sm:h-40 sm:w-40">
+            <div className="h-32 w-32 shrink-0 overflow-hidden rounded-3xl border-4 border-white bg-mist shadow-xl sm:h-40 sm:w-40">
               {profile.photo_url && (
                 <Image
                   src={profile.photo_url}

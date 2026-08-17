@@ -52,7 +52,7 @@ export async function LeadershipStories() {
                   {bio.summary}
                 </p>
                 <div className="mt-6 flex items-center gap-3 border-t border-white/10 pt-4">
-                  <div className="h-11 w-11 overflow-hidden rounded-full bg-white/10 p-1">
+                  <div className="h-11 w-11 overflow-hidden rounded-full bg-white/10">
                     {profile.photo_url && (
                       <Image
                         src={profile.photo_url}
