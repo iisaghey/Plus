@@ -2,10 +2,24 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 
-export function Logo({ light, className }: { light?: boolean; className?: string }) {
+export function Logo({
+  light,
+  surface = "light",
+  className,
+}: {
+  light?: boolean;
+  /** Badge treatment — use "dark" when the surrounding background is already navy/dark, so the icon still contrasts. */
+  surface?: "light" | "dark";
+  className?: string;
+}) {
   return (
     <Link href="/" className={cn("flex items-center gap-2.5 shrink-0", className)}>
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-navy p-1.5 shadow-sm ring-1 ring-white/10">
+      <span
+        className={cn(
+          "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl p-1.5 shadow-sm",
+          surface === "dark" ? "bg-white/10 ring-1 ring-white/15" : "bg-navy ring-1 ring-white/10"
+        )}
+      >
         <Image
           src="/logo.png"
           alt="AqoonsiPlus"

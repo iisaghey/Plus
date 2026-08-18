@@ -146,6 +146,7 @@ export async function getAllProfilesForAssignment() {
 export type ProfileLifecycleFilter =
   | "all"
   | "published"
+  | "verified"
   | "draft"
   | "hidden"
   | "archived"
@@ -167,6 +168,9 @@ export async function getAllProfilesForSuperAdmin(
   switch (filter) {
     case "published":
       query = query.eq("workflow_status", "published").is("deleted_at", null);
+      break;
+    case "verified":
+      query = query.eq("verification_status", "verified").is("deleted_at", null);
       break;
     case "draft":
       query = query

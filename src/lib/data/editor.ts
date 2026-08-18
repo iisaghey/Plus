@@ -116,7 +116,12 @@ export async function searchEditorProfiles({
       `full_name.ilike.%${safe}%,current_position.ilike.%${safe}%`
     );
   }
-  if (status) {
+  if (status === "incomplete") {
+    // Not yet published, and still missing one of the core identity fields.
+    query = query
+      .neq("workflow_status", "published")
+      .or("photo_url.is.null,category_id.is.null,current_position.is.null");
+  } else if (status) {
     query = query.eq(
       "workflow_status",
       status as Enums<"profile_workflow_status">

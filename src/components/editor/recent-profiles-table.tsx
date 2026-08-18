@@ -1,7 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Eye, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { ActionIconButton } from "@/components/dashboard/action-icon-button";
+import { DataTable, DataTableHead, DataTableBody, EmptyRow } from "@/components/dashboard/data-table";
 import { WORKFLOW_STATUS_VARIANT, workflowStatusLabel } from "@/lib/workflow";
 import type { Enums } from "@/types/database.types";
 
@@ -29,26 +30,22 @@ export function RecentProfilesTable({
         {title}
       </h2>
 
-      {profiles.length === 0 ? (
-        <p className="mt-6 py-8 text-center text-sm text-slate">
-          No profiles yet.
-        </p>
-      ) : (
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full min-w-[720px] border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-mist text-left text-[11px] font-semibold uppercase tracking-wide text-slate">
-                <th className="pb-2 pr-4 font-semibold">Profile</th>
-                <th className="pb-2 pr-4 font-semibold">Organization</th>
-                <th className="pb-2 pr-4 font-semibold">Status</th>
-                <th className="pb-2 pr-4 font-semibold">Last Updated</th>
-                <th className="pb-2 font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {profiles.map((p) => (
-                <tr key={p.id} className="border-b border-mist last:border-0">
-                  <td className="py-3 pr-4">
+      <div className="mt-4">
+        <DataTable minWidth={720}>
+          <DataTableHead>
+            <th className="px-4 py-3">Profile</th>
+            <th className="px-4 py-3">Organization</th>
+            <th className="px-4 py-3">Status</th>
+            <th className="px-4 py-3">Last Updated</th>
+            <th className="px-4 py-3 text-right">Actions</th>
+          </DataTableHead>
+          <DataTableBody>
+            {profiles.length === 0 ? (
+              <EmptyRow colSpan={5}>No profiles yet.</EmptyRow>
+            ) : (
+              profiles.map((p) => (
+                <tr key={p.id}>
+                  <td className="px-4 py-3">
                     <div className="flex min-w-0 items-center gap-3">
                       <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full bg-mist">
                         {p.photo_url && (
@@ -71,45 +68,40 @@ export function RecentProfilesTable({
                       </div>
                     </div>
                   </td>
-                  <td className="py-3 pr-4 text-xs text-slate">
+                  <td className="px-4 py-3 text-xs text-slate">
                     {p.organization_name ?? "—"}
                   </td>
-                  <td className="py-3 pr-4">
-                    <Badge
-                      variant={WORKFLOW_STATUS_VARIANT[p.workflow_status]}
-                      size="sm"
-                    >
+                  <td className="px-4 py-3">
+                    <Badge variant={WORKFLOW_STATUS_VARIANT[p.workflow_status]} size="sm">
                       {workflowStatusLabel(p.workflow_status)}
                     </Badge>
                   </td>
-                  <td className="py-3 pr-4 text-xs text-slate">
+                  <td className="px-4 py-3 text-xs text-slate">
                     {new Date(p.updated_at).toLocaleDateString()}
                   </td>
-                  <td className="py-3">
-                    <div className="flex items-center gap-1">
-                      <Link
+                  <td className="px-4 py-3">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <ActionIconButton
+                        icon={Eye}
+                        label="View public profile"
+                        tone="sky"
                         href={`/profile/${p.slug}`}
-                        target="_blank"
-                        aria-label="View public profile"
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-offwhite hover:text-navy dark:hover:text-white"
-                      >
-                        <Eye className="h-3.5 w-3.5" />
-                      </Link>
-                      <Link
+                        newTab
+                      />
+                      <ActionIconButton
+                        icon={Pencil}
+                        label="Edit profile"
+                        tone="teal"
                         href={`/editor/profiles/${p.id}`}
-                        aria-label="Edit profile"
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-offwhite hover:text-navy dark:hover:text-white"
-                      >
-                        <Pencil className="h-3.5 w-3.5" />
-                      </Link>
+                      />
                     </div>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              ))
+            )}
+          </DataTableBody>
+        </DataTable>
+      </div>
     </div>
   );
 }

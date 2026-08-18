@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 import { getStaffContext } from "@/lib/auth/staff";
 import {
@@ -8,8 +7,10 @@ import {
   type ProfileLifecycleFilter,
 } from "@/lib/data/admin";
 import { ProfileActionsMenu } from "@/components/admin/profile-actions-menu";
+import { SectionHeader } from "@/components/dashboard/section-header";
+import { DataTable, DataTableHead, DataTableBody, EmptyRow } from "@/components/dashboard/data-table";
+import { Pagination } from "@/components/dashboard/pagination";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import { WORKFLOW_STATUS_VARIANT, workflowStatusLabel } from "@/lib/workflow";
 
 export const metadata: Metadata = { title: "All Profiles" };
@@ -17,6 +18,7 @@ export const metadata: Metadata = { title: "All Profiles" };
 const TABS: { key: ProfileLifecycleFilter; label: string }[] = [
   { key: "all", label: "All" },
   { key: "published", label: "Published" },
+  { key: "verified", label: "Verified" },
   { key: "draft", label: "Draft" },
   { key: "hidden", label: "Hidden" },
   { key: "archived", label: "Archived" },
@@ -40,48 +42,43 @@ export default async function AdminAllProfilesPage(
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">
-        All Profiles
-      </h1>
-      <p className="mt-1 text-sm text-slate">
-        Complete lifecycle control over every profile on the platform.
-        {!isSuperAdmin && " Permanently deleting a profile requires Super Admin."}
-      </p>
+      <SectionHeader
+        title="All Profiles"
+        subtitle={
+          isSuperAdmin
+            ? "Complete lifecycle control over every profile on the platform."
+            : "Complete lifecycle control over every profile on the platform. Permanently deleting a profile requires Super Admin."
+        }
+        tabs={TABS.map((tab) => ({
+          key: tab.key,
+          label: tab.label,
+          href: tab.key === "all" ? "/admin/profiles" : `/admin/profiles?filter=${tab.key}`,
+        }))}
+        activeTabKey={filter}
+      />
 
-      <div className="mt-6 flex flex-wrap gap-1 border-b border-mist">
-        {TABS.map((tab) => (
-          <Link
-            key={tab.key}
-            href={tab.key === "all" ? "/admin/profiles" : `/admin/profiles?filter=${tab.key}`}
-            className={cn(
-              "rounded-t-lg px-4 py-2 text-sm font-medium transition-colors",
-              filter === tab.key
-                ? "border-b-2 border-teal text-teal"
-                : "text-slate hover:text-navy dark:hover:text-white"
-            )}
-          >
-            {tab.label}
-          </Link>
-        ))}
-      </div>
-
-      <div className="mt-6 overflow-x-auto rounded-2xl border border-mist">
-        <table className="w-full min-w-[860px] text-left text-sm">
-          <thead className="bg-offwhite text-xs font-semibold uppercase tracking-wide text-slate">
-            <tr>
-              <th className="px-4 py-3">Profile</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Last Updated</th>
-              <th className="px-4 py-3 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-mist">
+      <div className="mt-6">
+        <DataTable
+          footer={
+            <Pagination
+              page={1}
+              pageCount={1}
+              total={profiles.length}
+              buildHref={() =>
+                filter === "all" ? "/admin/profiles" : `/admin/profiles?filter=${filter}`
+              }
+            />
+          }
+        >
+          <DataTableHead>
+            <th className="px-4 py-3">Profile</th>
+            <th className="px-4 py-3">Status</th>
+            <th className="px-4 py-3">Last Updated</th>
+            <th className="px-4 py-3 text-right">Actions</th>
+          </DataTableHead>
+          <DataTableBody>
             {profiles.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-4 py-12 text-center text-slate">
-                  No profiles in this view.
-                </td>
-              </tr>
+              <EmptyRow colSpan={4}>No profiles in this view.</EmptyRow>
             ) : (
               profiles.map((p) => (
                 <tr key={p.id}>
@@ -117,7 +114,7 @@ export default async function AdminAllProfilesPage(
                         <Badge variant="verified" size="sm">Verified</Badge>
                       )}
                       {p.hidden_at && (
-                        <Badge variant="pending" size="sm">Hidden by Super Admin</Badge>
+                        <Badge variant="pending" size="sm">Hidden</Badge>
                       )}
                       {p.status === "archived" && (
                         <Badge variant="neutral" size="sm">Archived</Badge>
@@ -147,8 +144,8 @@ export default async function AdminAllProfilesPage(
                 </tr>
               ))
             )}
-          </tbody>
-        </table>
+          </DataTableBody>
+        </DataTable>
       </div>
     </div>
   );

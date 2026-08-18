@@ -5,6 +5,7 @@ import {
 } from "@/lib/data/admin";
 import { AdminReviewRow } from "@/components/admin/admin-review-row";
 import { PublishedEditReviewRow } from "@/components/admin/published-edit-review-row";
+import { SectionHeader } from "@/components/dashboard/section-header";
 
 export default async function AdminReviewPage() {
   const [reviewQueue, publishable, pendingPublishedEdits] = await Promise.all([
@@ -15,13 +16,10 @@ export default async function AdminReviewPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">
-        Content Review
-      </h1>
-      <p className="mt-1 text-sm text-slate">
-        Editor-approved profiles awaiting your final decision, and
-        approved/verified profiles ready to publish.
-      </p>
+      <SectionHeader
+        title="Review & Approval"
+        subtitle="Editor-approved profiles awaiting your final decision, and approved/verified profiles ready to publish."
+      />
 
       <div className="mt-8">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-slate">

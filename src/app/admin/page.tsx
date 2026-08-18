@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Users, ShieldCheck, Clock, UserCheck, Building2 } from "lucide-react";
 import { getAdminStats } from "@/lib/data/admin";
 import { StatCard } from "@/components/dashboard/stat-card";
+import { SectionHeader } from "@/components/dashboard/section-header";
 import { StaggerGrid, StaggerItem } from "@/components/motion/stagger-grid";
 
 export const metadata: Metadata = { title: "Admin Overview" };
@@ -19,10 +20,7 @@ export default async function AdminOverviewPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">Overview</h1>
-      <p className="mt-1 text-sm text-slate">
-        Platform-wide statistics at a glance.
-      </p>
+      <SectionHeader title="Overview" subtitle="Platform-wide statistics at a glance." />
 
       <StaggerGrid className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map(({ label, value, icon, accent }) => (

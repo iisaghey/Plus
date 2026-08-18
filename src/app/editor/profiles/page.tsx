@@ -1,6 +1,7 @@
 import { Search } from "lucide-react";
 import { searchEditorProfiles } from "@/lib/data/editor";
 import { RecentProfilesTable } from "@/components/editor/recent-profiles-table";
+import { SectionHeader } from "@/components/dashboard/section-header";
 import { StaffDraftForm } from "@/components/dashboard/staff-draft-form";
 import { createStaffDraft } from "@/lib/actions/profile";
 
@@ -8,6 +9,7 @@ const STATUS_OPTIONS = [
   { value: "", label: "All Statuses" },
   { value: "draft", label: "Draft" },
   { value: "in_progress", label: "In Progress" },
+  { value: "incomplete", label: "Incomplete" },
   { value: "submitted", label: "Submitted" },
   { value: "changes_required", label: "Changes Required" },
   { value: "editor_approved", label: "Editor Approved" },
@@ -29,17 +31,11 @@ export default async function EditorProfilesPage(
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">
-            Profiles
-          </h1>
-          <p className="mt-1 text-sm text-slate">
-            Search and manage every profile on the platform.
-          </p>
-        </div>
-        <StaffDraftForm action={createStaffDraft} triggerLabel="Create New Profile" />
-      </div>
+      <SectionHeader
+        title="Profiles"
+        subtitle="Search and manage every profile on the platform."
+        actions={<StaffDraftForm action={createStaffDraft} triggerLabel="Create New Profile" />}
+      />
 
       <form className="mt-6 flex flex-wrap items-center gap-3" method="get">
         <div className="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-xl border border-mist bg-white dark:bg-offwhite px-3">

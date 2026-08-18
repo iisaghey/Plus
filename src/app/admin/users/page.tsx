@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getStaffContext } from "@/lib/auth/staff";
 import { getAllUsers } from "@/lib/data/admin";
 import { TeamMemberRow } from "@/components/admin/team-member-row";
+import { SectionHeader } from "@/components/dashboard/section-header";
 import type { Enums } from "@/types/database.types";
 
 const ALL_ROLES: Enums<"app_role">[] = [
@@ -18,23 +19,52 @@ const ALL_ROLES: Enums<"app_role">[] = [
 // option the backend will reject.
 const ADMIN_ASSIGNABLE_ROLES: Enums<"app_role">[] = ["profile_owner", "staff", "editor"];
 
-export default async function AdminUsersPage() {
+const TABS = [
+  { key: "all", label: "All" },
+  { key: "admin", label: "Admins" },
+] as const;
+
+export default async function AdminUsersPage(
+  props: PageProps<"/admin/users">
+) {
   // Defense in depth: gated in the layout too, but a page that changes
   // roles must never rely solely on a hidden nav link.
   const { role } = await getStaffContext();
   if (role !== "super_admin" && role !== "admin") redirect("/admin");
   const isSuperAdmin = role === "super_admin";
 
-  const users = await getAllUsers();
+  const searchParams = await props.searchParams;
+  const rawRole = typeof searchParams.role === "string" ? searchParams.role : "all";
+  const roleFilter: (typeof TABS)[number]["key"] = TABS.some((t) => t.key === rawRole)
+    ? (rawRole as (typeof TABS)[number]["key"])
+    : "all";
+
+  const allUsers = await getAllUsers();
+  const users =
+    roleFilter === "admin"
+      ? allUsers.filter((u) => u.role === "admin" || u.role === "super_admin")
+      : allUsers;
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">Users</h1>
-      <p className="mt-1 text-sm text-slate">
-        Every account on the platform. Changing a role here takes effect
-        immediately.
-        {!isSuperAdmin && " Assigning Admin or Super Admin requires Super Admin."}
-      </p>
+      <SectionHeader
+        title="Users"
+        subtitle={
+          isSuperAdmin
+            ? "Every account on the platform. Changing a role here takes effect immediately."
+            : "Every account on the platform. Assigning Admin or Super Admin requires Super Admin."
+        }
+        tabs={
+          isSuperAdmin
+            ? TABS.map((tab) => ({
+                key: tab.key,
+                label: tab.label,
+                href: tab.key === "all" ? "/admin/users" : `/admin/users?role=${tab.key}`,
+              }))
+            : undefined
+        }
+        activeTabKey={roleFilter}
+      />
 
       <div className="mt-8 space-y-2">
         {users.map((u) => (

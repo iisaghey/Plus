@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { SectionHeader } from "@/components/dashboard/section-header";
+import { DataTable, DataTableHead, DataTableBody, EmptyRow } from "@/components/dashboard/data-table";
 
 const STATUS_KEYS = ["status", "workflow_status", "verification_status"] as const;
 
@@ -60,31 +62,23 @@ export default async function AdminAuditLogsPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">
-        Audit Logs
-      </h1>
-      <p className="mt-1 text-sm text-slate">
-        Every important action, traceable to the person who performed it.
-      </p>
+      <SectionHeader
+        title="Audit Logs"
+        subtitle="Every important action, traceable to the person who performed it."
+      />
 
-      <div className="mt-8 overflow-x-auto rounded-2xl border border-mist">
-        <table className="w-full min-w-[920px] text-left text-sm">
-          <thead className="bg-offwhite text-xs font-semibold uppercase tracking-wide text-slate">
-            <tr>
-              <th className="px-4 py-3">When</th>
-              <th className="px-4 py-3">Actor</th>
-              <th className="px-4 py-3">Action</th>
-              <th className="px-4 py-3">Profile Affected</th>
-              <th className="px-4 py-3">Status Change</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-mist">
+      <div className="mt-8">
+        <DataTable minWidth={920}>
+          <DataTableHead>
+            <th className="px-4 py-3">When</th>
+            <th className="px-4 py-3">Actor</th>
+            <th className="px-4 py-3">Action</th>
+            <th className="px-4 py-3">Profile Affected</th>
+            <th className="px-4 py-3">Status Change</th>
+          </DataTableHead>
+          <DataTableBody>
             {logs.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-slate">
-                  No audit events yet.
-                </td>
-              </tr>
+              <EmptyRow colSpan={5}>No audit events yet.</EmptyRow>
             ) : (
               logs.map((log) => (
                 <tr key={log.id}>
@@ -115,8 +109,8 @@ export default async function AdminAuditLogsPage() {
                 </tr>
               ))
             )}
-          </tbody>
-        </table>
+          </DataTableBody>
+        </DataTable>
       </div>
     </div>
   );

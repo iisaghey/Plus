@@ -5,24 +5,44 @@ import {
 } from "@/lib/data/admin";
 import { TeamMemberRow } from "@/components/admin/team-member-row";
 import { AssignmentRow } from "@/components/admin/assignment-row";
+import { SectionHeader } from "@/components/dashboard/section-header";
 
-export default async function AdminTeamPage() {
+const TABS = [
+  { key: "all", label: "All" },
+  { key: "staff", label: "Staff" },
+  { key: "editor", label: "Editors" },
+] as const;
+
+export default async function AdminTeamPage(
+  props: PageProps<"/admin/team">
+) {
+  const searchParams = await props.searchParams;
+  const rawRole = typeof searchParams.role === "string" ? searchParams.role : "all";
+  const roleFilter: (typeof TABS)[number]["key"] = TABS.some((t) => t.key === rawRole)
+    ? (rawRole as (typeof TABS)[number]["key"])
+    : "all";
+
   const [staff, editors, profiles] = await Promise.all([
     getUsersByRole(["staff"]),
     getUsersByRole(["editor"]),
     getAllProfilesForAssignment(),
   ]);
 
-  const team = [...staff, ...editors];
+  const team =
+    roleFilter === "staff" ? staff : roleFilter === "editor" ? editors : [...staff, ...editors];
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">
-        Staff, Editors & Task Assignment
-      </h1>
-      <p className="mt-1 text-sm text-slate">
-        Manage your team's roles and assign profiles to work on.
-      </p>
+      <SectionHeader
+        title="Staff & Editors"
+        subtitle="Manage your team's roles and assign profiles to work on."
+        tabs={TABS.map((tab) => ({
+          key: tab.key,
+          label: tab.label,
+          href: tab.key === "all" ? "/admin/team" : `/admin/team?role=${tab.key}`,
+        }))}
+        activeTabKey={roleFilter}
+      />
 
       <div className="mt-8">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-slate">
@@ -31,12 +51,12 @@ export default async function AdminTeamPage() {
         <div className="mt-3 space-y-2">
           {team.length === 0 ? (
             <p className="rounded-xl border border-dashed border-mist py-8 text-center text-sm text-slate">
-              No Staff or Editor accounts yet. Promote an approved user's
+              No Staff or Editor accounts yet. Promote an approved user&apos;s
               role from{" "}
               <Link href="/admin/users" className="font-semibold text-teal hover:underline">
                 Users
               </Link>
-              {" "}— they'll appear here once promoted.
+              {" "}— they&apos;ll appear here once promoted.
             </p>
           ) : (
             team.map((t) => (
