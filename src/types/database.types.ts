@@ -374,9 +374,12 @@ export type Database = {
           created_at: string
           created_by: string | null
           document_date: string | null
+          file_name: string | null
+          file_size: number | null
           id: string
           is_private: boolean
           issuing_organization: string | null
+          mime_type: string | null
           profile_id: string
           sort_order: number
           status: Database["public"]["Enums"]["record_status"]
@@ -390,9 +393,12 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           document_date?: string | null
+          file_name?: string | null
+          file_size?: number | null
           id?: string
           is_private?: boolean
           issuing_organization?: string | null
+          mime_type?: string | null
           profile_id: string
           sort_order?: number
           status?: Database["public"]["Enums"]["record_status"]
@@ -406,9 +412,12 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           document_date?: string | null
+          file_name?: string | null
+          file_size?: number | null
           id?: string
           is_private?: boolean
           issuing_organization?: string | null
+          mime_type?: string | null
           profile_id?: string
           sort_order?: number
           status?: Database["public"]["Enums"]["record_status"]
@@ -420,6 +429,65 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "documents_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      education: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          degree: string | null
+          description: string | null
+          end_date: string | null
+          field_of_study: string | null
+          id: string
+          institution: string
+          is_current: boolean
+          profile_id: string
+          sort_order: number
+          start_date: string | null
+          status: Database["public"]["Enums"]["record_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          degree?: string | null
+          description?: string | null
+          end_date?: string | null
+          field_of_study?: string | null
+          id?: string
+          institution: string
+          is_current?: boolean
+          profile_id: string
+          sort_order?: number
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["record_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          degree?: string | null
+          description?: string | null
+          end_date?: string | null
+          field_of_study?: string | null
+          id?: string
+          institution?: string
+          is_current?: boolean
+          profile_id?: string
+          sort_order?: number
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["record_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "education_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -497,9 +565,12 @@ export type Database = {
           created_by: string | null
           event_date: string | null
           external_url: string | null
+          file_name: string | null
+          file_size: number | null
           id: string
           is_featured: boolean
           media_type: string
+          mime_type: string | null
           profile_id: string
           sort_order: number
           status: Database["public"]["Enums"]["record_status"]
@@ -514,9 +585,12 @@ export type Database = {
           created_by?: string | null
           event_date?: string | null
           external_url?: string | null
+          file_name?: string | null
+          file_size?: number | null
           id?: string
           is_featured?: boolean
           media_type?: string
+          mime_type?: string | null
           profile_id: string
           sort_order?: number
           status?: Database["public"]["Enums"]["record_status"]
@@ -531,9 +605,12 @@ export type Database = {
           created_by?: string | null
           event_date?: string | null
           external_url?: string | null
+          file_name?: string | null
+          file_size?: number | null
           id?: string
           is_featured?: boolean
           media_type?: string
+          mime_type?: string | null
           profile_id?: string
           sort_order?: number
           status?: Database["public"]["Enums"]["record_status"]
@@ -1114,6 +1191,53 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      speech_attachments: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          file_name: string | null
+          file_size: number | null
+          file_type: string
+          id: string
+          mime_type: string | null
+          sort_order: number
+          speech_id: string
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_type: string
+          id?: string
+          mime_type?: string | null
+          sort_order?: number
+          speech_id: string
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_type?: string
+          id?: string
+          mime_type?: string | null
+          sort_order?: number
+          speech_id?: string
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "speech_attachments_speech_id_fkey"
+            columns: ["speech_id"]
+            isOneToOne: false
+            referencedRelation: "speeches"
             referencedColumns: ["id"]
           },
         ]
