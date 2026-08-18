@@ -104,7 +104,7 @@ export default async function DashboardProfilePage() {
           .from("media")
           .select("*")
           .eq("profile_id", profile.id)
-          .eq("status", "active")
+          .in("status", ["active", "archived"])
           .order("sort_order"),
         supabase
           .from("documents")
@@ -205,7 +205,7 @@ export default async function DashboardProfilePage() {
     activities: activities ?? [],
     travel: travel ?? [],
     speeches: speeches ?? [],
-    media: media ?? [],
+    media: (media ?? []).filter((m) => m.status !== "archived"),
     documents: documents ?? [],
   });
   const checklist = sectionStatus.map((s) => ({ label: s.label, done: s.complete }));

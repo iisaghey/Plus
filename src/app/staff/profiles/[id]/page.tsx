@@ -69,7 +69,7 @@ export default async function StaffEditProfilePage(
     supabase.from("organizations").select("id, name").eq("status", "active").order("name"),
     supabase.from("career_timeline").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
     supabase.from("achievements").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
-    supabase.from("media").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
+    supabase.from("media").select("*").eq("profile_id", id).in("status", ["active", "archived"]).order("sort_order"),
     supabase.from("documents").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
     supabase.from("biographies").select("*").eq("profile_id", id).maybeSingle(),
     supabase.from("government_positions").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
@@ -93,7 +93,7 @@ export default async function StaffEditProfilePage(
     activities: activities ?? [],
     travel: travel ?? [],
     speeches: speeches ?? [],
-    media: media ?? [],
+    media: (media ?? []).filter((m) => m.status !== "archived"),
     documents: documents ?? [],
   });
   const checklist = sectionStatus.map((s) => ({ label: s.label, done: s.complete }));

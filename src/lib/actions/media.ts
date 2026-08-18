@@ -13,6 +13,7 @@ const FIELDS = [
   "category",
   "media_type",
   "event_date",
+  "location",
   "caption",
   "external_url",
 ] as const;
@@ -30,6 +31,7 @@ function readFields(formData: FormData) {
 function revalidateProfilePages(profileId: string) {
   revalidatePath("/dashboard/profile");
   revalidatePath(`/staff/profiles/${profileId}`);
+  revalidatePath(`/editor/profiles/${profileId}`);
 }
 
 export async function createMediaItem(
@@ -89,7 +91,43 @@ export async function updateMediaItem(
 
 export async function deleteMediaItem(entryId: string, profileId: string) {
   const supabase = await createClient();
+
+  const { data: entry } = await supabase
+    .from("media")
+    .select("storage_path")
+    .eq("id", entryId)
+    .maybeSingle();
+
   const { error } = await supabase.from("media").delete().eq("id", entryId);
+  if (error) return { error: error.message };
+
+  if (entry?.storage_path) {
+    await supabase.storage.from("profile-media").remove([entry.storage_path]);
+  }
+
+  revalidateProfilePages(profileId);
+  return { success: true };
+}
+
+export async function archiveMediaItem(entryId: string, profileId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("media")
+    .update({ status: "archived" })
+    .eq("id", entryId);
+
+  if (error) return { error: error.message };
+
+  revalidateProfilePages(profileId);
+  return { success: true };
+}
+
+export async function restoreMediaItem(entryId: string, profileId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("media")
+    .update({ status: "active" })
+    .eq("id", entryId);
 
   if (error) return { error: error.message };
 
@@ -100,6 +138,7 @@ export async function deleteMediaItem(entryId: string, profileId: string) {
 function mediaTypeFromMime(mimeType: string) {
   if (mimeType.startsWith("image/")) return "photo";
   if (mimeType.startsWith("video/")) return "video";
+  if (mimeType.startsWith("audio/")) return "audio";
   return "document";
 }
 

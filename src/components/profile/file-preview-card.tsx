@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { FileText, Music, Trash2, RefreshCcw, Loader2, ExternalLink } from "lucide-react";
+import { FileText, Music, Trash2, RefreshCcw, Loader2, ExternalLink, Maximize2 } from "lucide-react";
 import { toast } from "sonner";
 import { getSignedUrl } from "@/lib/supabase/upload";
 
@@ -18,6 +18,7 @@ export function FilePreviewCard({
   removing,
   onRemove,
   onReplace,
+  onPreviewClick,
   children,
 }: {
   /** Public URL, when the bucket is public. */
@@ -31,6 +32,8 @@ export function FilePreviewCard({
   removing?: boolean;
   onRemove: () => void;
   onReplace?: (file: File) => void;
+  /** Opens this item in a full-screen viewer (photo/video only). */
+  onPreviewClick?: () => void;
   /** Optional extra content rendered below the preview (e.g. a title field). */
   children?: React.ReactNode;
 }) {
@@ -55,10 +58,32 @@ export function FilePreviewCard({
     <div className="overflow-hidden rounded-xl border border-mist">
       <div className="relative flex aspect-[4/3] items-center justify-center bg-mist">
         {kind === "photo" && url && (
-          <Image src={url} alt={fileName ?? ""} fill className="object-cover" />
+          <>
+            <Image src={url} alt={fileName ?? ""} fill className="object-cover" />
+            {onPreviewClick && (
+              <button
+                type="button"
+                onClick={onPreviewClick}
+                aria-label="View full screen"
+                className="absolute inset-0 z-0"
+              />
+            )}
+          </>
         )}
         {kind === "video" && url && (
-          <video src={url} controls preload="metadata" className="h-full w-full object-cover" />
+          <>
+            <video src={url} controls preload="metadata" className="h-full w-full object-cover" />
+            {onPreviewClick && (
+              <button
+                type="button"
+                onClick={onPreviewClick}
+                aria-label="View full screen"
+                className="absolute bottom-1.5 left-1.5 flex h-6 w-6 items-center justify-center rounded bg-white/90 text-navy hover:bg-white"
+              >
+                <Maximize2 className="h-3 w-3" />
+              </button>
+            )}
+          </>
         )}
         {kind === "audio" && url && (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-3">

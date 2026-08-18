@@ -569,6 +569,7 @@ export type Database = {
           file_size: number | null
           id: string
           is_featured: boolean
+          location: string | null
           media_type: string
           mime_type: string | null
           profile_id: string
@@ -589,6 +590,7 @@ export type Database = {
           file_size?: number | null
           id?: string
           is_featured?: boolean
+          location?: string | null
           media_type?: string
           mime_type?: string | null
           profile_id: string
@@ -609,6 +611,7 @@ export type Database = {
           file_size?: number | null
           id?: string
           is_featured?: boolean
+          location?: string | null
           media_type?: string
           mime_type?: string | null
           profile_id?: string
