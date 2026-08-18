@@ -5,14 +5,16 @@ import Image from "next/image";
 export function Logo({ light, className }: { light?: boolean; className?: string }) {
   return (
     <Link href="/" className={cn("flex items-center gap-2.5 shrink-0", className)}>
-      <Image
-        src="/logo.png"
-        alt="AqoonsiPlus"
-        width={34}
-        height={34}
-        priority
-        className="h-[34px] w-[34px] object-contain"
-      />
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-navy p-1.5 shadow-sm ring-1 ring-white/10">
+        <Image
+          src="/logo.png"
+          alt="AqoonsiPlus"
+          width={34}
+          height={34}
+          priority
+          className="h-full w-full object-contain"
+        />
+      </span>
       <span
         className={cn(
           "font-heading text-lg font-bold tracking-tight",
