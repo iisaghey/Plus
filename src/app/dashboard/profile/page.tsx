@@ -16,6 +16,7 @@ import { ProfileWizard, ProfileWizardStep, type WizardStepDef } from "@/componen
 import { ProfileReviewStep } from "@/components/profile/profile-review-step";
 import { SubmitReviewButton } from "@/components/dashboard/submit-review-button";
 import { isEditableByOwner } from "@/lib/workflow";
+import { computeSectionCompleteness } from "@/lib/profile-completeness";
 import {
   Lock,
   ArrowLeft,
@@ -44,14 +45,16 @@ const LOCKED_MESSAGES: Record<string, string> = {
   archived: "Your profile has been archived and can no longer be edited here.",
 };
 
+const ICON_CLASS = "h-4 w-4";
+
 const STEPS: WizardStepDef[] = [
-  { id: "identity", label: "Personal & Contact", icon: IdCard, sections: ["identity", "contact", "social"] },
-  { id: "background", label: "Biography & Education", icon: BookOpenText, sections: ["biography", "education"] },
-  { id: "career", label: "Career & Positions", icon: Landmark, sections: ["career", "positions"] },
-  { id: "recognition", label: "Achievements & Activities", icon: Trophy, sections: ["achievements", "activities", "travel"] },
-  { id: "speeches", label: "Speeches", icon: Mic, sections: ["speeches"] },
-  { id: "media", label: "Media & Documents", icon: Images, sections: ["media", "documents"] },
-  { id: "review", label: "Review & Submit", icon: ShieldCheck, sections: ["review"] },
+  { id: "identity", label: "Personal & Contact", icon: <IdCard className={ICON_CLASS} />, sections: ["identity", "contact", "social"] },
+  { id: "background", label: "Biography & Education", icon: <BookOpenText className={ICON_CLASS} />, sections: ["biography", "education"] },
+  { id: "career", label: "Career & Positions", icon: <Landmark className={ICON_CLASS} />, sections: ["career", "positions"] },
+  { id: "recognition", label: "Achievements & Activities", icon: <Trophy className={ICON_CLASS} />, sections: ["achievements", "activities", "travel"] },
+  { id: "speeches", label: "Speeches", icon: <Mic className={ICON_CLASS} />, sections: ["speeches"] },
+  { id: "media", label: "Media & Documents", icon: <Images className={ICON_CLASS} />, sections: ["media", "documents"] },
+  { id: "review", label: "Review & Submit", icon: <ShieldCheck className={ICON_CLASS} />, sections: ["review"] },
 ];
 
 export default async function DashboardProfilePage() {
@@ -192,26 +195,22 @@ export default async function DashboardProfilePage() {
     );
   }
 
-  const checklist = [
-    { label: "Full name & photo", done: Boolean(profile.full_name && profile.photo_url) },
-    { label: "Current position & category", done: Boolean(profile.current_position && profile.category_id) },
-    { label: "Contact info (email or phone)", done: Boolean(profile.email || profile.phone) },
-    {
-      label: "Social media",
-      done: Boolean(profile.social_links && Object.keys(profile.social_links as object).length > 0),
-    },
-    { label: "Biography", done: Boolean(biography?.summary) },
-    { label: "Education", done: (education ?? []).length > 0 },
-    { label: "Career or government positions", done: (careerTimeline ?? []).length > 0 || (positions ?? []).length > 0 },
-    { label: "Achievements", done: (achievements ?? []).length > 0 },
-    { label: "Official activities", done: (activities ?? []).length > 0 },
-    { label: "Official travel", done: (travel ?? []).length > 0 },
-    { label: "Speeches", done: (speeches ?? []).length > 0 },
-    { label: "Media & gallery", done: (media ?? []).length > 0 },
-    { label: "Documents & records", done: (documents ?? []).length > 0 },
-  ];
+  const sectionStatus = computeSectionCompleteness({
+    profile,
+    biography: biography ?? null,
+    education: education ?? [],
+    careerTimeline: careerTimeline ?? [],
+    positions: positions ?? [],
+    achievements: achievements ?? [],
+    activities: activities ?? [],
+    travel: travel ?? [],
+    speeches: speeches ?? [],
+    media: media ?? [],
+    documents: documents ?? [],
+  });
+  const checklist = sectionStatus.map((s) => ({ label: s.label, done: s.complete }));
   const completionPercent = Math.round(
-    (checklist.filter((c) => c.done).length / checklist.length) * 100
+    (sectionStatus.filter((s) => s.complete).length / sectionStatus.length) * 100
   );
 
   const publicUrl = `/profile/${profile.slug}`;
@@ -246,6 +245,7 @@ export default async function DashboardProfilePage() {
         <ProfileWizard
           steps={STEPS}
           completionPercent={completionPercent}
+          sectionStatus={sectionStatus}
           previewHref={`/profile/${profile.slug}`}
           reviewSlot={
             isEditableByOwner(profile.workflow_status) && !locked ? (

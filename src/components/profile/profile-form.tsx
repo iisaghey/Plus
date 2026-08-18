@@ -46,11 +46,12 @@ export function ProfileForm({
         <Field label="Full Name" name="full_name" required defaultValue={profile?.full_name} />
         <Field label="Preferred Title" name="preferred_title" placeholder="Dr., Eng., Hon..." defaultValue={profile?.preferred_title ?? ""} />
         <Field label="Profession" name="profession" defaultValue={profile?.profession ?? ""} />
-        <Field label="Current Position" name="current_position" defaultValue={profile?.current_position ?? ""} />
+        <Field label="Current Position" name="current_position" required defaultValue={profile?.current_position ?? ""} />
 
         <SelectField
           label="Category"
           name="category_id"
+          required
           defaultValue={profile?.category_id ?? ""}
           options={categories.map((c) => ({ value: c.id, label: c.name }))}
         />
@@ -181,23 +182,29 @@ function SelectField({
   name,
   options,
   defaultValue,
+  required,
 }: {
   label: string;
   name: string;
   options: { value: string; label: string }[];
   defaultValue?: string;
+  required?: boolean;
 }) {
   return (
     <div>
       <label className="text-xs font-semibold uppercase tracking-wide text-slate">
         {label}
+        {required && <span className="text-teal"> *</span>}
       </label>
       <select
         name={name}
+        required={required}
         defaultValue={defaultValue ?? ""}
-        className="mt-1.5 w-full rounded-xl border border-mist bg-white dark:bg-offwhite px-4 py-2.5 text-sm text-ink focus:border-teal focus:outline-none"
+        className="mt-1.5 w-full rounded-xl border border-mist bg-white dark:bg-offwhite px-4 py-2.5 text-sm text-ink focus:border-teal focus:outline-none invalid:text-slate"
       >
-        <option value="">None</option>
+        <option value="" disabled={required}>
+          {required ? "Select a category…" : "None"}
+        </option>
         {options.map((o) => (
           <option key={o.value} value={o.value}>
             {o.label}

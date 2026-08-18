@@ -50,10 +50,12 @@ export function BiographyEditor({
         <div>
           <label className="text-xs font-semibold uppercase tracking-wide text-slate">
             Summary
+            <span className="text-teal"> *</span>
           </label>
           <textarea
             name="summary"
             rows={2}
+            required
             defaultValue={biography?.summary ?? ""}
             placeholder="A short summary shown at the top of the Biography tab…"
             className="mt-1.5 w-full rounded-lg border border-mist px-3 py-2 text-sm text-ink focus:border-teal focus:outline-none"
