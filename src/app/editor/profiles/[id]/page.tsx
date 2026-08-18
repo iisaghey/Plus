@@ -8,13 +8,35 @@ import { MediaEditor } from "@/components/profile/media-editor";
 import { DocumentsEditor } from "@/components/profile/documents-editor";
 import { BiographyEditor } from "@/components/profile/biography-editor";
 import { PositionsEditor } from "@/components/profile/positions-editor";
+import { EducationEditor } from "@/components/profile/education-editor";
 import { ActivitiesEditor } from "@/components/profile/activities-editor";
 import { TravelEditor } from "@/components/profile/travel-editor";
 import { SpeechesEditor } from "@/components/profile/speeches-editor";
+import { ProfileWizard, ProfileWizardStep, type WizardStepDef } from "@/components/profile/profile-wizard";
+import { ProfileReviewStep } from "@/components/profile/profile-review-step";
 import { EditorDecisionRow } from "@/components/editor/editor-decision-row";
 import { EditPermissionGate } from "@/components/editor/edit-permission-gate";
 import { Badge } from "@/components/ui/badge";
 import { WORKFLOW_STATUS_VARIANT, workflowStatusLabel } from "@/lib/workflow";
+import {
+  IdCard,
+  BookOpenText,
+  Landmark,
+  Trophy,
+  Mic,
+  Images,
+  ShieldCheck,
+} from "lucide-react";
+
+const STEPS: WizardStepDef[] = [
+  { id: "identity", label: "Personal & Contact", icon: IdCard, sections: ["identity", "contact", "social"] },
+  { id: "background", label: "Biography & Education", icon: BookOpenText, sections: ["biography", "education"] },
+  { id: "career", label: "Career & Positions", icon: Landmark, sections: ["career", "positions"] },
+  { id: "recognition", label: "Achievements & Activities", icon: Trophy, sections: ["achievements", "activities", "travel"] },
+  { id: "speeches", label: "Speeches", icon: Mic, sections: ["speeches"] },
+  { id: "media", label: "Media & Documents", icon: Images, sections: ["media", "documents"] },
+  { id: "review", label: "Review", icon: ShieldCheck, sections: ["review"] },
+];
 
 export default async function EditorProfileEditPage(
   props: PageProps<"/editor/profiles/[id]">
@@ -43,6 +65,7 @@ export default async function EditorProfileEditPage(
     { data: documents },
     { data: biography },
     { data: positions },
+    { data: education },
     { data: activities },
     { data: travel },
     { data: speeches },
@@ -56,6 +79,7 @@ export default async function EditorProfileEditPage(
     supabase.from("documents").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
     supabase.from("biographies").select("*").eq("profile_id", id).maybeSingle(),
     supabase.from("government_positions").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
+    supabase.from("education").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
     supabase.from("official_activities").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
     supabase.from("official_travel").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
     supabase.from("speeches").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
@@ -99,8 +123,30 @@ export default async function EditorProfileEditPage(
 
   const action = updateProfile.bind(null, profile.id, `/editor/profiles/${profile.id}`);
 
+  const checklist = [
+    { label: "Full name & photo", done: Boolean(profile.full_name && profile.photo_url) },
+    { label: "Current position & category", done: Boolean(profile.current_position && profile.category_id) },
+    { label: "Contact info (email or phone)", done: Boolean(profile.email || profile.phone) },
+    {
+      label: "Social media",
+      done: Boolean(profile.social_links && Object.keys(profile.social_links as object).length > 0),
+    },
+    { label: "Biography", done: Boolean(biography?.summary) },
+    { label: "Education", done: (education ?? []).length > 0 },
+    { label: "Career or government positions", done: (careerTimeline ?? []).length > 0 || (positions ?? []).length > 0 },
+    { label: "Achievements", done: (achievements ?? []).length > 0 },
+    { label: "Official activities", done: (activities ?? []).length > 0 },
+    { label: "Official travel", done: (travel ?? []).length > 0 },
+    { label: "Speeches", done: (speeches ?? []).length > 0 },
+    { label: "Media & gallery", done: (media ?? []).length > 0 },
+    { label: "Documents & records", done: (documents ?? []).length > 0 },
+  ];
+  const completionPercent = Math.round(
+    (checklist.filter((c) => c.done).length / checklist.length) * 100
+  );
+
   return (
-    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="flex items-center gap-2">
         <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">
           {profile.full_name}
@@ -155,26 +201,55 @@ export default async function EditorProfileEditPage(
       )}
 
       <div className="mt-8">
-        <ProfileForm
-          action={action}
-          profile={profile}
-          categories={categories ?? []}
-          organizations={organizations ?? []}
-          submitLabel="Save Changes"
-          locked={locked}
-        />
-      </div>
+        <ProfileWizard
+          steps={STEPS}
+          completionPercent={completionPercent}
+          previewHref={`/profile/${profile.slug}`}
+        >
+          <ProfileWizardStep id="identity">
+            <ProfileForm
+              action={action}
+              profile={profile}
+              categories={categories ?? []}
+              organizations={organizations ?? []}
+              submitLabel="Save Changes"
+              locked={locked}
+            />
+          </ProfileWizardStep>
 
-      <div className="mt-8 space-y-8">
-        <BiographyEditor profileId={profile.id} biography={biography ?? null} locked={locked} />
-        <CareerTimelineEditor profileId={profile.id} entries={careerTimeline ?? []} locked={locked} />
-        <PositionsEditor profileId={profile.id} entries={positions ?? []} locked={locked} />
-        <AchievementsEditor profileId={profile.id} entries={achievements ?? []} locked={locked} />
-        <ActivitiesEditor profileId={profile.id} entries={activities ?? []} locked={locked} />
-        <TravelEditor profileId={profile.id} entries={travel ?? []} locked={locked} />
-        <SpeechesEditor profileId={profile.id} entries={speeches ?? []} locked={locked} />
-        <MediaEditor profileId={profile.id} entries={media ?? []} locked={locked} />
-        <DocumentsEditor profileId={profile.id} entries={documents ?? []} locked={locked} />
+          <ProfileWizardStep id="background">
+            <BiographyEditor profileId={profile.id} biography={biography ?? null} locked={locked} />
+            <EducationEditor profileId={profile.id} entries={education ?? []} locked={locked} />
+          </ProfileWizardStep>
+
+          <ProfileWizardStep id="career">
+            <CareerTimelineEditor profileId={profile.id} entries={careerTimeline ?? []} locked={locked} />
+            <PositionsEditor profileId={profile.id} entries={positions ?? []} locked={locked} />
+          </ProfileWizardStep>
+
+          <ProfileWizardStep id="recognition">
+            <AchievementsEditor profileId={profile.id} entries={achievements ?? []} locked={locked} />
+            <ActivitiesEditor profileId={profile.id} entries={activities ?? []} locked={locked} />
+            <TravelEditor profileId={profile.id} entries={travel ?? []} locked={locked} />
+          </ProfileWizardStep>
+
+          <ProfileWizardStep id="speeches">
+            <SpeechesEditor profileId={profile.id} entries={speeches ?? []} locked={locked} />
+          </ProfileWizardStep>
+
+          <ProfileWizardStep id="media">
+            <MediaEditor profileId={profile.id} entries={media ?? []} locked={locked} />
+            <DocumentsEditor profileId={profile.id} entries={documents ?? []} locked={locked} />
+          </ProfileWizardStep>
+
+          <ProfileWizardStep id="review">
+            <ProfileReviewStep
+              profile={profile}
+              checklist={checklist}
+              publicUrl={`/profile/${profile.slug}`}
+            />
+          </ProfileWizardStep>
+        </ProfileWizard>
       </div>
     </div>
   );

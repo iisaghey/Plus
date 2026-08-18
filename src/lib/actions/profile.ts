@@ -21,6 +21,7 @@ const FIELDS = [
   "nationality",
   "short_bio",
   "email",
+  "phone",
   "website",
   "photo_url",
   "cover_url",
@@ -34,6 +35,18 @@ function readFields(formData: FormData) {
     values[field] = value === "" ? null : value;
   }
   return values;
+}
+
+const SOCIAL_PLATFORMS = ["linkedin", "twitter", "facebook", "instagram", "youtube"] as const;
+
+function readSocialLinks(formData: FormData) {
+  const links: Record<string, string> = {};
+  for (const platform of SOCIAL_PLATFORMS) {
+    const raw = formData.get(`social_${platform}`);
+    const value = typeof raw === "string" ? raw.trim() : "";
+    if (value) links[platform] = value;
+  }
+  return links;
 }
 
 async function uniqueSlug(
@@ -80,6 +93,7 @@ export async function createProfile(
     user_id: user.id,
     created_by: user.id,
     email: values.email ?? user.email ?? null,
+    social_links: readSocialLinks(formData),
   });
 
   if (error) return { error: error.message };
@@ -124,7 +138,11 @@ export async function updateProfile(
   // for staff editing someone else's assigned profile.
   const { error } = await supabase
     .from("profiles")
-    .update({ ...values, full_name: values.full_name })
+    .update({
+      ...values,
+      full_name: values.full_name,
+      social_links: readSocialLinks(formData),
+    })
     .eq("id", profileId);
 
   if (error) return { error: error.message };
@@ -205,6 +223,7 @@ export async function createStaffDraft(
       created_by: user.id,
       assigned_staff_id: userRole.role === "staff" ? user.id : null,
       workflow_status: "draft",
+      social_links: readSocialLinks(formData),
     })
     .select("id")
     .single();

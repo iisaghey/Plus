@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ImageUploadField } from "@/components/profile/image-upload-field";
+import { SOCIAL_FIELDS } from "@/lib/social-fields";
 import type { ProfileFormState } from "@/lib/actions/profile";
 import type { Tables } from "@/types/database.types";
 
@@ -64,8 +65,11 @@ export function ProfileForm({
         <Field label="Location" name="location" placeholder="City, Country" defaultValue={profile?.location ?? ""} />
         <Field label="Nationality" name="nationality" defaultValue={profile?.nationality ?? ""} />
         <Field label="Email" name="email" type="email" defaultValue={profile?.email ?? ""} />
+        <Field label="Phone" name="phone" type="tel" placeholder="+252..." defaultValue={profile?.phone ?? ""} />
         <Field label="Website" name="website" type="url" placeholder="https://" defaultValue={profile?.website ?? ""} />
       </div>
+
+      <SocialLinksFields socialLinks={(profile?.social_links as Record<string, string> | null) ?? {}} />
 
       {profile ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -111,6 +115,31 @@ export function ProfileForm({
       </Button>
       </fieldset>
     </form>
+  );
+}
+
+export function SocialLinksFields({ socialLinks }: { socialLinks: Record<string, string> }) {
+  return (
+    <div>
+      <label className="text-xs font-semibold uppercase tracking-wide text-slate">
+        Official Social Media
+      </label>
+      <div className="mt-1.5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {SOCIAL_FIELDS.map(({ key, label, icon: Icon, placeholder }) => (
+          <div key={key} className="flex items-center gap-2">
+            <Icon className="h-4 w-4 shrink-0 text-slate" />
+            <input
+              name={`social_${key}`}
+              type="url"
+              placeholder={placeholder}
+              aria-label={label}
+              defaultValue={socialLinks[key] ?? ""}
+              className="w-full rounded-xl border border-mist px-4 py-2.5 text-sm text-ink focus:border-teal focus:outline-none"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 

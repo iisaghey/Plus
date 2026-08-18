@@ -5,6 +5,7 @@ import { Plus, Loader2, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ImageUploadField } from "@/components/profile/image-upload-field";
+import { SocialLinksFields } from "@/components/profile/profile-form";
 import { createClient } from "@/lib/supabase/client";
 import { DURATION, EASE } from "@/lib/motion";
 import type { ProfileFormState } from "@/lib/actions/profile";
@@ -119,8 +120,11 @@ export function StaffDraftForm({
                 <TextField label="Location" name="location" placeholder="City, Country" />
                 <TextField label="Nationality" name="nationality" />
                 <TextField label="Email" name="email" type="email" />
+                <TextField label="Phone" name="phone" type="tel" placeholder="+252..." />
                 <TextField label="Website" name="website" type="url" placeholder="https://" />
               </div>
+
+              <SocialLinksFields socialLinks={{}} />
 
               <div>
                 <label className="text-xs font-semibold uppercase tracking-wide text-slate">
