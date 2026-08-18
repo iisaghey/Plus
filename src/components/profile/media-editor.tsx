@@ -2,27 +2,21 @@
 
 import { useActionState, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { Plus, Pencil, Trash2, Loader2, X, ImageIcon, PlayCircle, Star } from "lucide-react";
+import { Loader2, X, ImageIcon, Star, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import {
-  createMediaItem,
   updateMediaItem,
   deleteMediaItem,
+  createMediaFromUpload,
   type MediaFormState,
 } from "@/lib/actions/media";
-import { ImageUploadField } from "@/components/profile/image-upload-field";
-import { formatMonthYear } from "@/lib/utils";
+import { uploadPublicFile } from "@/lib/supabase/upload";
+import { MultiFileUpload, type UploadedFileMeta } from "@/components/profile/multi-file-upload";
+import { FilePreviewCard, type FileKind } from "@/components/profile/file-preview-card";
+import { formatFileSize } from "@/lib/utils";
 import type { Tables } from "@/types/database.types";
 
 type Entry = Tables<"media">;
-
-const MEDIA_TYPES = [
-  { value: "photo", label: "Photo" },
-  { value: "video", label: "Video (link)" },
-  { value: "article", label: "Article (link)" },
-  { value: "other", label: "Other (link)" },
-];
 
 export function MediaEditor({
   profileId,
@@ -35,14 +29,30 @@ export function MediaEditor({
 }) {
   const router = useRouter();
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null);
+  const [replacingId, setReplacingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
-  function handleDelete(id: string) {
-    setDeletingId(id);
+  async function handleFileUploaded(file: UploadedFileMeta) {
+    const result = await createMediaFromUpload(profileId, {
+      url: file.url ?? "",
+      path: file.path,
+      name: file.name,
+      size: file.size,
+      mimeType: file.mimeType,
+    });
+    if (result.error) {
+      toast.error(result.error);
+      return;
+    }
+    router.refresh();
+  }
+
+  function handleRemove(id: string) {
+    setRemovingId(id);
     startTransition(async () => {
       const result = await deleteMediaItem(id, profileId);
-      setDeletingId(null);
+      setRemovingId(null);
       if (result.error) {
         toast.error(result.error);
         return;
@@ -52,144 +62,119 @@ export function MediaEditor({
     });
   }
 
-  function handleDone() {
-    setEditingId(null);
-    router.refresh();
+  function handleReplace(entry: Entry, file: File) {
+    setReplacingId(entry.id);
+    startTransition(async () => {
+      try {
+        const uploaded = await uploadPublicFile("profile-media", profileId, file);
+        const formData = new FormData();
+        formData.set("title", entry.title ?? "");
+        formData.set("category", entry.category ?? "");
+        formData.set("media_type", entry.media_type);
+        formData.set("event_date", entry.event_date ?? "");
+        formData.set("caption", entry.caption ?? "");
+        formData.set("external_url", uploaded.url ?? "");
+        if (entry.is_featured) formData.set("is_featured", "on");
+        await updateMediaItem(entry.id, profileId, {}, formData);
+        toast.success("File replaced");
+        router.refresh();
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Replace failed");
+      } finally {
+        setReplacingId(null);
+      }
+    });
   }
 
   return (
     <div className="rounded-2xl border border-mist p-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <ImageIcon className="h-4 w-4 text-teal" />
-          <h2 className="font-heading text-base font-bold text-navy dark:text-white">Media</h2>
-        </div>
-        {editingId === null && !locked && (
-          <button
-            onClick={() => setEditingId("new")}
-            className="flex items-center gap-1.5 rounded-full bg-teal/10 px-3 py-1.5 text-xs font-semibold text-teal hover:bg-teal/20"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Add Media
-          </button>
-        )}
+      <div className="flex items-center gap-2">
+        <ImageIcon className="h-4 w-4 text-teal" />
+        <h2 className="font-heading text-base font-bold text-navy dark:text-white">
+          Media &amp; Gallery
+        </h2>
       </div>
+      <p className="mt-1 text-xs text-slate">
+        Photos, videos, and documents for your public profile gallery.
+      </p>
 
-      <div className="mt-4 space-y-3">
-        {editingId === "new" && (
-          <MediaForm
-            profileId={profileId}
-            onCancel={() => setEditingId(null)}
-            onDone={handleDone}
+      {!locked && (
+        <div className="mt-4">
+          <MultiFileUpload
+            bucket="profile-media"
+            folderId={profileId}
+            accept="image/*,video/*,application/pdf,.doc,.docx"
+            label="Upload Photos, Videos & Documents"
+            onFileUploaded={handleFileUploaded}
           />
-        )}
+        </div>
+      )}
 
-        {entries.length === 0 && editingId !== "new" && (
-          <p className="py-6 text-center text-sm text-slate">
-            No media added yet.
-          </p>
-        )}
-
-        {entries.length > 0 && editingId === null && (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {entries.map((entry) => (
-              <div
+      {entries.length === 0 ? (
+        <p className="py-6 text-center text-sm text-slate">No media added yet.</p>
+      ) : (
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {entries.map((entry) =>
+            editingId === entry.id ? (
+              <div key={entry.id} className="col-span-2 sm:col-span-3">
+                <MediaMetaForm
+                  profileId={profileId}
+                  entry={entry}
+                  onCancel={() => setEditingId(null)}
+                  onDone={() => {
+                    setEditingId(null);
+                    router.refresh();
+                  }}
+                />
+              </div>
+            ) : (
+              <FilePreviewCard
                 key={entry.id}
-                className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-mist"
+                url={entry.external_url}
+                fileName={entry.file_name ?? entry.title}
+                fileSize={formatFileSize(entry.file_size)}
+                kind={entry.media_type as FileKind}
+                removing={pending && removingId === entry.id}
+                onRemove={() => handleRemove(entry.id)}
+                onReplace={locked ? undefined : (file) => handleReplace(entry, file)}
               >
-                {entry.external_url && (
-                  <Image
-                    src={entry.external_url}
-                    alt={entry.title ?? ""}
-                    fill
-                    className="object-cover"
-                  />
-                )}
-                {entry.media_type !== "photo" && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-navy/40">
-                    <PlayCircle className="h-7 w-7 text-white" />
-                  </div>
-                )}
-                {entry.is_featured && (
-                  <Star className="absolute right-2 top-2 h-4 w-4 fill-gold text-gold" />
-                )}
-                <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-gradient-to-t from-navy/90 to-transparent p-2">
-                  <p className="line-clamp-1 text-[11px] font-medium text-white">
-                    {entry.title}
-                  </p>
-                  <div
-                    className={
-                      locked
-                        ? "flex shrink-0 gap-0.5"
-                        : "flex shrink-0 gap-0.5 opacity-0 transition-opacity group-hover:opacity-100"
-                    }
-                  >
-                    {!locked && (
+                <div className="mt-1.5 flex items-center justify-between gap-1">
+                  {entry.is_featured && <Star className="h-3 w-3 shrink-0 fill-gold text-gold" />}
+                  {!locked && (
                     <button
+                      type="button"
                       onClick={() => setEditingId(entry.id)}
-                      className="flex h-6 w-6 items-center justify-center rounded bg-white/90 text-navy dark:text-white hover:bg-white dark:bg-offwhite"
-                      aria-label="Edit"
+                      disabled={pending && replacingId === entry.id}
+                      className="ml-auto flex items-center gap-1 text-[11px] font-semibold text-teal hover:underline disabled:opacity-50"
                     >
                       <Pencil className="h-3 w-3" />
+                      Details
                     </button>
-                    )}
-                    {!locked && (
-                    <button
-                      onClick={() => handleDelete(entry.id)}
-                      disabled={pending && deletingId === entry.id}
-                      className="flex h-6 w-6 items-center justify-center rounded bg-white/90 text-red-600 hover:bg-white dark:bg-offwhite disabled:opacity-50"
-                      aria-label="Delete"
-                    >
-                      {pending && deletingId === entry.id ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        <Trash2 className="h-3 w-3" />
-                      )}
-                    </button>
-                    )}
-                  </div>
+                  )}
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {entries.map((entry) =>
-          editingId === entry.id ? (
-            <MediaForm
-              key={entry.id}
-              profileId={profileId}
-              entry={entry}
-              onCancel={() => setEditingId(null)}
-              onDone={handleDone}
-            />
-          ) : null
-        )}
-      </div>
+              </FilePreviewCard>
+            )
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-function MediaForm({
+function MediaMetaForm({
   profileId,
   entry,
   onCancel,
   onDone,
 }: {
   profileId: string;
-  entry?: Entry;
+  entry: Entry;
   onCancel: () => void;
   onDone: () => void;
 }) {
-  const action = entry
-    ? updateMediaItem.bind(null, entry.id, profileId)
-    : createMediaItem.bind(null, profileId);
-
-  const [state, formAction, pending] = useActionState<MediaFormState, FormData>(
-    action,
-    {}
-  );
-  const [mediaType, setMediaType] = useState(entry?.media_type ?? "photo");
+  const action = updateMediaItem.bind(null, entry.id, profileId);
+  const [state, formAction, pending] = useActionState<MediaFormState, FormData>(action, {});
+  const [isFeatured, setIsFeatured] = useState(entry.is_featured);
 
   useEffect(() => {
     if (state.success) onDone();
@@ -202,9 +187,7 @@ function MediaForm({
       className="rounded-xl border border-teal/30 bg-offwhite p-4"
     >
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wide text-teal">
-          {entry ? "Edit Media" : "New Media"}
-        </p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-teal">Media Details</p>
         <button type="button" onClick={onCancel} className="text-slate hover:text-navy dark:hover:text-white">
           <X className="h-4 w-4" />
         </button>
@@ -212,71 +195,31 @@ function MediaForm({
 
       {state.error && <p className="mt-2 text-xs text-red-600">{state.error}</p>}
 
+      <input type="hidden" name="media_type" value={entry.media_type} />
+      <input type="hidden" name="external_url" value={entry.external_url ?? ""} />
+
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <Field label="Title" name="title" defaultValue={entry?.title ?? ""} />
-        <div>
-          <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-            Type
-          </label>
-          <select
-            name="media_type"
-            value={mediaType}
-            onChange={(e) => setMediaType(e.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-mist bg-white dark:bg-offwhite px-3 py-2 text-sm text-ink focus:border-teal focus:outline-none"
-          >
-            {MEDIA_TYPES.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <Field label="Category" name="category" defaultValue={entry?.category ?? ""} />
-        <Field
-          label="Event Date"
-          name="event_date"
-          type="date"
-          defaultValue={entry?.event_date ?? ""}
-        />
+        <Field label="Title" name="title" defaultValue={entry.title ?? ""} />
+        <Field label="Category" name="category" defaultValue={entry.category ?? ""} />
+        <Field label="Event Date" name="event_date" type="date" defaultValue={entry.event_date ?? ""} />
       </div>
 
       <div className="mt-3">
-        <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-          Caption
-        </label>
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate">Caption</label>
         <textarea
           name="caption"
           rows={2}
-          defaultValue={entry?.caption ?? ""}
+          defaultValue={entry.caption ?? ""}
           className="mt-1.5 w-full rounded-lg border border-mist px-3 py-2 text-sm text-ink focus:border-teal focus:outline-none"
         />
-      </div>
-
-      <div className="mt-3">
-        {mediaType === "photo" ? (
-          <ImageUploadField
-            name="external_url"
-            label="Photo"
-            defaultValue={entry?.external_url}
-            bucket="profile-media"
-            profileId={profileId}
-          />
-        ) : (
-          <Field
-            label="Link URL"
-            name="external_url"
-            type="url"
-            placeholder="https://"
-            defaultValue={entry?.external_url ?? ""}
-          />
-        )}
       </div>
 
       <label className="mt-3 flex items-center gap-2 text-xs font-medium text-slate">
         <input
           type="checkbox"
           name="is_featured"
-          defaultChecked={entry?.is_featured ?? false}
+          checked={isFeatured}
+          onChange={(e) => setIsFeatured(e.target.checked)}
           className="h-3.5 w-3.5 rounded border-mist text-teal focus:ring-teal"
         />
         Feature on profile
@@ -296,7 +239,7 @@ function MediaForm({
           className="flex items-center gap-1.5 rounded-lg bg-teal px-4 py-2 text-xs font-semibold text-white hover:bg-aqoonsi disabled:opacity-50"
         >
           {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-          {entry ? "Save Changes" : "Add Media"}
+          Save Details
         </button>
       </div>
     </form>
@@ -308,23 +251,18 @@ function Field({
   name,
   type = "text",
   defaultValue,
-  placeholder,
 }: {
   label: string;
   name: string;
   type?: string;
   defaultValue?: string | null;
-  placeholder?: string;
 }) {
   return (
     <div>
-      <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-        {label}
-      </label>
+      <label className="text-xs font-semibold uppercase tracking-wide text-slate">{label}</label>
       <input
         name={name}
         type={type}
-        placeholder={placeholder}
         defaultValue={defaultValue ?? ""}
         className="mt-1.5 w-full rounded-lg border border-mist px-3 py-2 text-sm text-ink focus:border-teal focus:outline-none"
       />

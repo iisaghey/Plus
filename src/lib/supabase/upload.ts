@@ -35,7 +35,7 @@ export async function uploadPrivateFile(
     upsert: false,
   });
   if (error) throw error;
-  return { path };
+  return { path, url: null as string | null };
 }
 
 export async function getSignedUrl(

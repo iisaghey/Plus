@@ -15,8 +15,6 @@ const FIELDS = [
   "speech_date",
   "summary",
   "full_text",
-  "video_url",
-  "audio_url",
 ] as const;
 
 function readFields(formData: FormData) {

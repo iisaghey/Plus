@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Pencil, Trash2, Loader2, X, Mic } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, X, Mic, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import {
   createSpeech,
@@ -10,10 +10,24 @@ import {
   deleteSpeech,
   type SpeechFormState,
 } from "@/lib/actions/speeches";
-import { formatMonthYear } from "@/lib/utils";
+import {
+  createSpeechAttachment,
+  deleteSpeechAttachment,
+} from "@/lib/actions/speech-attachments";
+import { MultiFileUpload, type UploadedFileMeta } from "@/components/profile/multi-file-upload";
+import { FilePreviewCard, type FileKind } from "@/components/profile/file-preview-card";
+import { formatFileSize, formatMonthYear } from "@/lib/utils";
 import type { Tables } from "@/types/database.types";
 
-type Entry = Tables<"speeches">;
+type Attachment = Tables<"speech_attachments">;
+type Entry = Tables<"speeches"> & { speech_attachments: Attachment[] };
+
+const ATTACHMENT_KIND: Record<Attachment["file_type"], FileKind> = {
+  video: "video",
+  photo: "photo",
+  audio: "audio",
+  document: "document",
+};
 
 export function SpeechesEditor({
   profileId,
@@ -27,6 +41,8 @@ export function SpeechesEditor({
   const router = useRouter();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [removingAttachmentId, setRemovingAttachmentId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   function handleDelete(id: string) {
@@ -48,12 +64,41 @@ export function SpeechesEditor({
     router.refresh();
   }
 
+  async function handleAttachmentUploaded(speechId: string, file: UploadedFileMeta) {
+    const result = await createSpeechAttachment(speechId, profileId, {
+      path: file.path,
+      name: file.name,
+      size: file.size,
+      mimeType: file.mimeType,
+    });
+    if (result.error) {
+      toast.error(result.error);
+      return;
+    }
+    router.refresh();
+  }
+
+  function handleRemoveAttachment(attachmentId: string) {
+    setRemovingAttachmentId(attachmentId);
+    startTransition(async () => {
+      const result = await deleteSpeechAttachment(attachmentId, profileId);
+      setRemovingAttachmentId(null);
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+      router.refresh();
+    });
+  }
+
   return (
     <div className="rounded-2xl border border-mist p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Mic className="h-4 w-4 text-teal" />
-          <h2 className="font-heading text-base font-bold text-navy dark:text-white">Speeches</h2>
+          <h2 className="font-heading text-base font-bold text-navy dark:text-white">
+            Speeches &amp; Public Communications
+          </h2>
         </div>
         {editingId === null && !locked && (
           <button
@@ -68,17 +113,11 @@ export function SpeechesEditor({
 
       <div className="mt-4 space-y-3">
         {editingId === "new" && (
-          <SpeechForm
-            profileId={profileId}
-            onCancel={() => setEditingId(null)}
-            onDone={handleDone}
-          />
+          <SpeechForm profileId={profileId} onCancel={() => setEditingId(null)} onDone={handleDone} />
         )}
 
         {entries.length === 0 && editingId !== "new" && (
-          <p className="py-6 text-center text-sm text-slate">
-            No speeches added yet.
-          </p>
+          <p className="py-6 text-center text-sm text-slate">No speeches added yet.</p>
         )}
 
         {entries.map((entry) =>
@@ -91,52 +130,92 @@ export function SpeechesEditor({
               onDone={handleDone}
             />
           ) : (
-            <div
-              key={entry.id}
-              className="flex items-start justify-between gap-4 rounded-xl border border-mist p-4"
-            >
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-baseline gap-x-2">
-                  <p className="text-sm font-semibold text-navy dark:text-white">{entry.title}</p>
-                  {entry.speech_date && (
+            <div key={entry.id} className="rounded-xl border border-mist p-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-baseline gap-x-2">
+                    <p className="text-sm font-semibold text-navy dark:text-white">{entry.title}</p>
+                    {entry.speech_date && (
+                      <p className="text-xs text-slate">{formatMonthYear(entry.speech_date)}</p>
+                    )}
+                  </div>
+                  {(entry.event || entry.location) && (
                     <p className="text-xs text-slate">
-                      {formatMonthYear(entry.speech_date)}
+                      {[entry.event, entry.location].filter(Boolean).join(" · ")}
                     </p>
                   )}
-                </div>
-                {(entry.event || entry.location) && (
-                  <p className="text-xs text-slate">
-                    {[entry.event, entry.location].filter(Boolean).join(" · ")}
-                  </p>
-                )}
-                {entry.summary && (
-                  <p className="mt-1.5 text-sm leading-relaxed text-slate">
-                    {entry.summary}
-                  </p>
-                )}
-              </div>
-              <div className="flex shrink-0 gap-1">
-                <button
-                  onClick={() => setEditingId(entry.id)}
-                  disabled={locked}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-offwhite hover:text-navy dark:hover:text-white disabled:pointer-events-none disabled:opacity-40"
-                  aria-label="Edit"
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  onClick={() => handleDelete(entry.id)}
-                  disabled={locked || (pending && deletingId === entry.id)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
-                  aria-label="Delete"
-                >
-                  {pending && deletingId === entry.id ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <Trash2 className="h-3.5 w-3.5" />
+                  {entry.summary && (
+                    <p className="mt-1.5 text-sm leading-relaxed text-slate">{entry.summary}</p>
                   )}
-                </button>
+                </div>
+                <div className="flex shrink-0 gap-1">
+                  <button
+                    onClick={() => setEditingId(entry.id)}
+                    disabled={locked}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-offwhite hover:text-navy dark:hover:text-white disabled:pointer-events-none disabled:opacity-40"
+                    aria-label="Edit"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(entry.id)}
+                    disabled={locked || (pending && deletingId === entry.id)}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+                    aria-label="Delete"
+                  >
+                    {pending && deletingId === entry.id ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-3.5 w-3.5" />
+                    )}
+                  </button>
+                </div>
               </div>
+
+              <button
+                type="button"
+                onClick={() => setExpandedId(expandedId === entry.id ? null : entry.id)}
+                className="mt-3 flex items-center gap-1 text-xs font-semibold text-teal hover:underline"
+              >
+                {expandedId === entry.id ? (
+                  <ChevronUp className="h-3.5 w-3.5" />
+                ) : (
+                  <ChevronDown className="h-3.5 w-3.5" />
+                )}
+                Attachments
+                {entry.speech_attachments.length > 0 && ` (${entry.speech_attachments.length})`}
+              </button>
+
+              {expandedId === entry.id && (
+                <div className="mt-3 border-t border-mist pt-3">
+                  {!locked && (
+                    <MultiFileUpload
+                      bucket="profile-media"
+                      folderId={profileId}
+                      accept="video/*,image/*,audio/*,application/pdf,.doc,.docx"
+                      label="Upload Speech Files"
+                      hint="Video, photos, audio recordings, or transcripts"
+                      onFileUploaded={(file) => handleAttachmentUploaded(entry.id, file)}
+                    />
+                  )}
+                  {entry.speech_attachments.length > 0 && (
+                    <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                      {entry.speech_attachments.map((attachment) => (
+                        <FilePreviewCard
+                          key={attachment.id}
+                          path={attachment.storage_path}
+                          bucket="profile-media"
+                          fileName={attachment.file_name}
+                          fileSize={formatFileSize(attachment.file_size)}
+                          kind={ATTACHMENT_KIND[attachment.file_type]}
+                          removing={pending && removingAttachmentId === attachment.id}
+                          onRemove={() => handleRemoveAttachment(attachment.id)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )
         )}
@@ -160,10 +239,7 @@ function SpeechForm({
     ? updateSpeech.bind(null, entry.id, profileId)
     : createSpeech.bind(null, profileId);
 
-  const [state, formAction, pending] = useActionState<SpeechFormState, FormData>(
-    action,
-    {}
-  );
+  const [state, formAction, pending] = useActionState<SpeechFormState, FormData>(action, {});
 
   useEffect(() => {
     if (state.success) onDone();
@@ -171,10 +247,7 @@ function SpeechForm({
   }, [state.success]);
 
   return (
-    <form
-      action={formAction}
-      className="rounded-xl border border-teal/30 bg-offwhite p-4"
-    >
+    <form action={formAction} className="rounded-xl border border-teal/30 bg-offwhite p-4">
       <div className="flex items-center justify-between">
         <p className="text-xs font-semibold uppercase tracking-wide text-teal">
           {entry ? "Edit Speech" : "New Speech"}
@@ -190,32 +263,11 @@ function SpeechForm({
         <Field label="Title" name="title" required defaultValue={entry?.title} />
         <Field label="Event" name="event" defaultValue={entry?.event ?? ""} />
         <Field label="Location" name="location" defaultValue={entry?.location ?? ""} />
-        <Field
-          label="Date"
-          name="speech_date"
-          type="date"
-          defaultValue={entry?.speech_date ?? ""}
-        />
-        <Field
-          label="Video URL"
-          name="video_url"
-          type="url"
-          placeholder="https://"
-          defaultValue={entry?.video_url ?? ""}
-        />
-        <Field
-          label="Audio URL"
-          name="audio_url"
-          type="url"
-          placeholder="https://"
-          defaultValue={entry?.audio_url ?? ""}
-        />
+        <Field label="Date" name="speech_date" type="date" defaultValue={entry?.speech_date ?? ""} />
       </div>
 
       <div className="mt-3">
-        <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-          Summary
-        </label>
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate">Summary</label>
         <textarea
           name="summary"
           rows={2}
@@ -225,9 +277,7 @@ function SpeechForm({
       </div>
 
       <div className="mt-3">
-        <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-          Full Text
-        </label>
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate">Full Text</label>
         <textarea
           name="full_text"
           rows={4}
@@ -235,6 +285,12 @@ function SpeechForm({
           className="mt-1.5 w-full rounded-lg border border-mist px-3 py-2 text-sm text-ink focus:border-teal focus:outline-none"
         />
       </div>
+
+      {!entry && (
+        <p className="mt-3 text-xs text-slate">
+          Save the speech first, then use the Attachments panel to upload video, photos, audio, or documents.
+        </p>
+      )}
 
       <div className="mt-4 flex justify-end gap-2">
         <button
@@ -263,14 +319,12 @@ function Field({
   type = "text",
   required,
   defaultValue,
-  placeholder,
 }: {
   label: string;
   name: string;
   type?: string;
   required?: boolean;
   defaultValue?: string | null;
-  placeholder?: string;
 }) {
   return (
     <div>
@@ -282,7 +336,6 @@ function Field({
         name={name}
         type={type}
         required={required}
-        placeholder={placeholder}
         defaultValue={defaultValue ?? ""}
         className="mt-1.5 w-full rounded-lg border border-mist px-3 py-2 text-sm text-ink focus:border-teal focus:outline-none"
       />

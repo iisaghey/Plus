@@ -136,7 +136,7 @@ export default async function DashboardProfilePage() {
           .order("sort_order"),
         supabase
           .from("speeches")
-          .select("*")
+          .select("*, speech_attachments(*)")
           .eq("profile_id", profile.id)
           .eq("status", "active")
           .order("sort_order"),

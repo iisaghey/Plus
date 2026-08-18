@@ -96,3 +96,42 @@ export async function deleteMediaItem(entryId: string, profileId: string) {
   revalidateProfilePages(profileId);
   return { success: true };
 }
+
+function mediaTypeFromMime(mimeType: string) {
+  if (mimeType.startsWith("image/")) return "photo";
+  if (mimeType.startsWith("video/")) return "video";
+  return "document";
+}
+
+export async function createMediaFromUpload(
+  profileId: string,
+  file: { url: string; path: string; name: string; size: number; mimeType: string }
+): Promise<MediaFormState & { id?: string }> {
+  const supabase = await createClient();
+
+  const { count } = await supabase
+    .from("media")
+    .select("*", { count: "exact", head: true })
+    .eq("profile_id", profileId);
+
+  const { data, error } = await supabase
+    .from("media")
+    .insert({
+      profile_id: profileId,
+      media_type: mediaTypeFromMime(file.mimeType),
+      title: file.name.replace(/\.[^.]+$/, ""),
+      external_url: file.url,
+      storage_path: file.path,
+      file_name: file.name,
+      file_size: file.size,
+      mime_type: file.mimeType,
+      sort_order: count ?? 0,
+    })
+    .select("id")
+    .single();
+
+  if (error) return { error: error.message };
+
+  revalidateProfilePages(profileId);
+  return { success: true, id: data.id };
+}

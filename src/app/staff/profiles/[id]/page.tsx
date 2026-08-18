@@ -73,7 +73,7 @@ export default async function StaffEditProfilePage(
     supabase.from("education").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
     supabase.from("official_activities").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
     supabase.from("official_travel").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
-    supabase.from("speeches").select("*").eq("profile_id", id).eq("status", "active").order("sort_order"),
+    supabase.from("speeches").select("*, speech_attachments(*)").eq("profile_id", id).eq("status", "active").order("sort_order"),
   ]);
 
   if (!profile) notFound();

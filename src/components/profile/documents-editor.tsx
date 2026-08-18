@@ -2,16 +2,18 @@
 
 import { useActionState, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Pencil, Trash2, Loader2, X, FileText, Lock, Globe } from "lucide-react";
+import { Loader2, X, FileText, Pencil, Lock, Globe } from "lucide-react";
 import { toast } from "sonner";
 import {
-  createDocument,
   updateDocument,
   deleteDocument,
+  createDocumentFromUpload,
   type DocumentFormState,
 } from "@/lib/actions/documents";
-import { FileUploadField } from "@/components/profile/file-upload-field";
-import { formatMonthYear } from "@/lib/utils";
+import { uploadPrivateFile } from "@/lib/supabase/upload";
+import { MultiFileUpload, type UploadedFileMeta } from "@/components/profile/multi-file-upload";
+import { FilePreviewCard, kindFromMimeType } from "@/components/profile/file-preview-card";
+import { formatFileSize } from "@/lib/utils";
 import type { Tables } from "@/types/database.types";
 
 type Entry = Tables<"documents">;
@@ -27,14 +29,30 @@ export function DocumentsEditor({
 }) {
   const router = useRouter();
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null);
+  const [replacingId, setReplacingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
-  function handleDelete(id: string) {
-    setDeletingId(id);
+  async function handleFileUploaded(file: UploadedFileMeta) {
+    const result = await createDocumentFromUpload(profileId, {
+      url: file.url ?? "",
+      path: file.path,
+      name: file.name,
+      size: file.size,
+      mimeType: file.mimeType,
+    });
+    if (result.error) {
+      toast.error(result.error);
+      return;
+    }
+    router.refresh();
+  }
+
+  function handleRemove(id: string) {
+    setRemovingId(id);
     startTransition(async () => {
       const result = await deleteDocument(id, profileId);
-      setDeletingId(null);
+      setRemovingId(null);
       if (result.error) {
         toast.error(result.error);
         return;
@@ -44,126 +62,122 @@ export function DocumentsEditor({
     });
   }
 
-  function handleDone() {
-    setEditingId(null);
-    router.refresh();
+  function handleReplace(entry: Entry, file: File) {
+    setReplacingId(entry.id);
+    startTransition(async () => {
+      try {
+        const uploaded = await uploadPrivateFile("profile-documents", profileId, file);
+        const formData = new FormData();
+        formData.set("title", entry.title);
+        formData.set("category", entry.category ?? "");
+        formData.set("issuing_organization", entry.issuing_organization ?? "");
+        formData.set("document_date", entry.document_date ?? "");
+        formData.set("storage_path", uploaded.path);
+        formData.set("is_private", entry.is_private ? "true" : "false");
+        await updateDocument(entry.id, profileId, {}, formData);
+        toast.success("File replaced");
+        router.refresh();
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Replace failed");
+      } finally {
+        setReplacingId(null);
+      }
+    });
   }
 
   return (
     <div className="rounded-2xl border border-mist p-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <FileText className="h-4 w-4 text-teal" />
-          <h2 className="font-heading text-base font-bold text-navy dark:text-white">Documents</h2>
-        </div>
-        {editingId === null && !locked && (
-          <button
-            onClick={() => setEditingId("new")}
-            className="flex items-center gap-1.5 rounded-full bg-teal/10 px-3 py-1.5 text-xs font-semibold text-teal hover:bg-teal/20"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Add Document
-          </button>
-        )}
+      <div className="flex items-center gap-2">
+        <FileText className="h-4 w-4 text-teal" />
+        <h2 className="font-heading text-base font-bold text-navy dark:text-white">Documents &amp; Records</h2>
       </div>
+      <p className="mt-1 text-xs text-slate">
+        PDFs, Word docs, scanned records, and images. Files are kept private by default.
+      </p>
 
-      <div className="mt-4 space-y-3">
-        {editingId === "new" && (
-          <DocumentForm
-            profileId={profileId}
-            onCancel={() => setEditingId(null)}
-            onDone={handleDone}
+      {!locked && (
+        <div className="mt-4">
+          <MultiFileUpload
+            bucket="profile-documents"
+            folderId={profileId}
+            isPrivate
+            accept="application/pdf,.doc,.docx,image/*"
+            label="Upload Documents & Records"
+            onFileUploaded={handleFileUploaded}
           />
-        )}
+        </div>
+      )}
 
-        {entries.length === 0 && editingId !== "new" && (
-          <p className="py-6 text-center text-sm text-slate">
-            No documents added yet.
-          </p>
-        )}
-
-        {entries.map((entry) =>
-          editingId === entry.id ? (
-            <DocumentForm
-              key={entry.id}
-              profileId={profileId}
-              entry={entry}
-              onCancel={() => setEditingId(null)}
-              onDone={handleDone}
-            />
-          ) : (
-            <div
-              key={entry.id}
-              className="flex items-start justify-between gap-4 rounded-xl border border-mist p-4"
-            >
-              <div className="flex min-w-0 gap-3">
-                {entry.is_private ? (
-                  <Lock className="mt-0.5 h-4 w-4 shrink-0 text-slate" />
-                ) : (
-                  <Globe className="mt-0.5 h-4 w-4 shrink-0 text-teal" />
-                )}
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-navy dark:text-white">{entry.title}</p>
-                  <p className="text-xs text-slate">
-                    {[entry.category, entry.issuing_organization]
-                      .filter(Boolean)
-                      .join(" · ")}
-                    {entry.document_date
-                      ? ` · ${formatMonthYear(entry.document_date)}`
-                      : ""}
-                  </p>
-                </div>
+      {entries.length === 0 ? (
+        <p className="py-6 text-center text-sm text-slate">No documents added yet.</p>
+      ) : (
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {entries.map((entry) =>
+            editingId === entry.id ? (
+              <div key={entry.id} className="col-span-2 sm:col-span-3">
+                <DocumentMetaForm
+                  profileId={profileId}
+                  entry={entry}
+                  onCancel={() => setEditingId(null)}
+                  onDone={() => {
+                    setEditingId(null);
+                    router.refresh();
+                  }}
+                />
               </div>
-              <div className="flex shrink-0 gap-1">
-                <button
-                  onClick={() => setEditingId(entry.id)}
-                  disabled={locked}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-offwhite hover:text-navy dark:hover:text-white disabled:pointer-events-none disabled:opacity-40"
-                  aria-label="Edit"
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  onClick={() => handleDelete(entry.id)}
-                  disabled={locked || (pending && deletingId === entry.id)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
-                  aria-label="Delete"
-                >
-                  {pending && deletingId === entry.id ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <FilePreviewCard
+                key={entry.id}
+                path={entry.storage_path}
+                bucket="profile-documents"
+                fileName={entry.file_name ?? entry.title}
+                fileSize={formatFileSize(entry.file_size)}
+                kind={entry.mime_type ? kindFromMimeType(entry.mime_type) : "document"}
+                removing={pending && removingId === entry.id}
+                onRemove={() => handleRemove(entry.id)}
+                onReplace={locked ? undefined : (file) => handleReplace(entry, file)}
+              >
+                <div className="mt-1.5 flex items-center justify-between gap-1">
+                  {entry.is_private ? (
+                    <Lock className="h-3 w-3 shrink-0 text-slate" />
                   ) : (
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Globe className="h-3 w-3 shrink-0 text-teal" />
                   )}
-                </button>
-              </div>
-            </div>
-          )
-        )}
-      </div>
+                  {!locked && (
+                    <button
+                      type="button"
+                      onClick={() => setEditingId(entry.id)}
+                      disabled={pending && replacingId === entry.id}
+                      className="ml-auto flex items-center gap-1 text-[11px] font-semibold text-teal hover:underline disabled:opacity-50"
+                    >
+                      <Pencil className="h-3 w-3" />
+                      Details
+                    </button>
+                  )}
+                </div>
+              </FilePreviewCard>
+            )
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-function DocumentForm({
+function DocumentMetaForm({
   profileId,
   entry,
   onCancel,
   onDone,
 }: {
   profileId: string;
-  entry?: Entry;
+  entry: Entry;
   onCancel: () => void;
   onDone: () => void;
 }) {
-  const action = entry
-    ? updateDocument.bind(null, entry.id, profileId)
-    : createDocument.bind(null, profileId);
-
-  const [state, formAction, pending] = useActionState<DocumentFormState, FormData>(
-    action,
-    {}
-  );
-  const [isPrivate, setIsPrivate] = useState(entry?.is_private ?? true);
+  const action = updateDocument.bind(null, entry.id, profileId);
+  const [state, formAction, pending] = useActionState<DocumentFormState, FormData>(action, {});
+  const [isPrivate, setIsPrivate] = useState(entry.is_private ?? true);
 
   useEffect(() => {
     if (state.success) onDone();
@@ -171,14 +185,9 @@ function DocumentForm({
   }, [state.success]);
 
   return (
-    <form
-      action={formAction}
-      className="rounded-xl border border-teal/30 bg-offwhite p-4"
-    >
+    <form action={formAction} className="rounded-xl border border-teal/30 bg-offwhite p-4">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wide text-teal">
-          {entry ? "Edit Document" : "New Document"}
-        </p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-teal">Document Details</p>
         <button type="button" onClick={onCancel} className="text-slate hover:text-navy dark:hover:text-white">
           <X className="h-4 w-4" />
         </button>
@@ -186,30 +195,17 @@ function DocumentForm({
 
       {state.error && <p className="mt-2 text-xs text-red-600">{state.error}</p>}
 
+      <input type="hidden" name="storage_path" value={entry.storage_path ?? ""} />
+
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <Field label="Title" name="title" required defaultValue={entry?.title} />
-        <Field label="Category" name="category" defaultValue={entry?.category ?? ""} />
+        <Field label="Title" name="title" required defaultValue={entry.title} />
+        <Field label="Category" name="category" defaultValue={entry.category ?? ""} />
         <Field
           label="Issuing Organization"
           name="issuing_organization"
-          defaultValue={entry?.issuing_organization ?? ""}
+          defaultValue={entry.issuing_organization ?? ""}
         />
-        <Field
-          label="Date"
-          name="document_date"
-          type="date"
-          defaultValue={entry?.document_date ?? ""}
-        />
-      </div>
-
-      <div className="mt-3">
-        <FileUploadField
-          name="storage_path"
-          label="File"
-          defaultValue={entry?.storage_path}
-          bucket="profile-documents"
-          profileId={profileId}
-        />
+        <Field label="Date" name="document_date" type="date" defaultValue={entry.document_date ?? ""} />
       </div>
 
       <input type="hidden" name="is_private" value={isPrivate ? "true" : "false"} />
@@ -237,7 +233,7 @@ function DocumentForm({
           className="flex items-center gap-1.5 rounded-lg bg-teal px-4 py-2 text-xs font-semibold text-white hover:bg-aqoonsi disabled:opacity-50"
         >
           {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-          {entry ? "Save Changes" : "Add Document"}
+          Save Details
         </button>
       </div>
     </form>

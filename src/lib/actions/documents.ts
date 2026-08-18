@@ -95,3 +95,35 @@ export async function deleteDocument(entryId: string, profileId: string) {
   revalidateProfilePages(profileId);
   return { success: true };
 }
+
+export async function createDocumentFromUpload(
+  profileId: string,
+  file: { url: string; path: string; name: string; size: number; mimeType: string }
+): Promise<DocumentFormState & { id?: string }> {
+  const supabase = await createClient();
+
+  const { count } = await supabase
+    .from("documents")
+    .select("*", { count: "exact", head: true })
+    .eq("profile_id", profileId);
+
+  const { data, error } = await supabase
+    .from("documents")
+    .insert({
+      profile_id: profileId,
+      title: file.name.replace(/\.[^.]+$/, ""),
+      storage_path: file.path,
+      file_name: file.name,
+      file_size: file.size,
+      mime_type: file.mimeType,
+      is_private: true,
+      sort_order: count ?? 0,
+    })
+    .select("id")
+    .single();
+
+  if (error) return { error: error.message };
+
+  revalidateProfilePages(profileId);
+  return { success: true, id: data.id };
+}
