@@ -27,7 +27,8 @@ export default async function AdminAllProfilesPage(
   props: PageProps<"/admin/profiles">
 ) {
   const { role } = await getStaffContext();
-  if (role !== "super_admin") redirect("/admin");
+  if (role !== "super_admin" && role !== "admin") redirect("/admin");
+  const isSuperAdmin = role === "super_admin";
 
   const searchParams = await props.searchParams;
   const rawFilter = typeof searchParams.filter === "string" ? searchParams.filter : "all";
@@ -43,8 +44,8 @@ export default async function AdminAllProfilesPage(
         All Profiles
       </h1>
       <p className="mt-1 text-sm text-slate">
-        Complete lifecycle control over every profile on the platform — Super Admin
-        only.
+        Complete lifecycle control over every profile on the platform.
+        {!isSuperAdmin && " Permanently deleting a profile requires Super Admin."}
       </p>
 
       <div className="mt-6 flex flex-wrap gap-1 border-b border-mist">
@@ -140,6 +141,7 @@ export default async function AdminAllProfilesPage(
                         hidden_at: p.hidden_at,
                         deleted_at: p.deleted_at,
                       }}
+                      canPermanentlyDelete={isSuperAdmin}
                     />
                   </td>
                 </tr>

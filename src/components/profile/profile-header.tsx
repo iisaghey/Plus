@@ -13,10 +13,10 @@ type ProfileWithRelations = Tables<"profiles"> & {
 
 export function ProfileHeader({
   profile,
-  isSuperAdmin,
+  canManageQr,
 }: {
   profile: ProfileWithRelations;
-  isSuperAdmin: boolean;
+  canManageQr: boolean;
 }) {
   const social = (profile.social_links ?? {}) as Record<string, string>;
   const isVerified = profile.verification_status === "verified";
@@ -125,7 +125,7 @@ export function ProfileHeader({
             <ProfileQrCode
               slug={profile.slug}
               fullName={profile.full_name}
-              isSuperAdmin={isSuperAdmin}
+              canManageQr={canManageQr}
             />
             <ShareButton slug={profile.slug} fullName={profile.full_name} />
             {profile.email && (

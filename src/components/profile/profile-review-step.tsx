@@ -90,7 +90,7 @@ export function ProfileReviewStep({
               Share your profile instantly by scanning or sending its QR code.
             </p>
           </div>
-          <ProfileQrCode slug={profile.slug} fullName={profile.full_name} isSuperAdmin={false} />
+          <ProfileQrCode slug={profile.slug} fullName={profile.full_name} canManageQr={false} />
         </div>
       </div>
     </div>

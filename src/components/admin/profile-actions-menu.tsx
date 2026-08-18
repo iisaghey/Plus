@@ -50,7 +50,14 @@ export type ProfileActionState = {
 
 type Confirm = "delete" | "permanent" | null;
 
-export function ProfileActionsMenu({ profile }: { profile: ProfileActionState }) {
+export function ProfileActionsMenu({
+  profile,
+  canPermanentlyDelete = true,
+}: {
+  profile: ProfileActionState;
+  /** Permanent, irreversible deletion stays Super Admin only. */
+  canPermanentlyDelete?: boolean;
+}) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState<Confirm>(null);
@@ -177,12 +184,14 @@ export function ProfileActionsMenu({ profile }: { profile: ProfileActionState })
                       run("Profile restored", () => restoreDeletedProfile(profile.id))
                     }
                   />
-                  <MenuButton
-                    icon={Flame}
-                    label="Permanently Delete Profile"
-                    danger
-                    onClick={() => setConfirm("permanent")}
-                  />
+                  {canPermanentlyDelete && (
+                    <MenuButton
+                      icon={Flame}
+                      label="Permanently Delete Profile"
+                      danger
+                      onClick={() => setConfirm("permanent")}
+                    />
+                  )}
                 </>
               ) : (
                 <>

@@ -10,11 +10,11 @@ import { DURATION, EASE } from "@/lib/motion";
 export function ProfileQrCode({
   slug,
   fullName,
-  isSuperAdmin,
+  canManageQr,
 }: {
   slug: string;
   fullName: string;
-  isSuperAdmin: boolean;
+  canManageQr: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -131,9 +131,9 @@ export function ProfileQrCode({
               <p className="mt-3 text-xs text-slate">{fullName}</p>
 
               <div
-                className={`mt-5 grid gap-2 ${isSuperAdmin ? "grid-cols-3" : "grid-cols-1"}`}
+                className={`mt-5 grid gap-2 ${canManageQr ? "grid-cols-3" : "grid-cols-1"}`}
               >
-                {isSuperAdmin && (
+                {canManageQr && (
                   <button
                     onClick={handleDownload}
                     className="flex flex-col items-center gap-1 rounded-xl border border-mist py-2.5 text-xs font-medium text-navy dark:text-white hover:border-teal hover:text-teal"
@@ -149,7 +149,7 @@ export function ProfileQrCode({
                   <QrCode className="h-4 w-4" />
                   Share
                 </button>
-                {isSuperAdmin && (
+                {canManageQr && (
                   <button
                     onClick={handlePrint}
                     className="flex flex-col items-center gap-1 rounded-xl border border-mist py-2.5 text-xs font-medium text-navy dark:text-white hover:border-teal hover:text-teal"
@@ -159,9 +159,9 @@ export function ProfileQrCode({
                   </button>
                 )}
               </div>
-              {!isSuperAdmin && (
+              {!canManageQr && (
                 <p className="mt-3 text-[11px] text-slate">
-                  Download and print are available to Super Admins only.
+                  Download and print are available to Admins and Super Admins only.
                 </p>
               )}
             </motion.div>

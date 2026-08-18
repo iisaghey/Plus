@@ -55,7 +55,7 @@ export default async function ProfilePage(
 
   return (
     <div className="bg-white dark:bg-offwhite">
-      <ProfileHeader profile={profile} isSuperAdmin={role === "super_admin"} />
+      <ProfileHeader profile={profile} canManageQr={role === "admin" || role === "super_admin"} />
       <ProfileTabs
         bio={biography ?? null}
         shortBio={profile.short_bio}

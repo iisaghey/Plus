@@ -11,7 +11,7 @@ const STORAGE_BUCKETS = [
   "qr-codes",
 ] as const;
 
-async function requireSuperAdmin() {
+async function getActorContext() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -25,6 +25,10 @@ async function requireSuperAdmin() {
     .maybeSingle();
 
   return { supabase, user, role: userRole?.role ?? null };
+}
+
+function isAdminRole(role: string | null) {
+  return role === "admin" || role === "super_admin";
 }
 
 async function snapshot(
@@ -77,9 +81,9 @@ async function logAndRevalidate(
 }
 
 export async function hideProfile(profileId: string) {
-  const { supabase, user, role } = await requireSuperAdmin();
+  const { supabase, user, role } = await getActorContext();
   if (!user) return { error: "You must be signed in." };
-  if (role !== "super_admin") return { error: "Only Super Admin can hide profiles." };
+  if (!isAdminRole(role)) return { error: "Only Admin or Super Admin can hide profiles." };
   const before = await snapshot(supabase, profileId);
   if (!before) return { error: "Profile not found." };
   const { error } = await supabase.rpc("super_admin_set_profile_hidden", {
@@ -92,9 +96,9 @@ export async function hideProfile(profileId: string) {
 }
 
 export async function unhideProfile(profileId: string) {
-  const { supabase, user, role } = await requireSuperAdmin();
+  const { supabase, user, role } = await getActorContext();
   if (!user) return { error: "You must be signed in." };
-  if (role !== "super_admin") return { error: "Only Super Admin can unhide profiles." };
+  if (!isAdminRole(role)) return { error: "Only Admin or Super Admin can unhide profiles." };
   const before = await snapshot(supabase, profileId);
   if (!before) return { error: "Profile not found." };
   const { error } = await supabase.rpc("super_admin_set_profile_hidden", {
@@ -107,9 +111,9 @@ export async function unhideProfile(profileId: string) {
 }
 
 export async function verifyProfile(profileId: string) {
-  const { supabase, user, role } = await requireSuperAdmin();
+  const { supabase, user, role } = await getActorContext();
   if (!user) return { error: "You must be signed in." };
-  if (role !== "super_admin") return { error: "Only Super Admin can verify profiles." };
+  if (!isAdminRole(role)) return { error: "Only Admin or Super Admin can verify profiles." };
   const before = await snapshot(supabase, profileId);
   if (!before) return { error: "Profile not found." };
   const { error } = await supabase.rpc("super_admin_set_profile_verified", {
@@ -122,9 +126,9 @@ export async function verifyProfile(profileId: string) {
 }
 
 export async function unverifyProfile(profileId: string) {
-  const { supabase, user, role } = await requireSuperAdmin();
+  const { supabase, user, role } = await getActorContext();
   if (!user) return { error: "You must be signed in." };
-  if (role !== "super_admin") return { error: "Only Super Admin can unverify profiles." };
+  if (!isAdminRole(role)) return { error: "Only Admin or Super Admin can unverify profiles." };
   const before = await snapshot(supabase, profileId);
   if (!before) return { error: "Profile not found." };
   const { error } = await supabase.rpc("super_admin_set_profile_verified", {
@@ -137,9 +141,9 @@ export async function unverifyProfile(profileId: string) {
 }
 
 export async function archiveProfile(profileId: string) {
-  const { supabase, user, role } = await requireSuperAdmin();
+  const { supabase, user, role } = await getActorContext();
   if (!user) return { error: "You must be signed in." };
-  if (role !== "super_admin") return { error: "Only Super Admin can archive profiles." };
+  if (!isAdminRole(role)) return { error: "Only Admin or Super Admin can archive profiles." };
   const before = await snapshot(supabase, profileId);
   if (!before) return { error: "Profile not found." };
   const { error } = await supabase.rpc("super_admin_set_profile_archived", {
@@ -152,9 +156,9 @@ export async function archiveProfile(profileId: string) {
 }
 
 export async function restoreArchivedProfile(profileId: string) {
-  const { supabase, user, role } = await requireSuperAdmin();
+  const { supabase, user, role } = await getActorContext();
   if (!user) return { error: "You must be signed in." };
-  if (role !== "super_admin") return { error: "Only Super Admin can restore profiles." };
+  if (!isAdminRole(role)) return { error: "Only Admin or Super Admin can restore profiles." };
   const before = await snapshot(supabase, profileId);
   if (!before) return { error: "Profile not found." };
   const { error } = await supabase.rpc("super_admin_set_profile_archived", {
@@ -167,9 +171,9 @@ export async function restoreArchivedProfile(profileId: string) {
 }
 
 export async function deleteProfile(profileId: string) {
-  const { supabase, user, role } = await requireSuperAdmin();
+  const { supabase, user, role } = await getActorContext();
   if (!user) return { error: "You must be signed in." };
-  if (role !== "super_admin") return { error: "Only Super Admin can delete profiles." };
+  if (!isAdminRole(role)) return { error: "Only Admin or Super Admin can delete profiles." };
   const before = await snapshot(supabase, profileId);
   if (!before) return { error: "Profile not found." };
   const { error } = await supabase.rpc("super_admin_set_profile_deleted", {
@@ -182,9 +186,9 @@ export async function deleteProfile(profileId: string) {
 }
 
 export async function restoreDeletedProfile(profileId: string) {
-  const { supabase, user, role } = await requireSuperAdmin();
+  const { supabase, user, role } = await getActorContext();
   if (!user) return { error: "You must be signed in." };
-  if (role !== "super_admin") return { error: "Only Super Admin can restore profiles." };
+  if (!isAdminRole(role)) return { error: "Only Admin or Super Admin can restore profiles." };
   const before = await snapshot(supabase, profileId);
   if (!before) return { error: "Profile not found." };
   const { error } = await supabase.rpc("super_admin_set_profile_deleted", {
@@ -197,7 +201,7 @@ export async function restoreDeletedProfile(profileId: string) {
 }
 
 export async function permanentlyDeleteProfile(profileId: string) {
-  const { supabase, user, role } = await requireSuperAdmin();
+  const { supabase, user, role } = await getActorContext();
   if (!user) return { error: "You must be signed in." };
   if (role !== "super_admin") {
     return { error: "Only Super Admin can permanently delete profiles." };

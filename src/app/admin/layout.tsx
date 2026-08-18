@@ -3,7 +3,6 @@ import {
   LayoutDashboard,
   Users,
   BadgeCheck,
-  IdCard,
   UsersRound,
   Building2,
   Tags,
@@ -37,11 +36,12 @@ export default async function AdminLayout({
 
   const NAV: SidebarItem[] = [
     { href: "/admin", label: "Overview", icon: <LayoutDashboard className={iconClass} /> },
-    { href: "/admin/team", label: "Profiles", icon: <IdCard className={iconClass} /> },
+    { href: "/admin/profiles", label: "All Profiles", icon: <ShieldCheck className={iconClass} /> },
     { href: "/admin/review", label: "Content Review", icon: <BarChart3 className={iconClass} /> },
     { href: "/admin/verification", label: "Verification", icon: <BadgeCheck className={iconClass} /> },
     { href: "/admin/approvals", label: "Account Approvals", icon: <Users className={iconClass} /> },
     { href: "/admin/team", label: "Staff & Editors", icon: <UsersRound className={iconClass} /> },
+    { href: "/admin/users", label: "Users", icon: <Users className={iconClass} /> },
     { href: "/admin/organizations", label: "Organizations", icon: <Building2 className={iconClass} /> },
     { href: "/admin/categories", label: "Categories", icon: <Tags className={iconClass} /> },
     { label: "Media", icon: <Images className={iconClass} />, comingSoon: true },
@@ -50,9 +50,7 @@ export default async function AdminLayout({
     { href: "/admin/audit-logs", label: "Audit Logs", icon: <ScrollText className={iconClass} /> },
     ...(isSuperAdmin
       ? ([
-          { href: "/admin/profiles", label: "All Profiles", icon: <ShieldCheck className={iconClass} /> },
           { href: "/admin/edit-requests", label: "Edit Requests", icon: <KeyRound className={iconClass} /> },
-          { href: "/admin/users", label: "Users", icon: <Users className={iconClass} /> },
           { href: "/admin/roles", label: "Roles & Permissions", icon: <ShieldAlert className={iconClass} /> },
           { label: "Security", icon: <Lock className={iconClass} />, comingSoon: true },
           { label: "System Settings", icon: <Settings className={iconClass} />, comingSoon: true },

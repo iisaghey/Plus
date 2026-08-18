@@ -12,11 +12,18 @@ const ALL_ROLES: Enums<"app_role">[] = [
   "super_admin",
 ];
 
+// Admin's set_user_role RPC is scoped server-side to these three roles only
+// -- it rejects any attempt to assign or change an admin/super_admin
+// account. This list must stay in sync with that so the UI never offers an
+// option the backend will reject.
+const ADMIN_ASSIGNABLE_ROLES: Enums<"app_role">[] = ["profile_owner", "staff", "editor"];
+
 export default async function AdminUsersPage() {
   // Defense in depth: gated in the layout too, but a page that changes
   // roles must never rely solely on a hidden nav link.
   const { role } = await getStaffContext();
-  if (role !== "super_admin") redirect("/admin");
+  if (role !== "super_admin" && role !== "admin") redirect("/admin");
+  const isSuperAdmin = role === "super_admin";
 
   const users = await getAllUsers();
 
@@ -26,6 +33,7 @@ export default async function AdminUsersPage() {
       <p className="mt-1 text-sm text-slate">
         Every account on the platform. Changing a role here takes effect
         immediately.
+        {!isSuperAdmin && " Assigning Admin or Super Admin requires Super Admin."}
       </p>
 
       <div className="mt-8 space-y-2">
@@ -36,7 +44,7 @@ export default async function AdminUsersPage() {
             email={u.email}
             role={u.role}
             accountStatus={u.account_status}
-            assignableRoles={ALL_ROLES}
+            assignableRoles={isSuperAdmin ? ALL_ROLES : ADMIN_ASSIGNABLE_ROLES}
           />
         ))}
       </div>

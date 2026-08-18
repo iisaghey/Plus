@@ -54,18 +54,24 @@ export function TeamMemberRow({
       </div>
       <div className="flex items-center gap-2">
         {pending && <Loader2 className="h-3.5 w-3.5 animate-spin text-slate" />}
-        <select
-          value={role}
-          disabled={pending}
-          onChange={(e) => handleChange(e.target.value as Enums<"app_role">)}
-          className="rounded-lg border border-mist bg-white dark:bg-offwhite px-2 py-1.5 text-xs text-navy dark:text-white focus:border-teal focus:outline-none"
-        >
-          {assignableRoles.map((r) => (
-            <option key={r} value={r}>
-              {r.replace("_", " ")}
-            </option>
-          ))}
-        </select>
+        {assignableRoles.includes(role) ? (
+          <select
+            value={role}
+            disabled={pending}
+            onChange={(e) => handleChange(e.target.value as Enums<"app_role">)}
+            className="rounded-lg border border-mist bg-white dark:bg-offwhite px-2 py-1.5 text-xs text-navy dark:text-white focus:border-teal focus:outline-none"
+          >
+            {assignableRoles.map((r) => (
+              <option key={r} value={r}>
+                {r.replace("_", " ")}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <Badge variant="neutral" size="sm" title="You don't have permission to change this role">
+            {role.replace("_", " ")}
+          </Badge>
+        )}
       </div>
     </div>
   );

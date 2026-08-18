@@ -21,8 +21,8 @@ async function requireSuperAdmin() {
 
 export async function getProfileResumeData(profileId: string) {
   const { supabase, user, role } = await requireSuperAdmin();
-  if (!user || role !== "super_admin") {
-    return { error: "Only Super Admins can export a profile resume." };
+  if (!user || (role !== "super_admin" && role !== "admin")) {
+    return { error: "Only Admins and Super Admins can export a profile resume." };
   }
 
   const { data: profile } = await supabase
