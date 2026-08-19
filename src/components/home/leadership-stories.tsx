@@ -5,6 +5,7 @@ import { SectionLabel } from "@/components/ui/section-label";
 import { createClient } from "@/lib/supabase/server";
 import { Reveal } from "@/components/motion/reveal";
 import { StaggerGrid, StaggerItem } from "@/components/motion/stagger-grid";
+import { CinematicBackground } from "@/components/home/cinematic-background";
 
 export async function LeadershipStories() {
   const supabase = await createClient();
@@ -24,8 +25,9 @@ export async function LeadershipStories() {
   if (!bios || bios.length === 0) return null;
 
   return (
-    <section className="bg-navy">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
+    <section className="relative overflow-hidden bg-navy">
+      <CinematicBackground src="/home/hamza-abdi.jpg" alt="" />
+      <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <Reveal>
           <SectionLabel light className="mx-auto justify-center">
             Leadership History

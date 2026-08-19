@@ -1,10 +1,16 @@
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
 import { Reveal } from "@/components/motion/reveal";
+import { CinematicBackground } from "@/components/home/cinematic-background";
 
 export function FinalCta() {
   return (
     <section className="relative overflow-hidden bg-navy">
+      <CinematicBackground
+        src="/home/farmajo-hassan.jpg"
+        alt=""
+        overlay="from-navy/90 via-navy/85 to-navy/92"
+      />
       <div
         className="absolute inset-0 opacity-80"
         style={{
