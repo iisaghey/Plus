@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import {
   LayoutDashboard,
@@ -16,6 +17,10 @@ import { createClient } from "@/lib/supabase/server";
 import { RoleSidebar, type SidebarItem } from "@/components/dashboard/role-sidebar";
 import { StaffDraftForm } from "@/components/dashboard/staff-draft-form";
 import { createStaffDraft } from "@/lib/actions/profile";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 const iconClass = "h-4 w-4";
 

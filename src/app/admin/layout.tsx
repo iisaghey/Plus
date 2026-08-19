@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import {
   LayoutDashboard,
@@ -26,6 +27,10 @@ import {
 } from "lucide-react";
 import { getStaffContext } from "@/lib/auth/staff";
 import { RoleSidebar, type SidebarItem } from "@/components/dashboard/role-sidebar";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function AdminLayout({
   children,

@@ -29,6 +29,11 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 const STAFF_ROLES = ["super_admin", "admin", "editor", "staff"];
 const UNRESTRICTED_ROLES = ["super_admin", "admin", "editor"];

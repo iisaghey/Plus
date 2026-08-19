@@ -32,6 +32,19 @@ function publicProfilesQuery(supabase: Awaited<ReturnType<typeof createClient>>)
     .is("deleted_at", null);
 }
 
+export async function getPublishedProfileSlugs() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("profiles")
+    .select("slug, updated_at")
+    .eq("is_public", true)
+    .eq("status", "active")
+    .eq("workflow_status", "published")
+    .is("hidden_at", null)
+    .is("deleted_at", null);
+  return data ?? [];
+}
+
 export async function getFeaturedProfiles(limit = 6) {
   const supabase = await createClient();
   const { data } = await publicProfilesQuery(supabase)

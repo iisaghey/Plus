@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Hero } from "@/components/home/hero";
 import { FeaturedProfiles } from "@/components/home/featured-profiles";
 import { WhyAqoonsiPlus } from "@/components/home/why-aqoonsiplus";
@@ -9,6 +10,12 @@ import { DigitalLegacy } from "@/components/home/digital-legacy";
 import { OurValues } from "@/components/home/our-values";
 import { FinalCta } from "@/components/home/final-cta";
 import { getPlatformStats } from "@/lib/data/profiles";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default async function Home() {
   const stats = await getPlatformStats();

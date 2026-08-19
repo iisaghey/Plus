@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   Search,
   ShieldCheck,
@@ -15,6 +16,13 @@ import {
 } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
 import { AnimatedCounter } from "@/components/motion/animated-counter";
+
+const TRUSTED_LEADERS = [
+  { src: "/home/hamza-abdi.jpg", alt: "Hamza Abdi Barre" },
+  { src: "/home/sheikh-sharif.jpg", alt: "Sheikh Sharif Sheikh Ahmed" },
+  { src: "/home/abdiqasim.jpg", alt: "Abdiqasim Salad Hassan" },
+  { src: "/home/abwan-xadraawi.jpg", alt: "Somali community leader" },
+];
 
 export function Hero({
   stats,
@@ -118,8 +126,27 @@ export function Hero({
           </LinkButton>
         </div>
 
+        <div
+          className="mt-12 flex items-center justify-center gap-3 animate-fade-up"
+          style={{ animationDelay: "360ms" }}
+        >
+          <div className="flex -space-x-3">
+            {TRUSTED_LEADERS.map((leader) => (
+              <div
+                key={leader.src}
+                className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-navy ring-1 ring-white/25 sm:h-12 sm:w-12"
+              >
+                <Image src={leader.src} alt={leader.alt} fill className="object-cover" />
+              </div>
+            ))}
+          </div>
+          <p className="text-left text-xs font-medium text-white/60 sm:text-sm">
+            Trusted by Somalia&apos;s leaders &amp; public officials
+          </p>
+        </div>
+
         <dl
-          className="mx-auto mt-16 grid max-w-2xl grid-cols-3 gap-4 border-t border-white/10 pt-8 animate-fade-up"
+          className="mx-auto mt-8 grid max-w-2xl grid-cols-3 gap-4 border-t border-white/10 pt-8 animate-fade-up"
           style={{ animationDelay: "400ms" }}
         >
           {[

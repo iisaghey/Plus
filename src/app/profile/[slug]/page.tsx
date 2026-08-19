@@ -10,10 +10,14 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await props.params;
   const data = await getProfileBySlug(slug);
-  if (!data) return { title: "Profile Not Found" };
+  if (!data) return { title: "Profile Not Found", robots: { index: false } };
 
   const { profile } = data;
-  const title = `${profile.full_name} | AqoonsiPlus`;
+  // Plain string here — the root layout's title template already appends
+  // " | AqoonsiPlus", so including it again here would double it up.
+  const title = profile.preferred_title
+    ? `${profile.preferred_title} ${profile.full_name}`
+    : profile.full_name;
   const description =
     profile.short_bio ??
     `${profile.full_name}'s verified digital profile on AqoonsiPlus.`;
@@ -21,10 +25,20 @@ export async function generateMetadata(
   return {
     title,
     description,
+    alternates: {
+      canonical: `/profile/${profile.slug}`,
+    },
     openGraph: {
       title,
       description,
       type: "profile",
+      url: `/profile/${profile.slug}`,
+      images: profile.photo_url ? [profile.photo_url] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
       images: profile.photo_url ? [profile.photo_url] : undefined,
     },
   };
@@ -53,8 +67,29 @@ export default async function ProfilePage(
     documents,
   } = data;
 
+  const socialLinks = (profile.social_links ?? {}) as Record<string, string>;
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: profile.full_name,
+    honorificPrefix: profile.preferred_title || undefined,
+    jobTitle: profile.current_position || undefined,
+    description: profile.short_bio || biography?.summary || undefined,
+    image: profile.photo_url || undefined,
+    url: `https://www.aqoonsiplus.com/profile/${profile.slug}`,
+    nationality: profile.nationality || undefined,
+    affiliation: profile.organizations?.name
+      ? { "@type": "Organization", name: profile.organizations.name }
+      : undefined,
+    sameAs: Object.values(socialLinks).filter(Boolean),
+  };
+
   return (
     <div className="bg-white dark:bg-offwhite">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
       <ProfileHeader profile={profile} canManageQr={role === "admin" || role === "super_admin"} />
       <ProfileTabs
         bio={biography ?? null}

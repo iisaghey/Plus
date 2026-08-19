@@ -23,7 +23,10 @@ const dmSans = DM_Sans({
   weight: ["500", "600"],
 });
 
+const SITE_URL = "https://www.aqoonsiplus.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "AqoonsiPlus | Your Leadership. Your Identity. Your Legacy.",
     template: "%s | AqoonsiPlus",
@@ -38,12 +41,51 @@ export const metadata: Metadata = {
     "government officials",
     "digital legacy",
   ],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "AqoonsiPlus | Your Leadership. Your Identity. Your Legacy.",
     description:
       "Discover verified digital profiles, leadership histories, achievements, and professional legacies in one trusted platform.",
     siteName: "AqoonsiPlus",
+    url: SITE_URL,
+    locale: "en_US",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AqoonsiPlus | Your Leadership. Your Identity. Your Legacy.",
+    description:
+      "Discover verified digital profiles, leadership histories, achievements, and professional legacies in one trusted platform.",
+  },
+};
+
+const ORGANIZATION_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "AqoonsiPlus",
+  url: SITE_URL,
+  logo: `${SITE_URL}/logo.png`,
+  description:
+    "A trusted digital profile and information management platform for leaders, professionals, government officials, and public figures in Somalia.",
+  sameAs: [
+    "https://x.com/aqoonsiplus",
+    "https://www.tiktok.com/@aqoonsiplus",
+    "https://www.linkedin.com/in/aqoonsi-plus-b2267642a/",
+    "https://www.facebook.com/share/19RPR1MFj3/?mibextid=wwXIfr",
+  ],
+};
+
+const WEBSITE_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "AqoonsiPlus",
+  url: SITE_URL,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${SITE_URL}/search?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
   },
 };
 
@@ -66,6 +108,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_JSON_LD) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
+        />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <Navbar />

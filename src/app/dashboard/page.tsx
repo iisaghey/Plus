@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -11,6 +12,10 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 import { SignOutButton } from "@/components/profile/sign-out-button";
 import { SubmitVerificationButton } from "@/components/profile/submit-verification-button";
 import { LinkButton } from "@/components/ui/button";
