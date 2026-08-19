@@ -12,11 +12,12 @@ import {
   FileText,
   Lock,
   PlayCircle,
-  X,
+  Music,
   Landmark,
 } from "lucide-react";
 import { cn, formatDateRange, formatMonthYear } from "@/lib/utils";
 import { Timeline, type TimelineEntry } from "./timeline";
+import { MediaLightbox, type LightboxItem } from "./media-lightbox";
 import type { Tables } from "@/types/database.types";
 
 type Props = {
@@ -50,7 +51,15 @@ type Tab = (typeof TABS)[number];
 
 export function ProfileTabs(props: Props) {
   const [active, setActive] = useState<Tab>("Overview");
-  const [lightbox, setLightbox] = useState<string | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  const lightboxItems: LightboxItem[] = props.media.map((m) => ({
+    id: m.id,
+    url: m.external_url,
+    kind: m.media_type as LightboxItem["kind"],
+    title: m.title,
+    description: m.caption,
+  }));
 
   const combinedTimeline: TimelineEntry[] = useMemo(() => {
     type RawEntry = TimelineEntry & { startDate: string | null };
@@ -298,23 +307,24 @@ export function ProfileTabs(props: Props) {
               <EmptyState label="No media has been published yet." />
             ) : (
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                {props.media.map((m) => (
+                {props.media.map((m, i) => (
                   <button
                     key={m.id}
-                    onClick={() => m.external_url && setLightbox(m.external_url)}
+                    onClick={() => setLightboxIndex(i)}
                     className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-mist text-left"
                   >
-                    {m.external_url && (
+                    {m.media_type === "photo" && m.external_url ? (
                       <Image
                         src={m.external_url}
                         alt={m.title ?? ""}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
-                    )}
-                    {m.media_type === "video" && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-navy/30">
-                        <PlayCircle className="h-8 w-8 text-white" />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center bg-navy">
+                        {m.media_type === "video" && <PlayCircle className="h-8 w-8 text-white/80" />}
+                        {m.media_type === "audio" && <Music className="h-8 w-8 text-white/80" />}
+                        {m.media_type === "document" && <FileText className="h-8 w-8 text-white/80" />}
                       </div>
                     )}
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy/80 to-transparent p-3">
@@ -326,40 +336,12 @@ export function ProfileTabs(props: Props) {
                 ))}
               </div>
             )}
-            <AnimatePresence>
-              {lightbox && (
-                <motion.div
-                  className="fixed inset-0 z-[100] flex items-center justify-center bg-navy/90 p-6"
-                  onClick={() => setLightbox(null)}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: DURATION.fast, ease: EASE }}
-                >
-                  <button
-                    className="absolute right-6 top-6 text-white/70 hover:text-white"
-                    onClick={() => setLightbox(null)}
-                  >
-                    <X className="h-6 w-6" />
-                  </button>
-                  <motion.div
-                    className="relative h-[70vh] w-full max-w-3xl"
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.96 }}
-                    transition={{ duration: DURATION.base, ease: EASE }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Image
-                      src={lightbox}
-                      alt=""
-                      fill
-                      className="object-contain"
-                    />
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <MediaLightbox
+              items={lightboxItems}
+              index={lightboxIndex}
+              onClose={() => setLightboxIndex(null)}
+              onNavigate={setLightboxIndex}
+            />
           </>
         )}
 
