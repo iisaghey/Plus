@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { DURATION, EASE } from "@/lib/motion";
@@ -320,9 +320,15 @@ export function ProfileTabs(props: Props) {
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
+                    ) : m.media_type === "video" && m.external_url ? (
+                      <>
+                        <VideoThumbnail src={m.external_url} />
+                        <div className="absolute inset-0 flex items-center justify-center bg-navy/20 transition-colors group-hover:bg-navy/40">
+                          <PlayCircle className="h-9 w-9 text-white drop-shadow" />
+                        </div>
+                      </>
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center bg-navy">
-                        {m.media_type === "video" && <PlayCircle className="h-8 w-8 text-white/80" />}
                         {m.media_type === "audio" && <Music className="h-8 w-8 text-white/80" />}
                         {m.media_type === "document" && <FileText className="h-8 w-8 text-white/80" />}
                       </div>
@@ -380,6 +386,26 @@ export function ProfileTabs(props: Props) {
         </motion.div>
       </AnimatePresence>
     </div>
+  );
+}
+
+function VideoThumbnail({ src }: { src: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      preload="metadata"
+      muted
+      playsInline
+      tabIndex={-1}
+      onLoadedMetadata={() => {
+        const video = videoRef.current;
+        if (video) video.currentTime = Math.min(0.5, video.duration / 2 || 0.5);
+      }}
+      className="pointer-events-none h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+    />
   );
 }
 
