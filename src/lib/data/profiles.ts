@@ -16,7 +16,7 @@ function isVerificationStatus(
 
 const CARD_SELECT = `
   id, slug, full_name, preferred_title, current_position, country, location,
-  photo_url, short_bio, verification_status, view_count, created_at,
+  photo_url, cover_url, short_bio, verification_status, view_count, created_at,
   organizations ( name ),
   categories ( name, slug )
 `;

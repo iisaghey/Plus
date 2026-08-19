@@ -17,8 +17,12 @@ export function ProfileCard({ profile }: { profile: ProfileCardData }) {
       href={`/profile/${profile.slug}`}
       className="group flex flex-col overflow-hidden rounded-2xl border border-mist bg-white dark:bg-offwhite transition-all duration-300 hover:-translate-y-1 hover:border-teal/30 hover:shadow-xl hover:shadow-navy/5"
     >
-      <div className="relative h-24 bg-gradient-to-br from-navy via-royal to-aqoonsi">
-        <div className="absolute inset-0 bg-grid-pattern opacity-30" />
+      <div className="relative h-24 overflow-hidden bg-gradient-to-br from-navy via-royal to-aqoonsi">
+        {profile.cover_url ? (
+          <Image src={profile.cover_url} alt="" fill className="object-cover" />
+        ) : (
+          <div className="absolute inset-0 bg-grid-pattern opacity-30" />
+        )}
       </div>
       <div className="flex flex-1 flex-col px-5 pb-5">
         <div className="relative z-10 -mt-10 mb-3 flex items-end justify-between">
