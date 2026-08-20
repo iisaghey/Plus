@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
@@ -26,12 +26,12 @@ const SLIDES = [
   },
   {
     src: "/home/farmajo-hassan.jpg",
-    name: "A Legacy of Leadership",
+    name: "Farmaajo & Hassan Sheikh Mohamud",
     caption: "Presidential transitions, preserved with dignity.",
   },
   {
     src: "/home/abwan-xadraawi.jpg",
-    name: "Community Leadership",
+    name: "Abwan Xadraawi",
     caption: "Voices that help shape the nation.",
   },
 ];
@@ -41,7 +41,10 @@ const AUTOPLAY_MS = 5500;
 export function LeadersCarousel() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const [progress, setProgress] = useState(0); // continuous scrollLeft / slideWidth
   const [paused, setPaused] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const dragRef = useRef<{ startX: number; startScrollLeft: number; pointerId: number } | null>(null);
   const reduceMotion = useReducedMotion();
 
   const scrollToIndex = useCallback((index: number) => {
@@ -51,7 +54,9 @@ export function LeadersCarousel() {
     child?.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
   }, []);
 
-  // Keep `active` (for dots/buttons) in sync with whatever the user swiped to.
+  // Continuous scroll tracking drives both the settled `active` index (for
+  // dots/autoplay) and a fractional `progress` value used for the per-slide
+  // parallax offset while swiping.
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
@@ -60,10 +65,12 @@ export function LeadersCarousel() {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         if (!track) return;
-        const index = Math.round(track.scrollLeft / track.clientWidth);
-        setActive(Math.max(0, Math.min(SLIDES.length - 1, index)));
+        const raw = track.scrollLeft / track.clientWidth;
+        setProgress(raw);
+        setActive(Math.max(0, Math.min(SLIDES.length - 1, Math.round(raw))));
       });
     }
+    onScroll();
     track.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       track.removeEventListener("scroll", onScroll);
@@ -71,15 +78,44 @@ export function LeadersCarousel() {
     };
   }, []);
 
-  // Gentle autoplay — pauses on hover/touch and respects reduced motion.
+  // Gentle autoplay — pauses on hover/touch/drag and respects reduced motion.
   useEffect(() => {
-    if (reduceMotion || paused) return;
+    if (reduceMotion || paused || dragging) return;
     const id = setInterval(() => {
       const next = (active + 1) % SLIDES.length;
       scrollToIndex(next);
     }, AUTOPLAY_MS);
     return () => clearInterval(id);
-  }, [active, paused, reduceMotion, scrollToIndex]);
+  }, [active, paused, dragging, reduceMotion, scrollToIndex]);
+
+  // Mouse drag-to-swipe. Touch already gets native momentum scrolling from
+  // scroll-snap, so this only engages for mouse/pen pointers.
+  function onPointerDown(e: ReactPointerEvent<HTMLDivElement>) {
+    if (e.pointerType === "touch") return;
+    const track = trackRef.current;
+    if (!track) return;
+    dragRef.current = { startX: e.clientX, startScrollLeft: track.scrollLeft, pointerId: e.pointerId };
+    track.setPointerCapture(e.pointerId);
+    track.style.scrollSnapType = "none";
+    setDragging(true);
+  }
+
+  function onPointerMove(e: ReactPointerEvent<HTMLDivElement>) {
+    const drag = dragRef.current;
+    const track = trackRef.current;
+    if (!drag || !track) return;
+    track.scrollLeft = drag.startScrollLeft - (e.clientX - drag.startX);
+  }
+
+  function endDrag() {
+    const track = trackRef.current;
+    if (!dragRef.current || !track) return;
+    dragRef.current = null;
+    track.style.scrollSnapType = "";
+    const nearest = Math.max(0, Math.min(SLIDES.length - 1, Math.round(track.scrollLeft / track.clientWidth)));
+    scrollToIndex(nearest);
+    setDragging(false);
+  }
 
   return (
     <section className="bg-white py-20 dark:bg-offwhite sm:py-24">
@@ -98,30 +134,59 @@ export function LeadersCarousel() {
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
           onTouchStart={() => setPaused(true)}
-          className="scrollbar-none flex snap-x snap-mandatory overflow-x-auto scroll-smooth"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          className={cn(
+            "scrollbar-none flex snap-x snap-mandatory overflow-x-auto",
+            dragging ? "cursor-grabbing select-none" : "cursor-grab scroll-smooth"
+          )}
         >
-          {SLIDES.map((slide, i) => (
-            <div
-              key={slide.src}
-              className="relative aspect-[4/3] w-full shrink-0 snap-start sm:aspect-[16/7]"
-            >
-              <Image
-                src={slide.src}
-                alt={slide.name}
-                fill
-                priority={i === 0}
-                sizes="100vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/10 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 px-6 py-6 sm:px-12 sm:py-10">
-                <p className="font-heading text-xl font-bold text-white sm:text-2xl">
-                  {slide.name}
-                </p>
-                <p className="mt-1 text-sm text-white/75 sm:text-base">{slide.caption}</p>
+          {SLIDES.map((slide, i) => {
+            const offset = i - progress; // -1 = slide to the left of active, 0 = active, 1 = to the right
+            const isActive = i === active;
+            return (
+              <div
+                key={slide.src}
+                className="relative aspect-[4/3] w-full shrink-0 snap-start overflow-hidden sm:aspect-[16/7]"
+              >
+                <div
+                  className="absolute inset-0 transition-transform duration-100 ease-out"
+                  style={
+                    reduceMotion
+                      ? undefined
+                      : { transform: `scale(1.12) translateX(${offset * -6}%)` }
+                  }
+                >
+                  <Image
+                    src={slide.src}
+                    alt={slide.name}
+                    fill
+                    priority={i === 0}
+                    sizes="100vw"
+                    draggable={false}
+                    className={cn(
+                      "object-cover transition-transform duration-[4000ms] ease-out",
+                      !reduceMotion && isActive && "scale-110"
+                    )}
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/10 to-transparent" />
+                <div
+                  className={cn(
+                    "absolute inset-x-0 bottom-0 px-6 py-6 transition-all duration-700 ease-out sm:px-12 sm:py-10",
+                    isActive ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+                  )}
+                >
+                  <p className="font-heading text-xl font-bold text-white sm:text-2xl">
+                    {slide.name}
+                  </p>
+                  <p className="mt-1 text-sm text-white/75 sm:text-base">{slide.caption}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <button
