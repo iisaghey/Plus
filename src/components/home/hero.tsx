@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
 import { AnimatedCounter } from "@/components/motion/animated-counter";
+import { useTranslation } from "@/i18n/language-provider";
 
 const TRUSTED_LEADERS = [
   { src: "/home/hamza-abdi.jpg", alt: "Hamza Abdi Barre" },
@@ -31,6 +32,7 @@ export function Hero({
 }) {
   const [query, setQuery] = useState("");
   const router = useRouter();
+  const { t } = useTranslation();
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -64,24 +66,21 @@ export function Hero({
       <div className="relative mx-auto max-w-5xl px-4 pb-20 pt-24 text-center sm:px-6 sm:pt-32 lg:px-8">
         <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 font-accent text-xs font-semibold uppercase tracking-widest text-sky backdrop-blur-sm animate-fade-up">
           <ShieldCheck className="h-3.5 w-3.5" />
-          Built for Somali Political Leaders and Public Officials
+          {t("hero.badge")}
         </div>
 
         <h1
           className="mt-6 text-balance text-center font-heading text-3xl font-extrabold leading-[1.15] text-white sm:text-4xl lg:text-5xl animate-fade-up"
           style={{ animationDelay: "80ms" }}
         >
-          Your Leadership. Your Identity. Your Legacy.
+          {t("hero.heading")}
         </h1>
 
         <p
           className="mx-auto mt-6 max-w-2xl text-balance text-base leading-relaxed text-white/70 sm:text-lg animate-fade-up"
           style={{ animationDelay: "160ms" }}
         >
-          Build, manage, and preserve your leadership profile with
-          AqoonsiPlus. Bring your identity, career, achievements, activities,
-          media, and official records together in one professional digital
-          home.
+          {t("hero.subtext")}
         </p>
 
         <form
@@ -94,7 +93,7 @@ export function Hero({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             type="text"
-            placeholder="Search leaders, professionals, personalities…"
+            placeholder={t("hero.searchPlaceholder")}
             className="h-11 w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
           />
           <button
@@ -103,13 +102,13 @@ export function Hero({
             className="hidden h-11 shrink-0 items-center gap-1.5 rounded-xl px-3 text-xs font-semibold text-slate-500 hover:bg-slate-100 sm:flex"
           >
             <SlidersHorizontal className="h-3.5 w-3.5" />
-            Advanced
+            {t("hero.advanced")}
           </button>
           <button
             type="submit"
             className="h-11 shrink-0 rounded-xl bg-teal px-6 text-sm font-semibold text-white transition-colors hover:bg-aqoonsi"
           >
-            Search
+            {t("hero.search")}
           </button>
         </form>
 
@@ -118,11 +117,11 @@ export function Hero({
           style={{ animationDelay: "320ms" }}
         >
           <LinkButton href="/profiles" variant="primary" size="lg">
-            Explore Profiles
+            {t("hero.exploreProfiles")}
             <ArrowRight className="h-4 w-4" />
           </LinkButton>
           <LinkButton href="/create-profile" variant="outline-white" size="lg">
-            Create a Profile
+            {t("hero.createProfile")}
           </LinkButton>
         </div>
 
@@ -141,7 +140,7 @@ export function Hero({
             ))}
           </div>
           <p className="text-left text-xs font-medium text-white/60 sm:text-sm">
-            Trusted by Somalia&apos;s leaders &amp; public officials
+            {t("hero.trustedBy")}
           </p>
         </div>
 
@@ -150,9 +149,9 @@ export function Hero({
           style={{ animationDelay: "400ms" }}
         >
           {[
-            { label: "Digital Profiles", value: stats.totalProfiles },
-            { label: "Verified Leaders", value: stats.verifiedProfiles },
-            { label: "Organizations", value: stats.organizations },
+            { label: t("hero.statDigitalProfiles"), value: stats.totalProfiles },
+            { label: t("hero.statVerifiedLeaders"), value: stats.verifiedProfiles },
+            { label: t("hero.statOrganizations"), value: stats.organizations },
           ].map((stat) => (
             <div key={stat.label}>
               <dt className="font-accent text-[11px] uppercase tracking-wider text-white/40">

@@ -6,33 +6,8 @@ import {
   TikTokIcon,
   LinkedinIcon,
 } from "@/components/ui/social-icons";
-
-const COLUMNS = [
-  {
-    title: "Platform",
-    links: [
-      { href: "/about", label: "About" },
-      { href: "/profiles", label: "Profiles" },
-      { href: "/verification", label: "Verification" },
-      { href: "/search", label: "Advanced Search" },
-      { href: "/about#how-it-works", label: "How It Works" },
-    ],
-  },
-  {
-    title: "Legal",
-    links: [
-      { href: "/privacy", label: "Privacy Policy" },
-      { href: "/terms", label: "Terms of Service" },
-    ],
-  },
-  {
-    title: "Support",
-    links: [
-      { href: "/contact", label: "Contact" },
-      { href: "/help", label: "Help Center" },
-    ],
-  },
-];
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 const SOCIALS = [
   {
@@ -49,7 +24,37 @@ const SOCIALS = [
   { href: "https://www.linkedin.com/in/aqoonsi-plus-b2267642a/", label: "LinkedIn", icon: LinkedinIcon },
 ];
 
-export function Footer() {
+export async function Footer() {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
+
+  const columns = [
+    {
+      title: t.footer.platform,
+      links: [
+        { href: "/about", label: t.footer.about },
+        { href: "/profiles", label: t.footer.profiles },
+        { href: "/verification", label: t.footer.verification },
+        { href: "/search", label: t.footer.advancedSearch },
+        { href: "/about#how-it-works", label: t.footer.howItWorks },
+      ],
+    },
+    {
+      title: t.footer.legal,
+      links: [
+        { href: "/privacy", label: t.footer.privacyPolicy },
+        { href: "/terms", label: t.footer.termsOfService },
+      ],
+    },
+    {
+      title: t.footer.support,
+      links: [
+        { href: "/contact", label: t.footer.contact },
+        { href: "/help", label: t.footer.helpCenter },
+      ],
+    },
+  ];
+
   return (
     <footer className="border-t border-white/10 bg-navy text-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -57,11 +62,10 @@ export function Footer() {
           <div>
             <Logo light />
             <p className="mt-4 max-w-xs font-heading text-lg font-semibold text-white/90">
-              &ldquo;Your Leadership. Your Identity. Your Legacy.&rdquo;
+              &ldquo;{t.footer.tagline}&rdquo;
             </p>
             <p className="mt-2 max-w-xs text-sm leading-relaxed text-white/50">
-              A digital leadership identity and profile management platform
-              for political leaders and public officials.
+              {t.footer.description}
             </p>
             <div className="mt-6 flex items-center gap-2">
               {SOCIALS.map(({ href, label, icon: Icon }) => (
@@ -79,7 +83,7 @@ export function Footer() {
             </div>
           </div>
 
-          {COLUMNS.map((col) => (
+          {columns.map((col) => (
             <div key={col.title}>
               <h3 className="font-accent text-xs font-semibold uppercase tracking-[0.2em] text-white/40">
                 {col.title}
@@ -101,10 +105,10 @@ export function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-white/40 sm:flex-row">
-          <p>© 2026 AqoonsiPlus. All Rights Reserved.</p>
+          <p>© 2026 AqoonsiPlus. {t.footer.rights}</p>
           <p className="flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald" />
-            Secured by Supabase &middot; Built for trust
+            {t.footer.securedBy}
           </p>
         </div>
       </div>

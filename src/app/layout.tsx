@@ -3,6 +3,10 @@ import { Plus_Jakarta_Sans, Inter, DM_Sans } from "next/font/google";
 import { Toaster } from "sonner";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { LanguageProvider } from "@/i18n/language-provider";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
+import { LOCALE_META } from "@/i18n/config";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -99,10 +103,15 @@ const THEME_INIT_SCRIPT = `
 })();
 `;
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getServerLocale();
+  const dictionary = getDictionary(locale);
+  const dir = LOCALE_META[locale].dir;
+
   return (
     <html
-      lang="en"
+      lang={locale}
+      dir={dir}
       className={`${jakarta.variable} ${inter.variable} ${dmSans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
@@ -118,10 +127,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <Toaster position="top-right" richColors closeButton />
+        <LanguageProvider locale={locale} dictionary={dictionary}>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <Toaster position="top-right" richColors closeButton />
+        </LanguageProvider>
       </body>
     </html>
   );

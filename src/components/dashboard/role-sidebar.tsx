@@ -5,6 +5,8 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/layout/logo";
+import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { useTranslation } from "@/i18n/language-provider";
 import type { ReactNode } from "react";
 
 export type SidebarItem = {
@@ -30,6 +32,7 @@ export function RoleSidebar({
   const search = searchParams.toString();
   const currentUrl = search ? `${pathname}?${search}` : pathname;
   const initial = (userEmail?.trim()?.[0] ?? "?").toUpperCase();
+  const { t } = useTranslation();
 
   return (
     <div className="flex h-full flex-col rounded-2xl bg-navy p-4 shadow-lg shadow-navy/20">
@@ -80,13 +83,16 @@ export function RoleSidebar({
       </nav>
 
       <div className="mt-4 space-y-3 border-t border-white/10 pt-4">
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-white/60 transition-colors hover:bg-white/10 hover:text-white"
-        >
-          <Globe className="h-3.5 w-3.5" />
-          View Public Site
-        </Link>
+        <div className="flex items-center justify-between gap-2">
+          <Link
+            href="/"
+            className="flex min-w-0 items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+          >
+            <Globe className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">{t("common.viewPublicSite")}</span>
+          </Link>
+          <LanguageSwitcher compact surface="dark" />
+        </div>
         {userEmail && (
           <div className="flex items-center gap-2.5 rounded-xl px-3 py-2">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal/20 text-xs font-bold text-teal">

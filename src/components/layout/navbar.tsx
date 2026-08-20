@@ -7,24 +7,27 @@ import { Menu, X, Search } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
+import { LanguageSwitcher } from "./language-switcher";
 import { LinkButton } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { DURATION, EASE } from "@/lib/motion";
+import { useTranslation } from "@/i18n/language-provider";
 
 const NAV_LINKS = [
-  { href: "/profiles", label: "Profiles" },
-  { href: "/leaders", label: "Leaders" },
-  { href: "/professionals", label: "Professionals" },
-  { href: "/organizations", label: "Organizations" },
-  { href: "/about", label: "About" },
-  { href: "/verification", label: "Verification" },
-  { href: "/contact", label: "Contact Us" },
+  { href: "/profiles", key: "nav.profiles" },
+  { href: "/leaders", key: "nav.leaders" },
+  { href: "/professionals", key: "nav.professionals" },
+  { href: "/organizations", key: "nav.organizations" },
+  { href: "/about", key: "nav.about" },
+  { href: "/verification", key: "nav.verification" },
+  { href: "/contact", key: "nav.contact" },
 ];
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -54,7 +57,7 @@ export function Navbar() {
               href={link.href}
               className="rounded-full px-4 py-2 text-sm font-medium text-slate transition-colors hover:bg-offwhite hover:text-navy dark:hover:text-white"
             >
-              {link.label}
+              {t(link.key)}
             </Link>
           ))}
         </nav>
@@ -62,23 +65,25 @@ export function Navbar() {
         <div className="hidden items-center gap-1 lg:flex">
           <Link
             href="/search"
-            aria-label="Search"
+            aria-label={t("nav.search")}
             className="flex h-10 w-10 items-center justify-center rounded-full text-slate transition-colors hover:bg-offwhite hover:text-navy dark:hover:text-white"
           >
             <Search className="h-[18px] w-[18px]" />
           </Link>
+          <LanguageSwitcher />
           <ThemeToggle />
           <LinkButton href="/login" variant="primary" size="sm">
-            Login
+            {t("nav.login")}
           </LinkButton>
         </div>
 
         <div className="flex items-center gap-1 lg:hidden">
+          <LanguageSwitcher compact />
           <ThemeToggle />
           <button
             className="flex h-10 w-10 items-center justify-center rounded-full text-navy dark:text-white"
             onClick={() => setOpen((v) => !v)}
-            aria-label="Toggle menu"
+            aria-label={t("nav.toggleMenu")}
             aria-expanded={open}
           >
             <motion.span
@@ -111,13 +116,13 @@ export function Navbar() {
                     href={link.href}
                     className="rounded-xl px-4 py-3 text-sm font-medium text-navy hover:bg-offwhite dark:text-white"
                   >
-                    {link.label}
+                    {t(link.key)}
                   </Link>
                 ))}
               </nav>
               <div className="mt-4 flex flex-col gap-2 border-t border-mist pt-4">
                 <LinkButton href="/login" variant="primary" size="md" className="w-full">
-                  Login
+                  {t("nav.login")}
                 </LinkButton>
               </div>
             </div>

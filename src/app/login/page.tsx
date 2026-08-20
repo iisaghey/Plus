@@ -7,9 +7,11 @@ import { ShieldCheck, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n/language-provider";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,17 +41,17 @@ export default function LoginPage() {
           <ShieldCheck className="h-6 w-6" />
         </div>
         <h1 className="mt-4 font-heading text-2xl font-bold text-navy dark:text-white">
-          Welcome Back
+          {t("auth.welcomeBack")}
         </h1>
         <p className="mt-2 text-sm text-slate">
-          Sign in to manage your AqoonsiPlus profile.
+          {t("auth.signInSubtitle")}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <div>
           <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-            Email
+            {t("auth.email")}
           </label>
           <input
             type="email"
@@ -62,7 +64,7 @@ export default function LoginPage() {
         </div>
         <div>
           <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-            Password
+            {t("auth.password")}
           </label>
           <input
             type="password"
@@ -76,14 +78,14 @@ export default function LoginPage() {
 
         <Button type="submit" variant="primary" size="md" disabled={loading} className="w-full">
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-          Sign In
+          {t("auth.signIn")}
         </Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-slate">
-        Don&apos;t have a profile yet?{" "}
+        {t("auth.noProfileYet")}{" "}
         <Link href="/create-profile" className="font-semibold text-teal hover:underline">
-          Create one
+          {t("auth.createOne")}
         </Link>
       </p>
     </div>
