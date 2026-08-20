@@ -31,8 +31,43 @@ const SLIDES = [
   },
   {
     src: "/home/abwan-xadraawi.jpg",
-    name: "Abwan Xadraawi",
-    caption: "Voices that help shape the nation.",
+    name: "Hadraawi",
+    caption: "Renowned Somali Poet & Wordsmith",
+  },
+  {
+    src: "/home/hadraawi.jpg",
+    name: "Hadraawi",
+    caption: "A Voice for the Somali Nation",
+  },
+  {
+    src: "/home/abdullahi-yusuf-ahmed.jpg",
+    name: "Abdullahi Yusuf Ahmed",
+    caption: "Former President of Somalia",
+  },
+  {
+    src: "/home/aden-abdulle-osman-daar.jpg",
+    name: "Aden Abdulle Osman Daar",
+    caption: "First President of the Somali Republic",
+  },
+  {
+    src: "/home/abdullahi-issa-mohamud.jpg",
+    name: "Abdullahi Issa Mohamud",
+    caption: "First Prime Minister of Somalia",
+  },
+  {
+    src: "/home/cabdiwali-sheikh-axmed.jpg",
+    name: "Cabdiwali Sheikh Axmed",
+    caption: "Former Prime Minister of Somalia",
+  },
+  {
+    src: "/home/maxamed-siyaad-bare.png",
+    name: "Maxamed Siyaad Barre",
+    caption: "Former President of Somalia",
+  },
+  {
+    src: "/home/abdalla-deerow-isxaaq.png",
+    name: "Abdalla Deerow Isxaaq",
+    caption: "Somali Political Leader",
   },
 ];
 
