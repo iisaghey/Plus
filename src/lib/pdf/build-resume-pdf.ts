@@ -182,7 +182,10 @@ export function buildResumePdf(data: ProfileResumeData) {
   if (achievements.length) {
     heading("Achievements & Awards");
     for (const entry of achievements) {
-      entryTitle(entry.title, formatDate(entry.achievement_date));
+      const dateRange = entry.end_date
+        ? `${formatDate(entry.achievement_date)} — ${formatDate(entry.end_date)}`
+        : formatDate(entry.achievement_date);
+      entryTitle(entry.title, dateRange);
       entrySubline([entry.issuing_organization, entry.category].filter(Boolean).join(" · "));
       if (entry.description) bodyText(entry.description);
       y += 4;

@@ -13,6 +13,7 @@ const FIELDS = [
   "category",
   "issuing_organization",
   "achievement_date",
+  "end_date",
   "description",
   "media_url",
 ] as const;
@@ -40,6 +41,7 @@ export async function createAchievement(
   const supabase = await createClient();
   const values = readFields(formData);
   if (!values.title) return { error: "Title is required." };
+  if (!values.achievement_date) return { error: "Start date is required." };
 
   const { count } = await supabase
     .from("achievements")
@@ -68,6 +70,7 @@ export async function updateAchievement(
   const supabase = await createClient();
   const values = readFields(formData);
   if (!values.title) return { error: "Title is required." };
+  if (!values.achievement_date) return { error: "Start date is required." };
 
   const { error } = await supabase
     .from("achievements")

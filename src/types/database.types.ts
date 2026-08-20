@@ -19,6 +19,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string | null
+          end_date: string | null
           id: string
           issuing_organization: string | null
           media_url: string | null
@@ -34,6 +35,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          end_date?: string | null
           id?: string
           issuing_organization?: string | null
           media_url?: string | null
@@ -49,6 +51,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          end_date?: string | null
           id?: string
           issuing_organization?: string | null
           media_url?: string | null

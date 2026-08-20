@@ -150,7 +150,7 @@ export function ProfileTabs(props: Props) {
                           <p className="text-xs text-slate">
                             {a.issuing_organization}
                             {a.achievement_date
-                              ? ` · ${formatMonthYear(a.achievement_date)}`
+                              ? ` · ${formatDateRange(a.achievement_date, a.end_date)}`
                               : ""}
                           </p>
                         </div>
@@ -243,7 +243,7 @@ export function ProfileTabs(props: Props) {
                 accent="text-gold"
                 title={a.title}
                 subtitle={a.issuing_organization}
-                meta={formatMonthYear(a.achievement_date)}
+                meta={formatDateRange(a.achievement_date, a.end_date)}
                 description={a.description}
               />
             )}

@@ -12,7 +12,7 @@ import {
   type AchievementFormState,
 } from "@/lib/actions/achievements";
 import { ImageUploadField } from "@/components/profile/image-upload-field";
-import { formatMonthYear } from "@/lib/utils";
+import { formatDateRange } from "@/lib/utils";
 import type { Tables } from "@/types/database.types";
 
 type Entry = Tables<"achievements">;
@@ -118,7 +118,7 @@ export function AchievementsEditor({
                     </p>
                     {entry.achievement_date && (
                       <p className="text-xs text-slate">
-                        {formatMonthYear(entry.achievement_date)}
+                        {formatDateRange(entry.achievement_date, entry.end_date)}
                       </p>
                     )}
                   </div>
@@ -233,10 +233,17 @@ function AchievementForm({
           defaultValue={entry?.issuing_organization ?? ""}
         />
         <Field
-          label="Date"
+          label="Start Date"
           name="achievement_date"
           type="date"
+          required
           defaultValue={entry?.achievement_date ?? ""}
+        />
+        <Field
+          label="End Date"
+          name="end_date"
+          type="date"
+          defaultValue={entry?.end_date ?? ""}
         />
       </div>
 
