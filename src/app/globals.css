@@ -130,6 +130,14 @@ h6 {
   background: var(--color-slate);
 }
 
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 .text-balance {
   text-wrap: balance;
 }

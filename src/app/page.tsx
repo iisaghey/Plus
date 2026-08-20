@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/home/hero";
+import { LeadersCarousel } from "@/components/home/leaders-carousel";
 import { FeaturedProfiles } from "@/components/home/featured-profiles";
 import { WhyAqoonsiPlus } from "@/components/home/why-aqoonsiplus";
 import { PlatformFeatures } from "@/components/home/platform-features";
@@ -23,6 +24,7 @@ export default async function Home() {
   return (
     <>
       <Hero stats={stats} />
+      <LeadersCarousel />
       <FeaturedProfiles />
       <WhyAqoonsiPlus />
       <PlatformFeatures />
