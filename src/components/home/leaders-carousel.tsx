@@ -15,10 +15,16 @@ import { Reveal } from "@/components/motion/reveal";
 const SLIDES = [
   // Presidents, newest to oldest.
   {
-    src: "/home/farmajo-hassan.jpg",
-    name: "Farmaajo & Hassan Sheikh Mohamud",
+    src: "/home/hassan-sheikh-mohamud.jpg",
+    name: "Hassan Sheikh Mohamud",
     role: "Presidential",
-    caption: "Presidential transitions, preserved with dignity.",
+    caption: "President of Somalia (2012–2017, 2022–present)",
+  },
+  {
+    src: "/home/mohamed-abdullahi-farmaajo.jpg",
+    name: "Mohamed Abdullahi Farmaajo",
+    role: "Presidential",
+    caption: "Former President of Somalia (2017–2022)",
   },
   {
     src: "/home/sheikh-sharif.jpg",
@@ -55,13 +61,25 @@ const SLIDES = [
     src: "/home/hamza-abdi.jpg",
     name: "Hamza Abdi Barre",
     role: "Prime Minister",
-    caption: "Prime Minister of Somalia",
+    caption: "Prime Minister of Somalia (2022–present)",
+  },
+  {
+    src: "/home/mohamed-hussein-roble.jpg",
+    name: "Mohamed Hussein Roble",
+    role: "Prime Minister",
+    caption: "Former Prime Minister of Somalia (2020–2022)",
+  },
+  {
+    src: "/home/hassan-ali-kheire.jpg",
+    name: "Hassan Ali Kheire",
+    role: "Prime Minister",
+    caption: "Former Prime Minister of Somalia (2017–2020)",
   },
   {
     src: "/home/cabdiwali-sheikh-axmed.jpg",
     name: "Cabdiwali Sheikh Axmed",
     role: "Prime Minister",
-    caption: "Former Prime Minister of Somalia",
+    caption: "Former Prime Minister of Somalia (2014–2017)",
   },
   {
     src: "/home/abdullahi-issa-mohamud.jpg",
@@ -75,12 +93,6 @@ const SLIDES = [
     name: "Hadraawi",
     role: "Cultural Leader",
     caption: "Renowned Somali Poet & Wordsmith",
-  },
-  {
-    src: "/home/hadraawi.jpg",
-    name: "Hadraawi",
-    role: "Cultural Leader",
-    caption: "A Voice for the Somali Nation",
   },
   {
     src: "/home/abdalla-deerow-isxaaq.png",
