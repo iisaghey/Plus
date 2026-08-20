@@ -8,65 +8,84 @@ import { cn } from "@/lib/utils";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Reveal } from "@/components/motion/reveal";
 
+// Grouped by role, each group ordered most-recent-first. Somalia's
+// transitional-era succession is genuinely contested depending on the
+// source, so captions describe the role/era rather than asserting an
+// exact ordinal (e.g. "9th President") we can't fully verify.
 const SLIDES = [
+  // Presidents, newest to oldest.
   {
-    src: "/home/hamza-abdi.jpg",
-    name: "Hamza Abdi Barre",
-    caption: "Prime Minister of Somalia",
+    src: "/home/farmajo-hassan.jpg",
+    name: "Farmaajo & Hassan Sheikh Mohamud",
+    role: "Presidential",
+    caption: "Presidential transitions, preserved with dignity.",
   },
   {
     src: "/home/sheikh-sharif.jpg",
     name: "Sheikh Sharif Sheikh Ahmed",
-    caption: "Former President of Somalia",
+    role: "Presidential",
+    caption: "Former President of Somalia (2009–2012)",
+  },
+  {
+    src: "/home/abdullahi-yusuf-ahmed.jpg",
+    name: "Abdullahi Yusuf Ahmed",
+    role: "Presidential",
+    caption: "Former President of Somalia (2004–2008)",
   },
   {
     src: "/home/abdiqasim.jpg",
     name: "Abdiqasim Salad Hassan",
-    caption: "Former President of Somalia",
+    role: "Presidential",
+    caption: "Former President of Somalia (2000–2004)",
   },
   {
-    src: "/home/farmajo-hassan.jpg",
-    name: "Farmaajo & Hassan Sheikh Mohamud",
-    caption: "Presidential transitions, preserved with dignity.",
+    src: "/home/maxamed-siyaad-bare.png",
+    name: "Maxamed Siyaad Barre",
+    role: "Presidential",
+    caption: "Former President of Somalia (1969–1991)",
   },
+  {
+    src: "/home/aden-abdulle-osman-daar.jpg",
+    name: "Aden Abdulle Osman Daar",
+    role: "Presidential",
+    caption: "First President of the Somali Republic (1960–1967)",
+  },
+  // Prime Ministers, newest to oldest.
+  {
+    src: "/home/hamza-abdi.jpg",
+    name: "Hamza Abdi Barre",
+    role: "Prime Minister",
+    caption: "Prime Minister of Somalia",
+  },
+  {
+    src: "/home/cabdiwali-sheikh-axmed.jpg",
+    name: "Cabdiwali Sheikh Axmed",
+    role: "Prime Minister",
+    caption: "Former Prime Minister of Somalia",
+  },
+  {
+    src: "/home/abdullahi-issa-mohamud.jpg",
+    name: "Abdullahi Issa Mohamud",
+    role: "Prime Minister",
+    caption: "First Prime Minister of Somalia (1956–1960)",
+  },
+  // Other national figures.
   {
     src: "/home/abwan-xadraawi.jpg",
     name: "Hadraawi",
+    role: "Cultural Leader",
     caption: "Renowned Somali Poet & Wordsmith",
   },
   {
     src: "/home/hadraawi.jpg",
     name: "Hadraawi",
+    role: "Cultural Leader",
     caption: "A Voice for the Somali Nation",
-  },
-  {
-    src: "/home/abdullahi-yusuf-ahmed.jpg",
-    name: "Abdullahi Yusuf Ahmed",
-    caption: "Former President of Somalia",
-  },
-  {
-    src: "/home/aden-abdulle-osman-daar.jpg",
-    name: "Aden Abdulle Osman Daar",
-    caption: "First President of the Somali Republic",
-  },
-  {
-    src: "/home/abdullahi-issa-mohamud.jpg",
-    name: "Abdullahi Issa Mohamud",
-    caption: "First Prime Minister of Somalia",
-  },
-  {
-    src: "/home/cabdiwali-sheikh-axmed.jpg",
-    name: "Cabdiwali Sheikh Axmed",
-    caption: "Former Prime Minister of Somalia",
-  },
-  {
-    src: "/home/maxamed-siyaad-bare.png",
-    name: "Maxamed Siyaad Barre",
-    caption: "Former President of Somalia",
   },
   {
     src: "/home/abdalla-deerow-isxaaq.png",
     name: "Abdalla Deerow Isxaaq",
+    role: "National Leader",
     caption: "Somali Political Leader",
   },
 ];
@@ -214,7 +233,10 @@ export function LeadersCarousel() {
                     isActive ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
                   )}
                 >
-                  <p className="font-heading text-xl font-bold text-white sm:text-2xl">
+                  <span className="font-accent text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+                    {slide.role}
+                  </span>
+                  <p className="mt-1 font-heading text-xl font-bold text-white sm:text-2xl">
                     {slide.name}
                   </p>
                   <p className="mt-1 text-sm text-white/75 sm:text-base">{slide.caption}</p>
