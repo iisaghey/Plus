@@ -6,13 +6,7 @@ import { toast } from "sonner";
 import { setRolePermission } from "@/lib/actions/roles";
 import { cn } from "@/lib/utils";
 import type { Enums, Tables } from "@/types/database.types";
-
-const SCOPE_LABEL: Record<Enums<"permission_scope">, string> = {
-  none: "—",
-  assigned: "Assigned",
-  limited: "Limited",
-  all: "✓",
-};
+import { useTranslation } from "@/i18n/language-provider";
 
 const SCOPE_COLOR: Record<Enums<"permission_scope">, string> = {
   none: "text-slate/30",
@@ -35,8 +29,16 @@ export function PermissionMatrix({
   editable: boolean;
 }) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [overrides, setOverrides] = useState<Record<string, Enums<"permission_scope">>>({});
+
+  const SCOPE_LABEL: Record<Enums<"permission_scope">, string> = {
+    none: t("admin.permissionMatrix.scopeNone"),
+    assigned: t("admin.permissionMatrix.scopeAssigned"),
+    limited: t("admin.permissionMatrix.scopeLimited"),
+    all: t("admin.permissionMatrix.scopeAll"),
+  };
 
   const scopeFor = (roleKey: string, permKey: string): Enums<"permission_scope"> => {
     const key = `${roleKey}:${permKey}`;
@@ -67,13 +69,13 @@ export function PermissionMatrix({
       <table className="w-full min-w-[820px] text-left text-sm">
         <thead className="bg-offwhite text-xs font-semibold uppercase tracking-wide text-slate">
           <tr>
-            <th className="px-4 py-3">Permission</th>
+            <th className="px-4 py-3">{t("admin.permissionMatrix.colPermission")}</th>
             {roles.map((r) => (
               <th key={r.key} className="px-4 py-3 text-center">
                 {r.label}
                 {!r.is_system && (
                   <span className="ml-1 text-[9px] font-normal normal-case text-slate/60">
-                    (future)
+                    {t("admin.permissionMatrix.futureTag")}
                   </span>
                 )}
               </th>

@@ -1,9 +1,14 @@
+"use client";
+
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
 import { Reveal } from "@/components/motion/reveal";
 import { CinematicBackground } from "@/components/home/cinematic-background";
+import { useTranslation } from "@/i18n/language-provider";
 
 export function FinalCta() {
+  const { t } = useTranslation();
+
   return (
     <section className="relative overflow-hidden bg-navy">
       <CinematicBackground
@@ -25,20 +30,18 @@ export function FinalCta() {
           <ShieldCheck className="h-7 w-7" />
         </div>
         <h2 className="mt-6 text-balance font-heading text-3xl font-bold text-white sm:text-4xl">
-          Build Your Digital Legacy.
+          {t("home.finalCta.heading")}
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-balance text-white/70">
-          Build your AqoonsiPlus digital profile and preserve your leadership
-          journey, achievements, and professional record in one trusted
-          digital home.
+          {t("home.finalCta.description")}
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <LinkButton href="/create-profile" variant="gold" size="lg">
-            Create Your Profile
+            {t("home.finalCta.createProfile")}
             <ArrowRight className="h-4 w-4" />
           </LinkButton>
           <LinkButton href="/profiles" variant="outline-white" size="lg">
-            Explore Profiles
+            {t("home.finalCta.exploreProfiles")}
           </LinkButton>
         </div>
       </Reveal>

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export type AchievementFormState = {
   error?: string;
+  errorCode?: string;
   success?: boolean;
 };
 
@@ -40,8 +41,8 @@ export async function createAchievement(
 ): Promise<AchievementFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.title) return { error: "Title is required." };
-  if (!values.achievement_date) return { error: "Start date is required." };
+  if (!values.title) return { error: "Title is required.", errorCode: "titleRequired" };
+  if (!values.achievement_date) return { error: "Start date is required.", errorCode: "startDateRequired" };
 
   const { count } = await supabase
     .from("achievements")
@@ -69,8 +70,8 @@ export async function updateAchievement(
 ): Promise<AchievementFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.title) return { error: "Title is required." };
-  if (!values.achievement_date) return { error: "Start date is required." };
+  if (!values.title) return { error: "Title is required.", errorCode: "titleRequired" };
+  if (!values.achievement_date) return { error: "Start date is required.", errorCode: "startDateRequired" };
 
   const { error } = await supabase
     .from("achievements")

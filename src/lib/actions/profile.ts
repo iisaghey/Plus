@@ -7,6 +7,9 @@ import { logAuditEvent, notifyUser } from "@/lib/actions/audit";
 
 export type ProfileFormState = {
   error?: string;
+  /** Stable machine-readable code for `error`, when it originates from our own validation
+   *  (not a raw Supabase error) — lets the UI look up a translated message. */
+  errorCode?: string;
 };
 
 const FIELDS = [
@@ -79,10 +82,11 @@ export async function createProfile(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: "You must be signed in." };
+  if (!user) return { error: "You must be signed in.", errorCode: "mustBeSignedIn" };
 
   const values = readFields(formData);
-  if (!values.full_name) return { error: "Full name is required." };
+  if (!values.full_name)
+    return { error: "Full name is required.", errorCode: "fullNameRequired" };
 
   const slug = await uniqueSlug(supabase, values.full_name);
 
@@ -111,10 +115,11 @@ export async function updateProfile(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: "You must be signed in." };
+  if (!user) return { error: "You must be signed in.", errorCode: "mustBeSignedIn" };
 
   const values = readFields(formData);
-  if (!values.full_name) return { error: "Full name is required." };
+  if (!values.full_name)
+    return { error: "Full name is required.", errorCode: "fullNameRequired" };
 
   const { data: userRole } = await supabase
     .from("user_roles")
@@ -196,7 +201,7 @@ export async function createStaffDraft(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: "You must be signed in." };
+  if (!user) return { error: "You must be signed in.", errorCode: "mustBeSignedIn" };
 
   const { data: userRole } = await supabase
     .from("user_roles")
@@ -204,12 +209,14 @@ export async function createStaffDraft(
     .eq("user_id", user.id)
     .maybeSingle();
   if (!userRole || !["staff", "editor", "admin", "super_admin"].includes(userRole.role)) {
-    return { error: "Only staff can create profile drafts." };
+    return { error: "Only staff can create profile drafts.", errorCode: "staffOnly" };
   }
 
   const values = readFields(formData);
-  if (!values.full_name) return { error: "Full name is required." };
-  if (!values.photo_url) return { error: "A profile photo is required." };
+  if (!values.full_name)
+    return { error: "Full name is required.", errorCode: "fullNameRequired" };
+  if (!values.photo_url)
+    return { error: "A profile photo is required.", errorCode: "photoRequired" };
 
   const slug = await uniqueSlug(supabase, values.full_name);
 

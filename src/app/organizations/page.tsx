@@ -3,6 +3,8 @@ import { Building2 } from "lucide-react";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Badge } from "@/components/ui/badge";
 import { getOrganizations } from "@/lib/data/profiles";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 export const metadata: Metadata = {
   title: "Organizations",
@@ -11,27 +13,24 @@ export const metadata: Metadata = {
 };
 
 export default async function OrganizationsPage() {
-  const organizations = await getOrganizations();
+  const [organizations, locale] = await Promise.all([
+    getOrganizations(),
+    getServerLocale(),
+  ]);
+  const t = getDictionary(locale);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-      <SectionLabel>Organizations</SectionLabel>
+      <SectionLabel>{t.profilesPublic.organizations.label}</SectionLabel>
       <h1 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
-        Government Institutions
+        {t.profilesPublic.organizations.heading}
       </h1>
       <p className="mt-3 max-w-xl text-slate">
-        Explore government institutions and public bodies connected to the
-        leadership profiles on AqoonsiPlus.
+        {t.profilesPublic.organizations.description}
       </p>
 
       <div className="mt-5 flex flex-wrap gap-2">
-        {[
-          "Federal Government Institutions",
-          "Federal Member State Institutions",
-          "Regional & Local Government",
-          "Ministries & Government Offices",
-          "Public Authorities & Agencies",
-        ].map((label) => (
+        {t.profilesPublic.organizations.categories.map((label) => (
           <Badge key={label} variant="neutral" size="sm">
             {label}
           </Badge>

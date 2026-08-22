@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export type TravelFormState = {
   error?: string;
+  errorCode?: string;
   success?: boolean;
 };
 
@@ -40,7 +41,7 @@ export async function createTravelEntry(
 ): Promise<TravelFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.destination_country) return { error: "Destination country is required." };
+  if (!values.destination_country) return { error: "Destination country is required.", errorCode: "destinationCountryRequired" };
 
   const { count } = await supabase
     .from("official_travel")
@@ -68,7 +69,7 @@ export async function updateTravelEntry(
 ): Promise<TravelFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.destination_country) return { error: "Destination country is required." };
+  if (!values.destination_country) return { error: "Destination country is required.", errorCode: "destinationCountryRequired" };
 
   const { error } = await supabase
     .from("official_travel")

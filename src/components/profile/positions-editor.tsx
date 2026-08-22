@@ -11,6 +11,7 @@ import {
   type PositionFormState,
 } from "@/lib/actions/positions";
 import { formatDateRange } from "@/lib/utils";
+import { useTranslation } from "@/i18n/language-provider";
 import type { Tables } from "@/types/database.types";
 
 type Entry = Tables<"government_positions">;
@@ -25,6 +26,7 @@ export function PositionsEditor({
   locked?: boolean;
 }) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -38,7 +40,7 @@ export function PositionsEditor({
         toast.error(result.error);
         return;
       }
-      toast.success("Position removed");
+      toast.success(t("editorForms.positions.toasts.deleted"));
       router.refresh();
     });
   }
@@ -54,7 +56,7 @@ export function PositionsEditor({
         <div className="flex items-center gap-2">
           <Landmark className="h-4 w-4 text-teal" />
           <h2 className="font-heading text-base font-bold text-navy dark:text-white">
-            Government Positions
+            {t("editorForms.positions.heading")}
           </h2>
         </div>
         {editingId === null && !locked && (
@@ -63,7 +65,7 @@ export function PositionsEditor({
             className="flex items-center gap-1.5 rounded-full bg-teal/10 px-3 py-1.5 text-xs font-semibold text-teal hover:bg-teal/20"
           >
             <Plus className="h-3.5 w-3.5" />
-            Add Position
+            {t("editorForms.positions.addButton")}
           </button>
         )}
       </div>
@@ -79,7 +81,7 @@ export function PositionsEditor({
 
         {entries.length === 0 && editingId !== "new" && (
           <p className="py-6 text-center text-sm text-slate">
-            No government positions added yet.
+            {t("editorForms.positions.emptyState")}
           </p>
         )}
 
@@ -124,7 +126,7 @@ export function PositionsEditor({
                   onClick={() => setEditingId(entry.id)}
                   disabled={locked}
                   className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-offwhite hover:text-navy dark:hover:text-white disabled:pointer-events-none disabled:opacity-40"
-                  aria-label="Edit"
+                  aria-label={t("common.edit")}
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
@@ -132,7 +134,7 @@ export function PositionsEditor({
                   onClick={() => handleDelete(entry.id)}
                   disabled={locked || (pending && deletingId === entry.id)}
                   className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
-                  aria-label="Delete"
+                  aria-label={t("common.delete")}
                 >
                   {pending && deletingId === entry.id ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -164,6 +166,7 @@ function PositionForm({
     ? updatePosition.bind(null, entry.id, profileId)
     : createPosition.bind(null, profileId);
 
+  const { t } = useTranslation();
   const [state, formAction, pending] = useActionState<PositionFormState, FormData>(
     action,
     {}
@@ -175,6 +178,10 @@ function PositionForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.success]);
 
+  const errorMessage = state.errorCode
+    ? t(`editorForms.positions.errors.${state.errorCode}`)
+    : state.error;
+
   return (
     <form
       action={formAction}
@@ -182,35 +189,35 @@ function PositionForm({
     >
       <div className="flex items-center justify-between">
         <p className="text-xs font-semibold uppercase tracking-wide text-teal">
-          {entry ? "Edit Position" : "New Position"}
+          {entry ? t("editorForms.positions.editHeading") : t("editorForms.positions.newHeading")}
         </p>
         <button type="button" onClick={onCancel} className="text-slate hover:text-navy dark:hover:text-white">
           <X className="h-4 w-4" />
         </button>
       </div>
 
-      {state.error && <p className="mt-2 text-xs text-red-600">{state.error}</p>}
+      {errorMessage && <p className="mt-2 text-xs text-red-600">{errorMessage}</p>}
 
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field
-          label="Position Title"
+          label={t("editorForms.positions.fields.positionTitle")}
           name="position_title"
           required
           defaultValue={entry?.position_title}
-          placeholder="Minister of Foreign Affairs"
+          placeholder={t("editorForms.positions.fields.positionTitlePlaceholder")}
         />
         <Field
-          label="Institution"
+          label={t("editorForms.positions.fields.institution")}
           name="institution"
           defaultValue={entry?.institution ?? ""}
         />
         <Field
-          label="Government Level"
+          label={t("editorForms.positions.fields.governmentLevel")}
           name="government_level"
-          placeholder="Federal, Regional, Local..."
+          placeholder={t("editorForms.positions.fields.governmentLevelPlaceholder")}
           defaultValue={entry?.government_level ?? ""}
         />
-        <Field label="Country" name="country" defaultValue={entry?.country ?? ""} />
+        <Field label={t("editorForms.positions.fields.country")} name="country" defaultValue={entry?.country ?? ""} />
         <div className="flex items-end pb-2">
           <label className="flex items-center gap-2 text-sm text-navy dark:text-white">
             <input
@@ -220,18 +227,18 @@ function PositionForm({
               onChange={(e) => setIsCurrent(e.target.checked)}
               className="h-4 w-4 rounded border-mist text-teal focus:ring-teal"
             />
-            Current position
+            {t("editorForms.positions.fields.currentPosition")}
           </label>
         </div>
         <Field
-          label="Start Date"
+          label={t("editorForms.positions.fields.startDate")}
           name="start_date"
           type="date"
           defaultValue={entry?.start_date ?? ""}
         />
         {!isCurrent && (
           <Field
-            label="End Date"
+            label={t("editorForms.positions.fields.endDate")}
             name="end_date"
             type="date"
             defaultValue={entry?.end_date ?? ""}
@@ -241,7 +248,7 @@ function PositionForm({
 
       <div className="mt-3">
         <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-          Description
+          {t("editorForms.positions.fields.description")}
         </label>
         <textarea
           name="description"
@@ -257,7 +264,7 @@ function PositionForm({
           onClick={onCancel}
           className="rounded-lg px-4 py-2 text-xs font-semibold text-slate hover:bg-mist/60"
         >
-          Cancel
+          {t("common.cancel")}
         </button>
         <button
           type="submit"
@@ -265,7 +272,7 @@ function PositionForm({
           className="flex items-center gap-1.5 rounded-lg bg-teal px-4 py-2 text-xs font-semibold text-white hover:bg-aqoonsi disabled:opacity-50"
         >
           {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-          {entry ? "Save Changes" : "Add Position"}
+          {entry ? t("editorForms.positions.saveChangesButton") : t("editorForms.positions.addButton")}
         </button>
       </div>
     </form>

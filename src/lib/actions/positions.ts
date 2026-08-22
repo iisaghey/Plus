@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export type PositionFormState = {
   error?: string;
+  errorCode?: string;
   success?: boolean;
 };
 
@@ -40,7 +41,7 @@ export async function createPosition(
 ): Promise<PositionFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.position_title) return { error: "Position title is required." };
+  if (!values.position_title) return { error: "Position title is required.", errorCode: "positionTitleRequired" };
 
   const isCurrent = formData.get("is_current") === "on";
 
@@ -72,7 +73,7 @@ export async function updatePosition(
 ): Promise<PositionFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.position_title) return { error: "Position title is required." };
+  if (!values.position_title) return { error: "Position title is required.", errorCode: "positionTitleRequired" };
 
   const isCurrent = formData.get("is_current") === "on";
 

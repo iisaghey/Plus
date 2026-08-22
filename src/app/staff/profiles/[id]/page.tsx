@@ -26,22 +26,27 @@ import {
   Images,
   ShieldCheck,
 } from "lucide-react";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 const ICON_CLASS = "h-4 w-4";
-
-const STEPS: WizardStepDef[] = [
-  { id: "identity", label: "Personal & Contact", icon: <IdCard className={ICON_CLASS} />, sections: ["identity", "contact", "social"] },
-  { id: "background", label: "Biography & Education", icon: <BookOpenText className={ICON_CLASS} />, sections: ["biography", "education"] },
-  { id: "career", label: "Career & Positions", icon: <Landmark className={ICON_CLASS} />, sections: ["career", "positions"] },
-  { id: "recognition", label: "Achievements & Activities", icon: <Trophy className={ICON_CLASS} />, sections: ["achievements", "activities", "travel"] },
-  { id: "speeches", label: "Speeches", icon: <Mic className={ICON_CLASS} />, sections: ["speeches"] },
-  { id: "media", label: "Media & Documents", icon: <Images className={ICON_CLASS} />, sections: ["media", "documents"] },
-  { id: "review", label: "Review & Submit", icon: <ShieldCheck className={ICON_CLASS} />, sections: ["review"] },
-];
 
 export default async function StaffEditProfilePage(
   props: PageProps<"/staff/profiles/[id]">
 ) {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
+
+  const STEPS: WizardStepDef[] = [
+    { id: "identity", label: t.admin.staffProfileDetail.stepIdentity, icon: <IdCard className={ICON_CLASS} />, sections: ["identity", "contact", "social"] },
+    { id: "background", label: t.admin.staffProfileDetail.stepBackground, icon: <BookOpenText className={ICON_CLASS} />, sections: ["biography", "education"] },
+    { id: "career", label: t.admin.staffProfileDetail.stepCareer, icon: <Landmark className={ICON_CLASS} />, sections: ["career", "positions"] },
+    { id: "recognition", label: t.admin.staffProfileDetail.stepRecognition, icon: <Trophy className={ICON_CLASS} />, sections: ["achievements", "activities", "travel"] },
+    { id: "speeches", label: t.admin.staffProfileDetail.stepSpeeches, icon: <Mic className={ICON_CLASS} />, sections: ["speeches"] },
+    { id: "media", label: t.admin.staffProfileDetail.stepMedia, icon: <Images className={ICON_CLASS} />, sections: ["media", "documents"] },
+    { id: "review", label: t.admin.staffProfileDetail.stepReview, icon: <ShieldCheck className={ICON_CLASS} />, sections: ["review"] },
+  ];
+
   const { id } = await props.params;
   const supabase = await createClient();
   const {
@@ -116,7 +121,7 @@ export default async function StaffEditProfilePage(
         </Badge>
       </div>
       <p className="mt-2 text-sm text-slate">
-        Edit the profile, then submit it for editorial review when ready.
+        {t.admin.staffProfileDetail.subtitle}
       </p>
 
       <div className="mt-8">
@@ -137,7 +142,7 @@ export default async function StaffEditProfilePage(
               profile={profile}
               categories={categories ?? []}
               organizations={organizations ?? []}
-              submitLabel="Save Changes"
+              submitLabel={t.admin.staffProfileDetail.submitLabel}
             />
           </ProfileWizardStep>
 

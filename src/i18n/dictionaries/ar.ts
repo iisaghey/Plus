@@ -1,6 +1,20 @@
 import type { Dictionary } from "./en";
+import admin from "./sections/admin.ar";
+import dashboard from "./sections/dashboard.ar";
+import editorForms from "./sections/editorForms.ar";
+import editorWorkspace from "./sections/editorWorkspace.ar";
+import home from "./sections/home.ar";
+import profilesPublic from "./sections/profilesPublic.ar";
+import publicPages from "./sections/publicPages.ar";
 
 const ar: Dictionary = {
+  admin,
+  dashboard,
+  editorForms,
+  editorWorkspace,
+  home,
+  profilesPublic,
+  publicPages,
   nav: {
     profiles: "الملفات الشخصية",
     leaders: "القادة",
@@ -63,6 +77,8 @@ const ar: Dictionary = {
     required: "مطلوب",
     optional: "اختياري",
     viewPublicSite: "عرض الموقع العام",
+    switchToLightMode: "التبديل إلى الوضع الفاتح",
+    switchToDarkMode: "التبديل إلى الوضع الداكن",
   },
   auth: {
     welcomeBack: "مرحبًا بعودتك",

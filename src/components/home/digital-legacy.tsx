@@ -1,47 +1,41 @@
+"use client";
+
 import { Archive, Lock, QrCode, RefreshCcw } from "lucide-react";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Reveal } from "@/components/motion/reveal";
+import { useTranslation } from "@/i18n/language-provider";
 
-const POINTS = [
-  {
-    icon: Lock,
-    title: "Securely Organized",
-    description:
-      "Your profile information, documents, and media are organized within a structured digital profile with appropriate access controls.",
-  },
-  {
-    icon: QrCode,
-    title: "Accessible When Needed",
-    description:
-      "Your public profile can be accessed through a dedicated profile link and unique QR code, making your professional information easier to find and share.",
-  },
-  {
-    icon: RefreshCcw,
-    title: "Continuously Updated",
-    description:
-      "As new positions, achievements, activities, speeches, media, and documents become available, your profile can be updated to reflect your ongoing leadership journey.",
-  },
-];
+const POINT_ICONS = [
+  { key: "secure", icon: Lock },
+  { key: "accessible", icon: QrCode },
+  { key: "updated", icon: RefreshCcw },
+] as const;
+
+const ARCHIVE_ITEM_KEYS = ["biography", "positions", "achievements", "speeches"] as const;
 
 export function DigitalLegacy() {
+  const { t } = useTranslation();
+
+  const points = POINT_ICONS.map(({ key, icon }) => ({
+    icon,
+    title: t(`home.digitalLegacy.points.${key}.title`),
+    description: t(`home.digitalLegacy.points.${key}.description`),
+  }));
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
       <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
         <Reveal>
-          <SectionLabel>Digital Legacy</SectionLabel>
+          <SectionLabel>{t("home.digitalLegacy.label")}</SectionLabel>
           <h2 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
-            Preserving Leadership History for the Future
+            {t("home.digitalLegacy.heading")}
           </h2>
           <p className="mt-4 leading-relaxed text-slate">
-            AqoonsiPlus helps organize and preserve a leader&apos;s
-            professional journey, achievements, activities, media, and
-            official records in one structured digital profile. Each profile
-            is designed to remain accessible, organized, and updatable as the
-            leader&apos;s journey continues.
+            {t("home.digitalLegacy.description")}
           </p>
 
           <dl className="mt-8 space-y-6">
-            {POINTS.map(({ icon: Icon, title, description }) => (
+            {points.map(({ icon: Icon, title, description }) => (
               <div key={title} className="flex gap-4">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal/10 text-teal">
                   <Icon className="h-5 w-5" />
@@ -68,24 +62,19 @@ export function DigitalLegacy() {
               </div>
               <div>
                 <p className="font-heading text-lg font-bold text-navy dark:text-white">
-                  Digital Legacy Archive
+                  {t("home.digitalLegacy.archiveTitle")}
                 </p>
-                <p className="text-xs text-slate">Preserved &middot; Verified &middot; Secure</p>
+                <p className="text-xs text-slate">{t("home.digitalLegacy.archiveSubtitle")}</p>
               </div>
             </div>
             <div className="mt-6 space-y-3">
-              {[
-                "Biography & Career History",
-                "Government Positions & Leadership Journey",
-                "Achievements & Recognition",
-                "Speeches, Media & Documents",
-              ].map((item) => (
+              {ARCHIVE_ITEM_KEYS.map((key) => (
                 <div
-                  key={item}
+                  key={key}
                   className="flex items-center gap-3 rounded-xl bg-offwhite px-4 py-3 text-sm font-medium text-navy dark:text-white"
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald" />
-                  {item}
+                  {t(`home.digitalLegacy.archiveItems.${key}`)}
                 </div>
               ))}
             </div>

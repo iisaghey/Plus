@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export type CareerEntryFormState = {
   error?: string;
+  errorCode?: string;
   success?: boolean;
 };
 
@@ -39,7 +40,7 @@ export async function createCareerEntry(
 ): Promise<CareerEntryFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.title) return { error: "Title is required." };
+  if (!values.title) return { error: "Title is required.", errorCode: "titleRequired" };
 
   const isCurrent = formData.get("is_current") === "on";
 
@@ -74,7 +75,7 @@ export async function updateCareerEntry(
 ): Promise<CareerEntryFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.title) return { error: "Title is required." };
+  if (!values.title) return { error: "Title is required.", errorCode: "titleRequired" };
 
   const isCurrent = formData.get("is_current") === "on";
 

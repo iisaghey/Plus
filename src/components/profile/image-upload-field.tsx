@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Upload, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { uploadPublicFile } from "@/lib/supabase/upload";
+import { useTranslation } from "@/i18n/language-provider";
 
 const MAX_SIZE_BYTES = 5 * 1024 * 1024;
 
@@ -25,6 +26,7 @@ export function ImageUploadField({
   shape?: "square" | "wide";
   onUploaded?: (url: string) => void;
 }) {
+  const { t } = useTranslation();
   const [url, setUrl] = useState(defaultValue ?? "");
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -34,11 +36,11 @@ export function ImageUploadField({
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast.error("Please choose an image file.");
+      toast.error(t("editorWorkspace.imageUpload.chooseImageError"));
       return;
     }
     if (file.size > MAX_SIZE_BYTES) {
-      toast.error("Image must be under 5MB.");
+      toast.error(t("editorWorkspace.imageUpload.maxSizeError"));
       return;
     }
 
@@ -47,9 +49,9 @@ export function ImageUploadField({
       const { url: publicUrl } = await uploadPublicFile(bucket, profileId, file);
       setUrl(publicUrl);
       onUploaded?.(publicUrl);
-      toast.success("Image uploaded");
+      toast.success(t("editorWorkspace.imageUpload.uploadedToast"));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upload failed");
+      toast.error(err instanceof Error ? err.message : t("editorWorkspace.imageUpload.uploadFailedToast"));
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -90,7 +92,9 @@ export function ImageUploadField({
             ) : (
               <Upload className="h-3.5 w-3.5" />
             )}
-            {url ? "Change" : "Upload"} Image
+            {url
+              ? t("editorWorkspace.imageUpload.changeImageButton")
+              : t("editorWorkspace.imageUpload.uploadImageButton")}
           </button>
           {url && !uploading && (
             <button
@@ -102,7 +106,7 @@ export function ImageUploadField({
               className="flex items-center gap-1 text-xs text-slate hover:text-red-600"
             >
               <X className="h-3 w-3" />
-              Remove
+              {t("editorWorkspace.imageUpload.remove")}
             </button>
           )}
         </div>

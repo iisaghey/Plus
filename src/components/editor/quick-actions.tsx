@@ -8,25 +8,30 @@ import {
   ImageIcon,
   type LucideIcon,
 } from "lucide-react";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
-const ACTIONS: {
-  label: string;
-  href: string;
-  icon: LucideIcon;
-}[] = [
-  { label: "Create Profile", href: "/editor/profiles", icon: UserPlus },
-  { label: "Review Profiles", href: "/editor/queue", icon: ListChecks },
-  { label: "Upload Documents", href: "/editor/profiles", icon: FileUp },
-  { label: "Add Biography", href: "/editor/profiles", icon: BookOpen },
-  { label: "Add Achievements", href: "/editor/profiles", icon: Trophy },
-  { label: "Add Media", href: "/editor/profiles", icon: ImageIcon },
-];
+export async function QuickActions() {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
 
-export function QuickActions() {
+  const ACTIONS: {
+    label: string;
+    href: string;
+    icon: LucideIcon;
+  }[] = [
+    { label: t.editorWorkspace.quickActions.createProfile, href: "/editor/profiles", icon: UserPlus },
+    { label: t.editorWorkspace.quickActions.reviewProfiles, href: "/editor/queue", icon: ListChecks },
+    { label: t.editorWorkspace.quickActions.uploadDocuments, href: "/editor/profiles", icon: FileUp },
+    { label: t.editorWorkspace.quickActions.addBiography, href: "/editor/profiles", icon: BookOpen },
+    { label: t.editorWorkspace.quickActions.addAchievements, href: "/editor/profiles", icon: Trophy },
+    { label: t.editorWorkspace.quickActions.addMedia, href: "/editor/profiles", icon: ImageIcon },
+  ];
+
   return (
     <div className="rounded-2xl border border-mist bg-white dark:bg-offwhite p-6">
       <h2 className="font-heading text-base font-bold text-navy dark:text-white">
-        Quick Actions
+        {t.editorWorkspace.quickActions.heading}
       </h2>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {ACTIONS.map(({ label, href, icon: Icon }) => (

@@ -22,6 +22,8 @@ import { LinkButton } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AnimatedCounter } from "@/components/motion/animated-counter";
 import { AnimatedProgress } from "@/components/motion/animated-progress";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 const COMPLETION_FIELDS = [
   "preferred_title",
@@ -37,30 +39,33 @@ const COMPLETION_FIELDS = [
 
 const STAFF_ROLES = ["super_admin", "admin", "editor", "staff"];
 
-const PANEL_BY_ROLE: Record<string, { href: string; label: string; description: string }> = {
-  super_admin: {
-    href: "/admin",
-    label: "Admin Panel",
-    description: "Manage staff, editors, verification, and platform settings.",
-  },
-  admin: {
-    href: "/admin",
-    label: "Admin Panel",
-    description: "Review account approvals and profile verifications.",
-  },
-  editor: {
-    href: "/editor",
-    label: "Editor Panel",
-    description: "Review submitted profiles and manage content.",
-  },
-  staff: {
-    href: "/staff",
-    label: "Staff Panel",
-    description: "Build profile drafts and track your assigned tasks.",
-  },
-};
-
 export default async function DashboardPage() {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
+
+  const PANEL_BY_ROLE: Record<string, { href: string; label: string; description: string }> = {
+    super_admin: {
+      href: "/admin",
+      label: t.dashboard.home.panels.superAdmin.label,
+      description: t.dashboard.home.panels.superAdmin.description,
+    },
+    admin: {
+      href: "/admin",
+      label: t.dashboard.home.panels.admin.label,
+      description: t.dashboard.home.panels.admin.description,
+    },
+    editor: {
+      href: "/editor",
+      label: t.dashboard.home.panels.editor.label,
+      description: t.dashboard.home.panels.editor.description,
+    },
+    staff: {
+      href: "/staff",
+      label: t.dashboard.home.panels.staff.label,
+      description: t.dashboard.home.panels.staff.description,
+    },
+  };
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -98,7 +103,7 @@ export default async function DashboardPage() {
           </div>
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-slate">
-              Signed in as
+              {t.dashboard.home.signedInAs}
             </p>
             <p className="text-sm font-semibold text-navy dark:text-white">{user.email}</p>
           </div>
@@ -118,7 +123,7 @@ export default async function DashboardPage() {
               <p className="text-xs text-slate">{panel.description}</p>
             </div>
           </div>
-          <span className="text-xs font-semibold text-teal">Open →</span>
+          <span className="text-xs font-semibold text-teal">{t.dashboard.home.openPanel}</span>
         </Link>
       )}
 
@@ -128,11 +133,10 @@ export default async function DashboardPage() {
             <Hourglass className="h-6 w-6" />
           </div>
           <h1 className="mt-4 font-heading text-xl font-bold text-navy dark:text-white">
-            Your account is pending approval
+            {t.dashboard.home.pendingApprovalTitle}
           </h1>
           <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate">
-            A member of our team reviews new accounts before you can create a
-            profile. This is usually quick — check back soon.
+            {t.dashboard.home.pendingApprovalDescription}
           </p>
         </div>
       )}
@@ -143,14 +147,14 @@ export default async function DashboardPage() {
             <XCircle className="h-6 w-6" />
           </div>
           <h1 className="mt-4 font-heading text-xl font-bold text-navy dark:text-white">
-            Your account was not approved
+            {t.dashboard.home.rejectedTitle}
           </h1>
           <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate">
-            Contact our support team if you believe this was a mistake.
+            {t.dashboard.home.rejectedDescription}
           </p>
           <div className="mt-6">
             <LinkButton href="/contact" variant="outline" size="md">
-              Contact Support
+              {t.dashboard.home.contactSupport}
             </LinkButton>
           </div>
         </div>
@@ -162,16 +166,15 @@ export default async function DashboardPage() {
             <Sparkles className="h-6 w-6" />
           </div>
           <h1 className="mt-4 font-heading text-xl font-bold text-navy dark:text-white">
-            You haven&apos;t created your profile yet
+            {t.dashboard.home.noProfileTitle}
           </h1>
           <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate">
-            Add your name, title, and biography to publish your digital
-            profile on AqoonsiPlus.
+            {t.dashboard.home.noProfileDescription}
           </p>
           <div className="mt-6">
             <LinkButton href="/dashboard/profile" variant="primary" size="md">
               <PenSquare className="h-4 w-4" />
-              Create Your Profile
+              {t.dashboard.home.createProfileCta}
             </LinkButton>
           </div>
         </div>
@@ -200,17 +203,17 @@ export default async function DashboardPage() {
                     </p>
                     {profile.verification_status === "verified" && (
                       <Badge variant="verified" size="sm">
-                        Verified
+                        {t.dashboard.home.verifiedBadge}
                       </Badge>
                     )}
                     {profile.verification_status === "pending" && (
                       <Badge variant="pending" size="sm">
-                        Verification Pending
+                        {t.dashboard.home.verificationPendingBadge}
                       </Badge>
                     )}
                   </div>
                   <p className="text-sm text-slate">
-                    {profile.current_position ?? "No position added yet"}
+                    {profile.current_position ?? t.dashboard.home.noPositionYet}
                   </p>
                 </div>
               </div>
@@ -218,7 +221,7 @@ export default async function DashboardPage() {
               <div className="flex flex-wrap gap-2">
                 <LinkButton href="/dashboard/profile" variant="outline" size="sm">
                   <PenSquare className="h-3.5 w-3.5" />
-                  Edit Profile
+                  {t.dashboard.home.editProfileCta}
                 </LinkButton>
                 <LinkButton
                   href={`/profile/${profile.slug}`}
@@ -226,14 +229,14 @@ export default async function DashboardPage() {
                   size="sm"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
-                  View Public Profile
+                  {t.dashboard.home.viewPublicProfileCta}
                 </LinkButton>
               </div>
             </div>
 
             <div className="mt-6">
               <div className="flex items-center justify-between text-xs font-medium text-slate">
-                <span>Profile Completion</span>
+                <span>{t.dashboard.home.profileCompletion}</span>
                 <span>
                   <AnimatedCounter value={completion} suffix="%" duration={1} />
                 </span>
@@ -245,8 +248,7 @@ export default async function DashboardPage() {
               />
               {completion < 100 && (
                 <p className="mt-2 text-xs text-slate">
-                  Add a category, organization, location, and photo to
-                  complete your profile.
+                  {t.dashboard.home.completeProfileHint}
                 </p>
               )}
             </div>
@@ -256,8 +258,8 @@ export default async function DashboardPage() {
               <div className="mt-6 flex items-center justify-between rounded-xl bg-offwhite p-4">
                 <p className="text-xs text-slate">
                   {profile.verification_status === "rejected"
-                    ? "Your last verification request was not approved. You can submit again."
-                    : "Ready to earn a verified badge? Submit your profile for review."}
+                    ? t.dashboard.home.verificationRejectedHint
+                    : t.dashboard.home.verificationReadyHint}
                 </p>
                 <SubmitVerificationButton profileId={profile.id} />
               </div>
@@ -266,11 +268,10 @@ export default async function DashboardPage() {
 
           <div className="rounded-2xl border border-dashed border-mist p-8 text-center">
             <p className="text-sm font-semibold text-navy dark:text-white">
-              Career timeline, achievements, media & documents
+              {t.dashboard.home.moreSectionsTitle}
             </p>
             <p className="mx-auto mt-1.5 max-w-md text-sm text-slate">
-              Dedicated editors for these sections are coming in the next
-              phase. Your base profile is live at{" "}
+              {t.dashboard.home.moreSectionsDescription}{" "}
               <Link
                 href={`/profile/${profile.slug}`}
                 className="font-medium text-teal hover:underline"

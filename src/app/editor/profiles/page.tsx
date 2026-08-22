@@ -4,25 +4,30 @@ import { RecentProfilesTable } from "@/components/editor/recent-profiles-table";
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { StaffDraftForm } from "@/components/dashboard/staff-draft-form";
 import { createStaffDraft } from "@/lib/actions/profile";
-
-const STATUS_OPTIONS = [
-  { value: "", label: "All Statuses" },
-  { value: "draft", label: "Draft" },
-  { value: "in_progress", label: "In Progress" },
-  { value: "incomplete", label: "Incomplete" },
-  { value: "submitted", label: "Submitted" },
-  { value: "changes_required", label: "Changes Required" },
-  { value: "editor_approved", label: "Editor Approved" },
-  { value: "admin_review", label: "Admin Review" },
-  { value: "approved", label: "Approved" },
-  { value: "verified", label: "Verified" },
-  { value: "published", label: "Published" },
-  { value: "rejected", label: "Rejected" },
-];
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 export default async function EditorProfilesPage(
   props: PageProps<"/editor/profiles">
 ) {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
+
+  const STATUS_OPTIONS = [
+    { value: "", label: t.editorWorkspace.profilesList.statusAll },
+    { value: "draft", label: t.editorWorkspace.profilesList.statusDraft },
+    { value: "in_progress", label: t.editorWorkspace.profilesList.statusInProgress },
+    { value: "incomplete", label: t.editorWorkspace.profilesList.statusIncomplete },
+    { value: "submitted", label: t.editorWorkspace.profilesList.statusSubmitted },
+    { value: "changes_required", label: t.editorWorkspace.profilesList.statusChangesRequired },
+    { value: "editor_approved", label: t.editorWorkspace.profilesList.statusEditorApproved },
+    { value: "admin_review", label: t.editorWorkspace.profilesList.statusAdminReview },
+    { value: "approved", label: t.editorWorkspace.profilesList.statusApproved },
+    { value: "verified", label: t.editorWorkspace.profilesList.statusVerified },
+    { value: "published", label: t.editorWorkspace.profilesList.statusPublished },
+    { value: "rejected", label: t.editorWorkspace.profilesList.statusRejected },
+  ];
+
   const searchParams = await props.searchParams;
   const q = typeof searchParams.q === "string" ? searchParams.q : "";
   const status = typeof searchParams.status === "string" ? searchParams.status : "";
@@ -32,9 +37,14 @@ export default async function EditorProfilesPage(
   return (
     <div>
       <SectionHeader
-        title="Profiles"
-        subtitle="Search and manage every profile on the platform."
-        actions={<StaffDraftForm action={createStaffDraft} triggerLabel="Create New Profile" />}
+        title={t.editorWorkspace.profilesList.title}
+        subtitle={t.editorWorkspace.profilesList.subtitle}
+        actions={
+          <StaffDraftForm
+            action={createStaffDraft}
+            triggerLabel={t.editorWorkspace.profilesList.createNewProfile}
+          />
+        }
       />
 
       <form className="mt-6 flex flex-wrap items-center gap-3" method="get">
@@ -44,7 +54,7 @@ export default async function EditorProfilesPage(
             type="text"
             name="q"
             defaultValue={q}
-            placeholder="Search by name or position…"
+            placeholder={t.editorWorkspace.profilesList.searchPlaceholder}
             className="w-full min-w-[160px] bg-transparent text-sm text-ink placeholder:text-slate focus:outline-none"
           />
         </div>
@@ -63,12 +73,19 @@ export default async function EditorProfilesPage(
           type="submit"
           className="h-11 shrink-0 rounded-xl bg-teal px-6 text-sm font-semibold text-white hover:bg-aqoonsi"
         >
-          Search
+          {t.editorWorkspace.profilesList.searchButton}
         </button>
       </form>
 
       <div className="mt-6">
-        <RecentProfilesTable profiles={profiles} title={`${profiles.length} Profile${profiles.length === 1 ? "" : "s"}`} />
+        <RecentProfilesTable
+          profiles={profiles}
+          title={`${profiles.length} ${
+            profiles.length === 1
+              ? t.editorWorkspace.profilesList.profileSingular
+              : t.editorWorkspace.profilesList.profilePlural
+          }`}
+        />
       </div>
     </div>
   );

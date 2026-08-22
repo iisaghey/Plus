@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/i18n/language-provider";
 
 export function Pagination({
   page,
@@ -13,9 +16,11 @@ export function Pagination({
   total: number;
   buildHref: (page: number) => string;
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 border-t border-mist px-4 py-3 text-xs text-slate">
-      <span>{total} total</span>
+      <span>{total} {t("dashboard.pagination.total")}</span>
       {pageCount > 1 && (
         <div className="flex items-center gap-1">
           <PageLink

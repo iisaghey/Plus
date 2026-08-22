@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export type DocumentFormState = {
   error?: string;
+  errorCode?: string;
   success?: boolean;
 };
 
@@ -38,8 +39,8 @@ export async function createDocument(
 ): Promise<DocumentFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.title) return { error: "Title is required." };
-  if (!values.storage_path) return { error: "Please upload a file." };
+  if (!values.title) return { error: "Title is required.", errorCode: "titleRequired" };
+  if (!values.storage_path) return { error: "Please upload a file.", errorCode: "fileRequired" };
 
   const { count } = await supabase
     .from("documents")
@@ -68,8 +69,8 @@ export async function updateDocument(
 ): Promise<DocumentFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.title) return { error: "Title is required." };
-  if (!values.storage_path) return { error: "Please upload a file." };
+  if (!values.title) return { error: "Title is required.", errorCode: "titleRequired" };
+  if (!values.storage_path) return { error: "Please upload a file.", errorCode: "fileRequired" };
 
   const { error } = await supabase
     .from("documents")

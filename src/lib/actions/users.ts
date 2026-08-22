@@ -10,7 +10,7 @@ export async function setUserRole(userId: string, role: Enums<"app_role">) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: "You must be signed in." };
+  if (!user) return { error: "You must be signed in.", errorCode: "notSignedIn" as const };
 
   const { error } = await supabase.rpc("set_user_role", {
     p_user_id: userId,

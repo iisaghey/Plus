@@ -6,20 +6,27 @@ import {
 import { TeamMemberRow } from "@/components/admin/team-member-row";
 import { AssignmentRow } from "@/components/admin/assignment-row";
 import { SectionHeader } from "@/components/dashboard/section-header";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
-const TABS = [
-  { key: "all", label: "All" },
-  { key: "staff", label: "Staff" },
-  { key: "editor", label: "Editors" },
-] as const;
+const TAB_KEYS = ["all", "staff", "editor"] as const;
 
 export default async function AdminTeamPage(
   props: PageProps<"/admin/team">
 ) {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
+
+  const TABS = [
+    { key: "all", label: t.admin.team.tabs.all },
+    { key: "staff", label: t.admin.team.tabs.staff },
+    { key: "editor", label: t.admin.team.tabs.editors },
+  ] as const;
+
   const searchParams = await props.searchParams;
   const rawRole = typeof searchParams.role === "string" ? searchParams.role : "all";
-  const roleFilter: (typeof TABS)[number]["key"] = TABS.some((t) => t.key === rawRole)
-    ? (rawRole as (typeof TABS)[number]["key"])
+  const roleFilter: (typeof TAB_KEYS)[number] = TAB_KEYS.includes(rawRole as (typeof TAB_KEYS)[number])
+    ? (rawRole as (typeof TAB_KEYS)[number])
     : "all";
 
   const [staff, editors, profiles] = await Promise.all([
@@ -34,8 +41,8 @@ export default async function AdminTeamPage(
   return (
     <div>
       <SectionHeader
-        title="Staff & Editors"
-        subtitle="Manage your team's roles and assign profiles to work on."
+        title={t.admin.team.title}
+        subtitle={t.admin.team.subtitle}
         tabs={TABS.map((tab) => ({
           key: tab.key,
           label: tab.label,
@@ -46,21 +53,20 @@ export default async function AdminTeamPage(
 
       <div className="mt-8">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-slate">
-          Team Members ({team.length})
+          {t.admin.team.teamMembers} ({team.length})
         </h2>
         <div className="mt-3 space-y-2">
           {team.length === 0 ? (
             <p className="rounded-xl border border-dashed border-mist py-8 text-center text-sm text-slate">
-              No Staff or Editor accounts yet. Promote an approved user&apos;s
-              role from{" "}
+              {t.admin.team.noTeamPrefix}{" "}
               <Link href="/admin/users" className="font-semibold text-teal hover:underline">
-                Users
+                {t.admin.team.usersLink}
               </Link>
-              {" "}— they&apos;ll appear here once promoted.
+              {" "}{t.admin.team.noTeamSuffix}
             </p>
           ) : (
-            team.map((t) => (
-              <TeamMemberRow key={t.user_id} userId={t.user_id} email={t.email} role={t.role} />
+            team.map((member) => (
+              <TeamMemberRow key={member.user_id} userId={member.user_id} email={member.email} role={member.role} />
             ))
           )}
         </div>
@@ -68,12 +74,12 @@ export default async function AdminTeamPage(
 
       <div className="mt-10">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-slate">
-          Profile Assignments
+          {t.admin.team.profileAssignments}
         </h2>
         <div className="mt-3 space-y-3">
           {profiles.length === 0 ? (
             <p className="rounded-xl border border-dashed border-mist py-8 text-center text-sm text-slate">
-              No profiles yet.
+              {t.admin.team.noProfiles}
             </p>
           ) : (
             profiles.map((p) => (

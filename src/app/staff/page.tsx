@@ -8,6 +8,8 @@ import { createStaffDraft } from "@/lib/actions/profile";
 import { StaffDraftForm } from "@/components/dashboard/staff-draft-form";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { StaggerGrid, StaggerItem } from "@/components/motion/stagger-grid";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 const STATUS_VARIANT: Record<string, "neutral" | "pending" | "verified" | "navy"> = {
   draft: "neutral",
@@ -23,6 +25,8 @@ const STATUS_VARIANT: Record<string, "neutral" | "pending" | "verified" | "navy"
 };
 
 export default async function StaffDashboardPage() {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
   const supabase = await createClient();
   const {
     data: { user },
@@ -39,10 +43,10 @@ export default async function StaffDashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">
-            Staff Dashboard
+            {t.admin.staff.title}
           </h1>
           <p className="mt-1 text-sm text-slate">
-            Profiles assigned to you, and drafts you&apos;re building.
+            {t.admin.staff.subtitle}
           </p>
         </div>
         <StaffDraftForm action={createStaffDraft} />
@@ -50,11 +54,11 @@ export default async function StaffDashboardPage() {
 
       <StaggerGrid className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-5">
         {[
-          { label: "Assigned", value: stats.total, icon: IdCard, accent: "navy" as const },
-          { label: "Drafts", value: stats.drafts, icon: FileEdit, accent: "sky" as const },
-          { label: "Pending Review", value: stats.pendingSubmissions, icon: Clock, accent: "gold" as const },
-          { label: "Returned", value: stats.returned, icon: Undo2, accent: "gold" as const },
-          { label: "Completed", value: stats.completed, icon: CheckCircle2, accent: "emerald" as const },
+          { label: t.admin.staff.statAssigned, value: stats.total, icon: IdCard, accent: "navy" as const },
+          { label: t.admin.staff.statDrafts, value: stats.drafts, icon: FileEdit, accent: "sky" as const },
+          { label: t.admin.staff.statPendingReview, value: stats.pendingSubmissions, icon: Clock, accent: "gold" as const },
+          { label: t.admin.staff.statReturned, value: stats.returned, icon: Undo2, accent: "gold" as const },
+          { label: t.admin.staff.statCompleted, value: stats.completed, icon: CheckCircle2, accent: "emerald" as const },
         ].map((s) => (
           <StaggerItem key={s.label} hoverLift>
             <StatCard label={s.label} value={s.value} icon={s.icon} accent={s.accent} />
@@ -65,7 +69,7 @@ export default async function StaffDashboardPage() {
       <div className="mt-8 space-y-3">
         {profiles.length === 0 ? (
           <p className="rounded-xl border border-dashed border-mist py-12 text-center text-sm text-slate">
-            No profiles assigned to you yet.
+            {t.admin.staff.empty}
           </p>
         ) : (
           profiles.map((p) => (
@@ -83,8 +87,8 @@ export default async function StaffDashboardPage() {
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-navy dark:text-white">{p.full_name}</p>
                   <p className="truncate text-xs text-slate">
-                    {p.current_position ?? "No position"}
-                    {p.assignment_deadline ? ` · Due ${p.assignment_deadline}` : ""}
+                    {p.current_position ?? t.admin.staff.noPosition}
+                    {p.assignment_deadline ? ` · ${t.admin.staff.due} ${p.assignment_deadline}` : ""}
                   </p>
                 </div>
               </div>
@@ -98,9 +102,7 @@ export default async function StaffDashboardPage() {
 
       <div className="mt-10 flex items-center gap-2 rounded-xl bg-offwhite p-4 text-xs text-slate">
         <PlusCircle className="h-4 w-4 shrink-0 text-teal" />
-        Use &ldquo;New Draft&rdquo; above to start a profile for someone who
-        hasn&apos;t signed up themselves &mdash; it stays assigned to you
-        until you submit it for review.
+        {t.admin.staff.newDraftHint}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/i18n/language-provider";
 
 export type TimelineEntry = {
   id: string;
@@ -15,10 +16,12 @@ export type TimelineEntry = {
 };
 
 export function Timeline({ entries }: { entries: TimelineEntry[] }) {
+  const { t } = useTranslation();
+
   if (entries.length === 0) {
     return (
       <p className="py-12 text-center text-sm text-slate">
-        No timeline entries have been published yet.
+        {t("profilesPublic.timeline.empty")}
       </p>
     );
   }
@@ -46,7 +49,7 @@ export function Timeline({ entries }: { entries: TimelineEntry[] }) {
             </span>
             {entry.current && (
               <span className="rounded-full bg-emerald/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald">
-                Current
+                {t("profilesPublic.timeline.current")}
               </span>
             )}
             {entry.kind && (

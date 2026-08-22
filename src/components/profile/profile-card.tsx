@@ -3,8 +3,12 @@ import Link from "next/link";
 import { MapPin, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { ProfileCardData } from "@/lib/data/profiles";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
-export function ProfileCard({ profile }: { profile: ProfileCardData }) {
+export async function ProfileCard({ profile }: { profile: ProfileCardData }) {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
   const organization = Array.isArray(profile.organizations)
     ? profile.organizations[0]
     : profile.organizations;
@@ -40,7 +44,7 @@ export function ProfileCard({ profile }: { profile: ProfileCardData }) {
           {profile.verification_status === "verified" && (
             <Badge variant="verified" className="mb-1">
               <ShieldCheck className="h-3 w-3" />
-              Verified
+              {t.profilesPublic.card.verifiedBadge}
             </Badge>
           )}
         </div>
@@ -76,7 +80,7 @@ export function ProfileCard({ profile }: { profile: ProfileCardData }) {
         )}
 
         <span className="mt-4 inline-flex items-center text-sm font-semibold text-teal">
-          View Profile
+          {t.common.viewProfile}
           <svg
             className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
             viewBox="0 0 16 16"

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, FileText, Music, ExternalLink } from "lucide-react";
 import { DURATION, EASE } from "@/lib/motion";
+import { useTranslation } from "@/i18n/language-provider";
 
 export type LightboxItem = {
   id: string;
@@ -25,6 +26,7 @@ export function MediaLightbox({
   onClose: () => void;
   onNavigate: (index: number) => void;
 }) {
+  const { t } = useTranslation();
   const open = index !== null;
   const item = open ? items[index] : null;
 
@@ -62,7 +64,7 @@ export function MediaLightbox({
         >
           <button
             onClick={onClose}
-            aria-label="Close"
+            aria-label={t("common.close")}
             className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:right-6 sm:top-6"
           >
             <X className="h-5 w-5" />
@@ -75,7 +77,7 @@ export function MediaLightbox({
                   e.stopPropagation();
                   goPrev();
                 }}
-                aria-label="Previous"
+                aria-label={t("profilesPublic.mediaLightbox.previousAriaLabel")}
                 className="absolute left-2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:left-6"
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -85,7 +87,7 @@ export function MediaLightbox({
                   e.stopPropagation();
                   goNext();
                 }}
-                aria-label="Next"
+                aria-label={t("profilesPublic.mediaLightbox.nextAriaLabel")}
                 className="absolute right-2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:right-6"
               >
                 <ChevronRight className="h-5 w-5" />
@@ -138,7 +140,7 @@ export function MediaLightbox({
                     className="flex items-center gap-1.5 text-sm font-semibold text-teal hover:underline"
                   >
                     <ExternalLink className="h-4 w-4" />
-                    Open document
+                    {t("profilesPublic.mediaLightbox.openDocument")}
                   </a>
                 )}
               </div>

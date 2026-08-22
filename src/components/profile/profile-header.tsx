@@ -5,19 +5,23 @@ import { Badge } from "@/components/ui/badge";
 import { ShareButton } from "./share-button";
 import { ProfileQrCode } from "./profile-qr-code";
 import type { Tables } from "@/types/database.types";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 type ProfileWithRelations = Tables<"profiles"> & {
   organizations: { id: string; name: string; logo_url: string | null; website: string | null } | null;
   categories: { id: string; name: string; slug: string } | null;
 };
 
-export function ProfileHeader({
+export async function ProfileHeader({
   profile,
   canManageQr,
 }: {
   profile: ProfileWithRelations;
   canManageQr: boolean;
 }) {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
   const social = (profile.social_links ?? {}) as Record<string, string>;
   const isVerified = profile.verification_status === "verified";
 
@@ -59,9 +63,15 @@ export function ProfileHeader({
                     {profile.categories.name}
                   </Badge>
                 )}
-                {isVerified && <Badge variant="verified" size="sm">Verified Profile</Badge>}
+                {isVerified && (
+                  <Badge variant="verified" size="sm">
+                    {t.profilesPublic.header.verifiedBadge}
+                  </Badge>
+                )}
                 {profile.verification_status === "pending" && (
-                  <Badge variant="pending" size="sm">Verification Pending</Badge>
+                  <Badge variant="pending" size="sm">
+                    {t.profilesPublic.header.pendingBadge}
+                  </Badge>
                 )}
               </div>
               <h1 className="mt-2 font-heading text-2xl font-bold text-navy dark:text-white sm:text-3xl">
@@ -117,7 +127,7 @@ export function ProfileHeader({
                 target="_blank"
                 rel="noopener noreferrer nofollow"
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-mist text-slate hover:border-teal hover:text-teal"
-                aria-label="Website"
+                aria-label={t.profilesPublic.header.websiteAriaLabel}
               >
                 <Globe className="h-4 w-4" />
               </a>
@@ -133,7 +143,7 @@ export function ProfileHeader({
                 href={`mailto:${profile.email}`}
                 className="inline-flex h-10 items-center rounded-full bg-navy px-5 text-sm font-semibold text-white hover:bg-royal"
               >
-                Contact
+                {t.profilesPublic.header.contactButton}
               </a>
             )}
           </div>

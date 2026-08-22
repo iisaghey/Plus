@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { ProfileDirectory } from "@/components/profile/profile-directory";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 export const metadata: Metadata = {
   title: "Professionals",
@@ -11,11 +13,13 @@ export default async function ProfessionalsPage(
   props: PageProps<"/professionals">
 ) {
   const searchParams = await props.searchParams;
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
   return (
     <ProfileDirectory
-      label="Professionals"
-      title="Business, Academic & Civil Society Leaders"
-      description="Verified digital profiles of professionals building their digital legacy on AqoonsiPlus."
+      label={t.profilesPublic.professionals.label}
+      title={t.profilesPublic.professionals.title}
+      description={t.profilesPublic.professionals.description}
       searchParams={searchParams}
       presetCategory="business-leader,professional,academic-research,civil-society-ngo"
     />

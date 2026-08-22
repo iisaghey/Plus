@@ -4,8 +4,9 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2, Plus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "@/i18n/language-provider";
 
-type ActionResult = { error?: string; success?: boolean };
+type ActionResult = { error?: string; errorCode?: string; success?: boolean };
 
 export function TaxonomyManager({
   items,
@@ -19,16 +20,17 @@ export function TaxonomyManager({
   extraField?: { name: string; placeholder: string };
 }) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
 
   function handleCreate(formData: FormData) {
     startTransition(async () => {
       const result = await createAction(formData);
       if (result.error) {
-        toast.error(result.error);
+        toast.error(result.errorCode ? t(`admin.errors.${result.errorCode}`) : result.error);
         return;
       }
-      toast.success("Added");
+      toast.success(t("admin.taxonomyManager.added"));
       router.refresh();
     });
   }
@@ -37,10 +39,10 @@ export function TaxonomyManager({
     startTransition(async () => {
       const result = await deleteAction(id);
       if (result.error) {
-        toast.error(result.error);
+        toast.error(result.errorCode ? t(`admin.errors.${result.errorCode}`) : result.error);
         return;
       }
-      toast.success("Removed");
+      toast.success(t("admin.taxonomyManager.removed"));
       router.refresh();
     });
   }
@@ -51,7 +53,7 @@ export function TaxonomyManager({
         <input
           name="name"
           required
-          placeholder="Name"
+          placeholder={t("admin.taxonomyManager.namePlaceholder")}
           className="min-w-[200px] flex-1 rounded-lg border border-mist px-3 py-2 text-sm focus:border-teal focus:outline-none"
         />
         {extraField && (
@@ -67,14 +69,14 @@ export function TaxonomyManager({
           className="flex items-center gap-1.5 rounded-lg bg-teal px-4 py-2 text-sm font-semibold text-white hover:bg-aqoonsi disabled:opacity-50"
         >
           {pending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
-          Add
+          {t("admin.taxonomyManager.add")}
         </button>
       </form>
 
       <div className="mt-6 space-y-2">
         {items.length === 0 ? (
           <p className="rounded-xl border border-dashed border-mist py-8 text-center text-sm text-slate">
-            None yet.
+            {t("admin.taxonomyManager.empty")}
           </p>
         ) : (
           items.map((item) => (
@@ -90,7 +92,7 @@ export function TaxonomyManager({
                 onClick={() => handleDelete(item.id)}
                 disabled={pending}
                 className="text-slate hover:text-red-600 disabled:opacity-50"
-                aria-label="Delete"
+                aria-label={t("common.delete")}
               >
                 <Trash2 className="h-4 w-4" />
               </button>

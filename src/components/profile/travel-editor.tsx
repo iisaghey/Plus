@@ -11,6 +11,7 @@ import {
   type TravelFormState,
 } from "@/lib/actions/travel";
 import { formatDateRange } from "@/lib/utils";
+import { useTranslation } from "@/i18n/language-provider";
 import type { Tables } from "@/types/database.types";
 
 type Entry = Tables<"official_travel">;
@@ -25,6 +26,7 @@ export function TravelEditor({
   locked?: boolean;
 }) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -38,7 +40,7 @@ export function TravelEditor({
         toast.error(result.error);
         return;
       }
-      toast.success("Travel entry removed");
+      toast.success(t("editorForms.travel.toasts.deleted"));
       router.refresh();
     });
   }
@@ -54,7 +56,7 @@ export function TravelEditor({
         <div className="flex items-center gap-2">
           <Plane className="h-4 w-4 text-teal" />
           <h2 className="font-heading text-base font-bold text-navy dark:text-white">
-            Official Travel
+            {t("editorForms.travel.heading")}
           </h2>
         </div>
         {editingId === null && !locked && (
@@ -63,7 +65,7 @@ export function TravelEditor({
             className="flex items-center gap-1.5 rounded-full bg-teal/10 px-3 py-1.5 text-xs font-semibold text-teal hover:bg-teal/20"
           >
             <Plus className="h-3.5 w-3.5" />
-            Add Trip
+            {t("editorForms.travel.addButton")}
           </button>
         )}
       </div>
@@ -79,7 +81,7 @@ export function TravelEditor({
 
         {entries.length === 0 && editingId !== "new" && (
           <p className="py-6 text-center text-sm text-slate">
-            No official travel added yet.
+            {t("editorForms.travel.emptyState")}
           </p>
         )}
 
@@ -124,7 +126,7 @@ export function TravelEditor({
                   onClick={() => setEditingId(entry.id)}
                   disabled={locked}
                   className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-offwhite hover:text-navy dark:hover:text-white disabled:pointer-events-none disabled:opacity-40"
-                  aria-label="Edit"
+                  aria-label={t("common.edit")}
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
@@ -132,7 +134,7 @@ export function TravelEditor({
                   onClick={() => handleDelete(entry.id)}
                   disabled={locked || (pending && deletingId === entry.id)}
                   className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
-                  aria-label="Delete"
+                  aria-label={t("common.delete")}
                 >
                   {pending && deletingId === entry.id ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -164,6 +166,7 @@ function TravelForm({
     ? updateTravelEntry.bind(null, entry.id, profileId)
     : createTravelEntry.bind(null, profileId);
 
+  const { t } = useTranslation();
   const [state, formAction, pending] = useActionState<TravelFormState, FormData>(
     action,
     {}
@@ -174,6 +177,10 @@ function TravelForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.success]);
 
+  const errorMessage = state.errorCode
+    ? t(`editorForms.travel.errors.${state.errorCode}`)
+    : state.error;
+
   return (
     <form
       action={formAction}
@@ -181,41 +188,41 @@ function TravelForm({
     >
       <div className="flex items-center justify-between">
         <p className="text-xs font-semibold uppercase tracking-wide text-teal">
-          {entry ? "Edit Trip" : "New Trip"}
+          {entry ? t("editorForms.travel.editHeading") : t("editorForms.travel.newHeading")}
         </p>
         <button type="button" onClick={onCancel} className="text-slate hover:text-navy dark:hover:text-white">
           <X className="h-4 w-4" />
         </button>
       </div>
 
-      {state.error && <p className="mt-2 text-xs text-red-600">{state.error}</p>}
+      {errorMessage && <p className="mt-2 text-xs text-red-600">{errorMessage}</p>}
 
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field
-          label="Destination Country"
+          label={t("editorForms.travel.fields.destinationCountry")}
           name="destination_country"
           required
           defaultValue={entry?.destination_country}
         />
         <Field
-          label="Destination City"
+          label={t("editorForms.travel.fields.destinationCity")}
           name="destination_city"
           defaultValue={entry?.destination_city ?? ""}
         />
-        <Field label="Purpose" name="purpose" defaultValue={entry?.purpose ?? ""} />
+        <Field label={t("editorForms.travel.fields.purpose")} name="purpose" defaultValue={entry?.purpose ?? ""} />
         <Field
-          label="Delegation"
+          label={t("editorForms.travel.fields.delegation")}
           name="delegation"
           defaultValue={entry?.delegation ?? ""}
         />
         <Field
-          label="Start Date"
+          label={t("editorForms.travel.fields.startDate")}
           name="start_date"
           type="date"
           defaultValue={entry?.start_date ?? ""}
         />
         <Field
-          label="End Date"
+          label={t("editorForms.travel.fields.endDate")}
           name="end_date"
           type="date"
           defaultValue={entry?.end_date ?? ""}
@@ -224,7 +231,7 @@ function TravelForm({
 
       <div className="mt-3">
         <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-          Description
+          {t("editorForms.travel.fields.description")}
         </label>
         <textarea
           name="description"
@@ -240,7 +247,7 @@ function TravelForm({
           onClick={onCancel}
           className="rounded-lg px-4 py-2 text-xs font-semibold text-slate hover:bg-mist/60"
         >
-          Cancel
+          {t("common.cancel")}
         </button>
         <button
           type="submit"
@@ -248,7 +255,7 @@ function TravelForm({
           className="flex items-center gap-1.5 rounded-lg bg-teal px-4 py-2 text-xs font-semibold text-white hover:bg-aqoonsi disabled:opacity-50"
         >
           {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-          {entry ? "Save Changes" : "Add Trip"}
+          {entry ? t("editorForms.travel.saveChangesButton") : t("editorForms.travel.addButton")}
         </button>
       </div>
     </form>

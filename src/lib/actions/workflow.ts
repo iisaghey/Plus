@@ -133,9 +133,9 @@ export async function editorDecision(
   notes?: string
 ) {
   const { supabase, user, role } = await requireUser();
-  if (!user) return { error: "You must be signed in." };
+  if (!user) return { error: "You must be signed in.", errorCode: "mustBeSignedIn" };
   if (!["editor", "admin", "super_admin"].includes(role ?? "")) {
-    return { error: "Only Editors can make this decision." };
+    return { error: "Only Editors can make this decision.", errorCode: "editorsOnlyDecision" };
   }
 
   const { data: profile } = await supabase
@@ -143,7 +143,7 @@ export async function editorDecision(
     .select("full_name, assigned_staff_id")
     .eq("id", profileId)
     .maybeSingle();
-  if (!profile) return { error: "Profile not found." };
+  if (!profile) return { error: "Profile not found.", errorCode: "profileNotFound" };
 
   const nextStatus = decision === "approve" ? "editor_approved" : "changes_required";
 

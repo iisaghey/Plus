@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { setUserRole } from "@/lib/actions/users";
 import { Badge } from "@/components/ui/badge";
 import type { Enums } from "@/types/database.types";
+import { useTranslation } from "@/i18n/language-provider";
 
 const DEFAULT_ASSIGNABLE_ROLES: Enums<"app_role">[] = [
   "profile_owner",
@@ -28,16 +29,17 @@ export function TeamMemberRow({
   assignableRoles?: Enums<"app_role">[];
 }) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
 
   function handleChange(newRole: Enums<"app_role">) {
     startTransition(async () => {
       const result = await setUserRole(userId, newRole);
       if (result.error) {
-        toast.error(result.error);
+        toast.error(result.errorCode ? t(`admin.errors.${result.errorCode}`) : result.error);
         return;
       }
-      toast.success(`Role updated to ${newRole.replace("_", " ")}`);
+      toast.success(`${t("admin.teamMemberRow.roleUpdatedTo")} ${newRole.replace("_", " ")}`);
       router.refresh();
     });
   }
@@ -45,7 +47,7 @@ export function TeamMemberRow({
   return (
     <div className="flex items-center justify-between gap-4 rounded-xl border border-mist p-4">
       <div className="flex min-w-0 items-center gap-2">
-        <p className="truncate text-sm font-medium text-navy dark:text-white">{email ?? "Unknown"}</p>
+        <p className="truncate text-sm font-medium text-navy dark:text-white">{email ?? t("admin.teamMemberRow.unknown")}</p>
         {accountStatus && accountStatus !== "approved" && (
           <Badge variant={accountStatus === "pending" ? "pending" : "neutral"} size="sm">
             {accountStatus}
@@ -68,7 +70,7 @@ export function TeamMemberRow({
             ))}
           </select>
         ) : (
-          <Badge variant="neutral" size="sm" title="You don't have permission to change this role">
+          <Badge variant="neutral" size="sm" title={t("admin.teamMemberRow.noPermissionTitle")}>
             {role.replace("_", " ")}
           </Badge>
         )}

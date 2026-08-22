@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export type ActivityFormState = {
   error?: string;
+  errorCode?: string;
   success?: boolean;
 };
 
@@ -39,7 +40,7 @@ export async function createActivity(
 ): Promise<ActivityFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.title) return { error: "Title is required." };
+  if (!values.title) return { error: "Title is required.", errorCode: "titleRequired" };
 
   const { count } = await supabase
     .from("official_activities")
@@ -67,7 +68,7 @@ export async function updateActivity(
 ): Promise<ActivityFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.title) return { error: "Title is required." };
+  if (!values.title) return { error: "Title is required.", errorCode: "titleRequired" };
 
   const { error } = await supabase
     .from("official_activities")

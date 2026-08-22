@@ -7,9 +7,11 @@ import { ShieldCheck, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n/language-provider";
 
 export default function CreateProfilePage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,7 +35,7 @@ export default function CreateProfilePage() {
     }
 
     if (data.session) {
-      toast.success("Account created — let's build your profile.");
+      toast.success(t("profilesPublic.createProfile.accountCreatedToast"));
       router.push("/dashboard");
       router.refresh();
       return;
@@ -49,14 +51,14 @@ export default function CreateProfilePage() {
           <CheckCircle2 className="h-7 w-7" />
         </div>
         <h1 className="mt-4 font-heading text-2xl font-bold text-navy dark:text-white">
-          Check Your Email
+          {t("profilesPublic.createProfile.checkEmailHeading")}
         </h1>
         <p className="mt-2 text-sm text-slate">
-          We sent a confirmation link to <strong>{email}</strong>. Confirm
-          your account to start building your digital profile.
+          {t("profilesPublic.createProfile.checkEmailMessagePrefix")}{" "}
+          <strong>{email}</strong>. {t("profilesPublic.createProfile.checkEmailMessageSuffix")}
         </p>
         <Link href="/login" className="mt-6 text-sm font-semibold text-teal hover:underline">
-          Back to Sign In
+          {t("profilesPublic.createProfile.backToSignIn")}
         </Link>
       </div>
     );
@@ -69,17 +71,17 @@ export default function CreateProfilePage() {
           <ShieldCheck className="h-6 w-6" />
         </div>
         <h1 className="mt-4 font-heading text-2xl font-bold text-navy dark:text-white">
-          Create Your Profile
+          {t("profilesPublic.createProfile.heading")}
         </h1>
         <p className="mt-2 text-sm text-slate">
-          Start building your verified digital legacy on AqoonsiPlus.
+          {t("profilesPublic.createProfile.subtitle")}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <div>
           <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-            Full Name
+            {t("profilesPublic.createProfile.fullNameLabel")}
           </label>
           <input
             type="text"
@@ -87,12 +89,12 @@ export default function CreateProfilePage() {
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             className="mt-1.5 w-full rounded-xl border border-mist px-4 py-2.5 text-sm text-ink focus:border-teal focus:outline-none"
-            placeholder="Your full name"
+            placeholder={t("profilesPublic.createProfile.fullNamePlaceholder")}
           />
         </div>
         <div>
           <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-            Email
+            {t("auth.email")}
           </label>
           <input
             type="email"
@@ -105,7 +107,7 @@ export default function CreateProfilePage() {
         </div>
         <div>
           <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-            Password
+            {t("auth.password")}
           </label>
           <input
             type="password"
@@ -114,20 +116,20 @@ export default function CreateProfilePage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="mt-1.5 w-full rounded-xl border border-mist px-4 py-2.5 text-sm text-ink focus:border-teal focus:outline-none"
-            placeholder="At least 8 characters"
+            placeholder={t("profilesPublic.createProfile.passwordPlaceholder")}
           />
         </div>
 
         <Button type="submit" variant="primary" size="md" disabled={loading} className="w-full">
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-          Create Profile
+          {t("profilesPublic.createProfile.submitButton")}
         </Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-slate">
-        Already have a profile?{" "}
+        {t("profilesPublic.createProfile.alreadyHaveProfile")}{" "}
         <Link href="/login" className="font-semibold text-teal hover:underline">
-          Sign in
+          {t("profilesPublic.createProfile.signInLink")}
         </Link>
       </p>
     </div>

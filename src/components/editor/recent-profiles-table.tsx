@@ -5,6 +5,8 @@ import { ActionIconButton } from "@/components/dashboard/action-icon-button";
 import { DataTable, DataTableHead, DataTableBody, EmptyRow } from "@/components/dashboard/data-table";
 import { WORKFLOW_STATUS_VARIANT, workflowStatusLabel } from "@/lib/workflow";
 import type { Enums } from "@/types/database.types";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 export type RecentProfileRow = {
   id: string;
@@ -17,31 +19,35 @@ export type RecentProfileRow = {
   updated_at: string;
 };
 
-export function RecentProfilesTable({
+export async function RecentProfilesTable({
   profiles,
-  title = "Recent Profiles",
+  title,
 }: {
   profiles: RecentProfileRow[];
   title?: string;
 }) {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
+  const resolvedTitle = title ?? t.editorWorkspace.recentProfilesTable.defaultTitle;
+
   return (
     <div className="rounded-2xl border border-mist bg-white dark:bg-offwhite p-6">
       <h2 className="font-heading text-base font-bold text-navy dark:text-white">
-        {title}
+        {resolvedTitle}
       </h2>
 
       <div className="mt-4">
         <DataTable minWidth={720}>
           <DataTableHead>
-            <th className="px-4 py-3">Profile</th>
-            <th className="px-4 py-3">Organization</th>
-            <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3">Last Updated</th>
-            <th className="px-4 py-3 text-right">Actions</th>
+            <th className="px-4 py-3">{t.editorWorkspace.recentProfilesTable.colProfile}</th>
+            <th className="px-4 py-3">{t.editorWorkspace.recentProfilesTable.colOrganization}</th>
+            <th className="px-4 py-3">{t.editorWorkspace.recentProfilesTable.colStatus}</th>
+            <th className="px-4 py-3">{t.editorWorkspace.recentProfilesTable.colLastUpdated}</th>
+            <th className="px-4 py-3 text-right">{t.editorWorkspace.recentProfilesTable.colActions}</th>
           </DataTableHead>
           <DataTableBody>
             {profiles.length === 0 ? (
-              <EmptyRow colSpan={5}>No profiles yet.</EmptyRow>
+              <EmptyRow colSpan={5}>{t.editorWorkspace.recentProfilesTable.noProfilesYet}</EmptyRow>
             ) : (
               profiles.map((p) => (
                 <tr key={p.id}>
@@ -63,7 +69,7 @@ export function RecentProfilesTable({
                           {p.full_name}
                         </p>
                         <p className="truncate text-xs text-slate">
-                          {p.current_position ?? "No position"}
+                          {p.current_position ?? t.editorWorkspace.recentProfilesTable.noPosition}
                         </p>
                       </div>
                     </div>
@@ -83,14 +89,14 @@ export function RecentProfilesTable({
                     <div className="flex items-center justify-end gap-1.5">
                       <ActionIconButton
                         icon={Eye}
-                        label="View public profile"
+                        label={t.editorWorkspace.recentProfilesTable.viewPublicProfile}
                         tone="sky"
                         href={`/profile/${p.slug}`}
                         newTab
                       />
                       <ActionIconButton
                         icon={Pencil}
-                        label="Edit profile"
+                        label={t.editorWorkspace.recentProfilesTable.editProfile}
                         tone="teal"
                         href={`/editor/profiles/${p.id}`}
                       />

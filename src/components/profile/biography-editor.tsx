@@ -5,6 +5,7 @@ import { Loader2, BookOpen, Check } from "lucide-react";
 import { toast } from "sonner";
 import { saveBiography, type BiographyFormState } from "@/lib/actions/biography";
 import { RichTextEditor } from "@/components/profile/rich-text-editor";
+import { useTranslation } from "@/i18n/language-provider";
 import type { Tables } from "@/types/database.types";
 
 export function BiographyEditor({
@@ -16,6 +17,7 @@ export function BiographyEditor({
   biography: Tables<"biographies"> | null;
   locked?: boolean;
 }) {
+  const { t } = useTranslation();
   const action = saveBiography.bind(null, profileId);
   const [state, formAction, pending] = useActionState<BiographyFormState, FormData>(
     action,
@@ -32,8 +34,9 @@ export function BiographyEditor({
 
   useEffect(() => {
     if (state.success) {
-      toast.success("Biography saved");
+      toast.success(t("editorForms.biography.toasts.saved"));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.success]);
 
   useEffect(() => {
@@ -46,10 +49,10 @@ export function BiographyEditor({
     <div className="rounded-2xl border border-mist p-6">
       <div className="flex items-center gap-2">
         <BookOpen className="h-4 w-4 text-teal" />
-        <h2 className="font-heading text-base font-bold text-navy dark:text-white">Biography</h2>
+        <h2 className="font-heading text-base font-bold text-navy dark:text-white">{t("editorForms.biography.heading")}</h2>
       </div>
       <p className="mt-1 text-xs text-slate">
-        A longer-form biography shown on the Biography tab of the public profile.
+        {t("editorForms.biography.description")}
       </p>
 
       <form action={formAction} className="mt-4 space-y-3">
@@ -60,7 +63,7 @@ export function BiographyEditor({
         <fieldset disabled={locked} className="space-y-3">
         <div>
           <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-            Summary
+            {t("editorForms.biography.summaryLabel")}
             <span className="text-teal"> *</span>
           </label>
           <div className="mt-1.5">
@@ -68,7 +71,7 @@ export function BiographyEditor({
               key={`summary-${resetKey}`}
               name="summary"
               defaultValue={biography?.summary}
-              placeholder="A short summary shown at the top of the Biography tab…"
+              placeholder={t("editorForms.biography.summaryPlaceholder")}
               minHeight={60}
               disabled={locked}
             />
@@ -77,14 +80,14 @@ export function BiographyEditor({
 
         <div>
           <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-            Full Biography
+            {t("editorForms.biography.fullBiographyLabel")}
           </label>
           <div className="mt-1.5">
             <RichTextEditor
               key={`content-${resetKey}`}
               name="content"
               defaultValue={biography?.content}
-              placeholder="Write the full biography…"
+              placeholder={t("editorForms.biography.fullBiographyPlaceholder")}
               minHeight={220}
               disabled={locked}
             />
@@ -98,7 +101,7 @@ export function BiographyEditor({
             disabled={pending}
             className="rounded-lg px-4 py-2 text-xs font-semibold text-slate hover:bg-mist/60 disabled:opacity-50"
           >
-            Discard
+            {t("editorForms.biography.discardButton")}
           </button>
           <button
             type="submit"
@@ -107,7 +110,7 @@ export function BiographyEditor({
           >
             {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
             {justSaved && !pending && <Check className="h-3.5 w-3.5" />}
-            Save Biography
+            {t("editorForms.biography.saveButton")}
           </button>
         </div>
         </fieldset>

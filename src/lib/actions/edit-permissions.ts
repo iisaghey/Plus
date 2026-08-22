@@ -24,7 +24,13 @@ async function requireUser() {
 const SNAPSHOT_FIELDS =
   "full_name, preferred_title, profession, current_position, category_id, organization_id, country, location, nationality, short_bio, email, website, photo_url, cover_url, phone, social_links";
 
-export type EditRequestFormState = { error?: string; success?: boolean };
+export type EditRequestFormState = {
+  error?: string;
+  /** Stable machine-readable code for `error`, when it originates from our own validation
+   *  (not a raw Supabase error) — lets the UI look up a translated message. */
+  errorCode?: string;
+  success?: boolean;
+};
 
 export async function requestEditPermission(
   profileId: string,
@@ -32,11 +38,16 @@ export async function requestEditPermission(
   formData: FormData
 ): Promise<EditRequestFormState> {
   const { supabase, user, role } = await requireUser();
-  if (!user) return { error: "You must be signed in." };
-  if (role !== "editor") return { error: "Only Editors can request edit permission." };
+  if (!user) return { error: "You must be signed in.", errorCode: "mustBeSignedIn" };
+  if (role !== "editor")
+    return { error: "Only Editors can request edit permission.", errorCode: "editorsOnlyRequest" };
 
   const reason = String(formData.get("reason") ?? "").trim();
-  if (!reason) return { error: "Please explain why you need to edit this profile." };
+  if (!reason)
+    return {
+      error: "Please explain why you need to edit this profile.",
+      errorCode: "reasonRequired",
+    };
 
   const fieldsRequested = formData.getAll("fields_requested").map(String);
   const description = String(formData.get("description") ?? "").trim() || null;
@@ -48,9 +59,12 @@ export async function requestEditPermission(
     .select("full_name, workflow_status")
     .eq("id", profileId)
     .maybeSingle();
-  if (!profile) return { error: "Profile not found." };
+  if (!profile) return { error: "Profile not found.", errorCode: "profileNotFound" };
   if (profile.workflow_status !== "published") {
-    return { error: "This profile isn't published, so it's already editable." };
+    return {
+      error: "This profile isn't published, so it's already editable.",
+      errorCode: "alreadyEditable",
+    };
   }
 
   const { data: existing } = await supabase
@@ -60,7 +74,11 @@ export async function requestEditPermission(
     .eq("editor_id", user.id)
     .eq("status", "pending")
     .maybeSingle();
-  if (existing) return { error: "You already have a pending request for this profile." };
+  if (existing)
+    return {
+      error: "You already have a pending request for this profile.",
+      errorCode: "pendingRequestExists",
+    };
 
   const { error } = await supabase.from("edit_permission_requests").insert({
     profile_id: profileId,

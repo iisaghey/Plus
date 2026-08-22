@@ -26,7 +26,7 @@ export async function setAccountStatus(
   status: Enums<"account_status">
 ) {
   const { supabase, user } = await requireStaff();
-  if (!user) return { error: "You must be signed in." };
+  if (!user) return { error: "You must be signed in.", errorCode: "notSignedIn" as const };
 
   const { error } = await supabase.rpc("set_account_status", {
     p_user_id: userId,
@@ -45,9 +45,9 @@ export async function decideVerification(
   notes?: string
 ) {
   const { supabase, user, role } = await requireStaff();
-  if (!user) return { error: "You must be signed in." };
+  if (!user) return { error: "You must be signed in.", errorCode: "notSignedIn" as const };
   if (role !== "admin" && role !== "super_admin") {
-    return { error: "Only Admins can verify profiles." };
+    return { error: "Only Admins can verify profiles.", errorCode: "adminOnly" as const };
   }
 
   const status: Enums<"verification_status"> = approve

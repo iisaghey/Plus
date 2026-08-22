@@ -1,6 +1,9 @@
 import { Trash2, XCircle, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Enums, Tables } from "@/types/database.types";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
+import type { Dictionary } from "@/i18n/dictionaries/en";
 
 const ROLE_ORDER: Enums<"app_role">[] = ["staff", "editor", "admin", "super_admin"];
 
@@ -18,28 +21,32 @@ const TONE_CLASSES: Record<Status["tone"], string> = {
 
 function deleteStatus(
   deleteScope: Enums<"permission_scope">,
-  deletePermanentScope: Enums<"permission_scope">
+  deletePermanentScope: Enums<"permission_scope">,
+  t: Dictionary
 ): Status {
   if (deletePermanentScope === "all") {
-    return { icon: CheckCircle2, label: "Full delete authority", tone: "success" };
+    return { icon: CheckCircle2, label: t.admin.deletePermission.fullAuthority, tone: "success" };
   }
   if (deletePermanentScope === "limited") {
     return {
       icon: AlertTriangle,
-      label: "Can request/delete limited content",
+      label: t.admin.deletePermission.limitedAuthority,
       tone: "warning",
     };
   }
-  return { icon: XCircle, label: "No permanent delete", tone: "danger" };
+  return { icon: XCircle, label: t.admin.deletePermission.noAuthority, tone: "danger" };
 }
 
-export function DeletePermissionSummary({
+export async function DeletePermissionSummary({
   roles,
   rolePermissions,
 }: {
   roles: Tables<"roles">[];
   rolePermissions: Tables<"role_permissions">[];
 }) {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
+
   const scopeFor = (roleKey: string, permKey: string): Enums<"permission_scope"> =>
     rolePermissions.find((rp) => rp.role_key === roleKey && rp.permission_key === permKey)
       ?.scope ?? "none";
@@ -49,7 +56,8 @@ export function DeletePermissionSummary({
     if (!role) return null;
     const status = deleteStatus(
       scopeFor(key, "records.delete"),
-      scopeFor(key, "records.delete_permanent")
+      scopeFor(key, "records.delete_permanent"),
+      t
     );
     return { role, status };
   }).filter((row): row is NonNullable<typeof row> => row !== null);
@@ -59,20 +67,19 @@ export function DeletePermissionSummary({
       <div className="flex items-center gap-2">
         <Trash2 className="h-4 w-4 text-teal" />
         <h2 className="font-heading text-base font-bold text-navy dark:text-white">
-          Delete Role &amp; Permission
+          {t.admin.deletePermission.heading}
         </h2>
       </div>
       <p className="mt-1 text-xs text-slate">
-        Who can soft-delete records versus permanently erase them, derived live from the
-        permission matrix below.
+        {t.admin.deletePermission.subtitle}
       </p>
 
       <div className="mt-4 overflow-x-auto">
         <table className="w-full min-w-[420px] text-left text-sm">
           <thead>
             <tr className="border-b border-mist text-[11px] font-semibold uppercase tracking-wide text-slate">
-              <th className="pb-2 pr-4 font-semibold">Role</th>
-              <th className="pb-2 font-semibold">Delete Permission</th>
+              <th className="pb-2 pr-4 font-semibold">{t.admin.deletePermission.colRole}</th>
+              <th className="pb-2 font-semibold">{t.admin.deletePermission.colDeletePermission}</th>
             </tr>
           </thead>
           <tbody>

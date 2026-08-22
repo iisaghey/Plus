@@ -4,8 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { LinkButton } from "@/components/ui/button";
 import { StaffDraftForm } from "@/components/dashboard/staff-draft-form";
 import { createStaffDraft } from "@/lib/actions/profile";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
-export function EditorHeader({
+export async function EditorHeader({
   name,
   email,
   photoUrl,
@@ -14,6 +16,9 @@ export function EditorHeader({
   email: string;
   photoUrl: string | null;
 }) {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
+
   return (
     <div className="flex flex-col gap-4 rounded-2xl border border-mist bg-white dark:bg-offwhite p-6 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-4">
@@ -38,19 +43,19 @@ export function EditorHeader({
               {name}
             </h1>
             <Badge variant="verified" size="sm">
-              Active
+              {t.editorWorkspace.header.activeBadge}
             </Badge>
           </div>
-          <p className="text-sm font-medium text-teal">Content Editor</p>
+          <p className="text-sm font-medium text-teal">{t.editorWorkspace.header.roleLabel}</p>
           <p className="text-xs text-slate">{email}</p>
         </div>
       </div>
       <div className="flex shrink-0 flex-wrap items-center gap-2">
         <LinkButton href="/dashboard/profile" variant="outline" size="sm">
           <Pencil className="h-3.5 w-3.5" />
-          Edit Profile
+          {t.editorWorkspace.header.editProfile}
         </LinkButton>
-        <StaffDraftForm action={createStaffDraft} triggerLabel="Create New Profile" />
+        <StaffDraftForm action={createStaffDraft} triggerLabel={t.editorWorkspace.header.createNewProfile} />
       </div>
     </div>
   );

@@ -30,6 +30,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -38,31 +40,34 @@ export const metadata: Metadata = {
 const STAFF_ROLES = ["super_admin", "admin", "editor", "staff"];
 const UNRESTRICTED_ROLES = ["super_admin", "admin", "editor"];
 
-const LOCKED_MESSAGES: Record<string, string> = {
-  submitted: "Your profile has been submitted and is waiting to be picked up for review.",
-  under_review: "An editor is currently reviewing your profile.",
-  editor_approved: "Your profile has passed editorial review and is awaiting admin sign-off.",
-  admin_review: "An admin is currently reviewing your profile.",
-  approved: "Your profile has been approved and is queued for publishing.",
-  verified: "Your profile has been verified and is queued for publishing.",
-  published: "Your profile is live. Contact support if you need to make changes.",
-  suspended: "Your profile has been suspended. Contact support for details.",
-  archived: "Your profile has been archived and can no longer be edited here.",
-};
-
 const ICON_CLASS = "h-4 w-4";
 
-const STEPS: WizardStepDef[] = [
-  { id: "identity", label: "Personal & Contact", icon: <IdCard className={ICON_CLASS} />, sections: ["identity", "contact", "social"] },
-  { id: "background", label: "Biography & Education", icon: <BookOpenText className={ICON_CLASS} />, sections: ["biography", "education"] },
-  { id: "career", label: "Career & Positions", icon: <Landmark className={ICON_CLASS} />, sections: ["career", "positions"] },
-  { id: "recognition", label: "Achievements & Activities", icon: <Trophy className={ICON_CLASS} />, sections: ["achievements", "activities", "travel"] },
-  { id: "speeches", label: "Speeches", icon: <Mic className={ICON_CLASS} />, sections: ["speeches"] },
-  { id: "media", label: "Media & Documents", icon: <Images className={ICON_CLASS} />, sections: ["media", "documents"] },
-  { id: "review", label: "Review & Submit", icon: <ShieldCheck className={ICON_CLASS} />, sections: ["review"] },
-];
-
 export default async function DashboardProfilePage() {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
+
+  const LOCKED_MESSAGES: Record<string, string> = {
+    submitted: t.dashboard.profile.lockedMessages.submitted,
+    under_review: t.dashboard.profile.lockedMessages.underReview,
+    editor_approved: t.dashboard.profile.lockedMessages.editorApproved,
+    admin_review: t.dashboard.profile.lockedMessages.adminReview,
+    approved: t.dashboard.profile.lockedMessages.approved,
+    verified: t.dashboard.profile.lockedMessages.verified,
+    published: t.dashboard.profile.lockedMessages.published,
+    suspended: t.dashboard.profile.lockedMessages.suspended,
+    archived: t.dashboard.profile.lockedMessages.archived,
+  };
+
+  const STEPS: WizardStepDef[] = [
+    { id: "identity", label: t.dashboard.profile.steps.identity, icon: <IdCard className={ICON_CLASS} />, sections: ["identity", "contact", "social"] },
+    { id: "background", label: t.dashboard.profile.steps.background, icon: <BookOpenText className={ICON_CLASS} />, sections: ["biography", "education"] },
+    { id: "career", label: t.dashboard.profile.steps.career, icon: <Landmark className={ICON_CLASS} />, sections: ["career", "positions"] },
+    { id: "recognition", label: t.dashboard.profile.steps.recognition, icon: <Trophy className={ICON_CLASS} />, sections: ["achievements", "activities", "travel"] },
+    { id: "speeches", label: t.dashboard.profile.steps.speeches, icon: <Mic className={ICON_CLASS} />, sections: ["speeches"] },
+    { id: "media", label: t.dashboard.profile.steps.media, icon: <Images className={ICON_CLASS} />, sections: ["media", "documents"] },
+    { id: "review", label: t.dashboard.profile.steps.review, icon: <ShieldCheck className={ICON_CLASS} />, sections: ["review"] },
+  ];
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -178,14 +183,13 @@ export default async function DashboardProfilePage() {
           className="inline-flex items-center gap-1.5 text-sm font-medium text-slate transition-colors hover:text-teal"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Dashboard
+          {t.dashboard.profile.backToDashboard}
         </Link>
         <h1 className="mt-4 font-heading text-2xl font-bold text-navy dark:text-white">
-          Create Your Profile
+          {t.dashboard.profile.createHeading}
         </h1>
         <p className="mt-2 text-sm text-slate">
-          Start with the essentials — you can add your career timeline, achievements, media, and
-          documents from your dashboard afterward.
+          {t.dashboard.profile.createSubheading}
         </p>
         <div className="mt-8">
           <ProfileForm
@@ -193,7 +197,7 @@ export default async function DashboardProfilePage() {
             profile={profile}
             categories={categories ?? []}
             organizations={organizations ?? []}
-            submitLabel="Create Profile"
+            submitLabel={t.dashboard.profile.createSubmitLabel}
           />
         </div>
       </div>
@@ -227,13 +231,13 @@ export default async function DashboardProfilePage() {
         className="inline-flex items-center gap-1.5 text-sm font-medium text-slate transition-colors hover:text-teal"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to Dashboard
+        {t.dashboard.profile.backToDashboard}
       </Link>
       <h1 className="mt-4 font-heading text-2xl font-bold text-navy dark:text-white">
-        Edit Your Profile
+        {t.dashboard.profile.editHeading}
       </h1>
       <p className="mt-2 text-sm text-slate">
-        Work through each section at your own pace — everything saves as you go.
+        {t.dashboard.profile.editSubheading}
       </p>
 
       {locked && (
@@ -241,7 +245,7 @@ export default async function DashboardProfilePage() {
           <Lock className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
           <p>
             {LOCKED_MESSAGES[profile.workflow_status] ??
-              "Your profile can't be edited right now."}
+              t.dashboard.profile.lockedFallback}
           </p>
         </div>
       )}
@@ -264,7 +268,7 @@ export default async function DashboardProfilePage() {
               profile={profile}
               categories={categories ?? []}
               organizations={organizations ?? []}
-              submitLabel="Save Changes"
+              submitLabel={t.dashboard.profile.saveChangesLabel}
               locked={locked}
             />
           </ProfileWizardStep>

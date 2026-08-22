@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
+import { useTranslation } from "@/i18n/language-provider";
 
 export function ThemeToggle({ className }: { className?: string }) {
   const [isDark, setIsDark] = useState<boolean | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reads DOM class set by an inline script before hydration; can't be known during SSR
@@ -22,7 +24,7 @@ export function ThemeToggle({ className }: { className?: string }) {
     <button
       type="button"
       onClick={toggle}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-label={isDark ? t("common.switchToLightMode") : t("common.switchToDarkMode")}
       className={
         className ??
         "flex h-10 w-10 items-center justify-center rounded-full text-slate transition-colors hover:bg-offwhite hover:text-navy dark:hover:text-white dark:hover:text-white"

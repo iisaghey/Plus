@@ -5,6 +5,7 @@ import { UploadCloud, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { uploadPublicFile, uploadPrivateFile } from "@/lib/supabase/upload";
 import { formatFileSize } from "@/lib/utils";
+import { useTranslation } from "@/i18n/language-provider";
 
 const MAX_SIZE_BYTES = 50 * 1024 * 1024; // 50MB — video/audio need more room than a photo
 
@@ -28,7 +29,7 @@ export function MultiFileUpload({
   bucket,
   folderId,
   accept,
-  label = "Upload Files",
+  label,
   hint,
   isPrivate = false,
   onFileUploaded,
@@ -42,6 +43,9 @@ export function MultiFileUpload({
   isPrivate?: boolean;
   onFileUploaded: (file: UploadedFileMeta) => void | Promise<void>;
 }) {
+  const { t } = useTranslation();
+  const resolvedLabel = label ?? t("editorWorkspace.multiFileUpload.defaultLabel");
+  const resolvedHint = hint ?? t("editorWorkspace.multiFileUpload.defaultHint");
   const [pending, setPending] = useState<PendingFile[]>([]);
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -61,10 +65,14 @@ export function MultiFileUpload({
       if (entry.file.size > MAX_SIZE_BYTES) {
         setPending((prev) =>
           prev.map((p) =>
-            p.id === entry.id ? { ...p, progress: "error", error: "File is over 50MB" } : p
+            p.id === entry.id
+              ? { ...p, progress: "error", error: t("editorWorkspace.multiFileUpload.overSizeError") }
+              : p
           )
         );
-        toast.error(`${entry.file.name} is over 50MB.`);
+        toast.error(
+          t("editorWorkspace.multiFileUpload.overSizeToast").replace("{name}", entry.file.name)
+        );
         continue;
       }
       try {
@@ -80,7 +88,8 @@ export function MultiFileUpload({
         });
         setPending((prev) => prev.filter((p) => p.id !== entry.id));
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Upload failed";
+        const message =
+          err instanceof Error ? err.message : t("editorWorkspace.multiFileUpload.uploadFailed");
         setPending((prev) =>
           prev.map((p) => (p.id === entry.id ? { ...p, progress: "error", error: message } : p))
         );
@@ -112,9 +121,9 @@ export function MultiFileUpload({
         }`}
       >
         <UploadCloud className={`h-7 w-7 ${dragging ? "text-teal" : "text-slate"}`} />
-        <p className="text-sm font-semibold text-navy dark:text-white">{label}</p>
+        <p className="text-sm font-semibold text-navy dark:text-white">{resolvedLabel}</p>
         <p className="text-xs text-slate">
-          {hint ?? "Drag and drop, or click to browse — you can select multiple files"}
+          {resolvedHint}
         </p>
         <input
           ref={inputRef}

@@ -11,6 +11,7 @@ import {
   type ActivityFormState,
 } from "@/lib/actions/activities";
 import { formatMonthYear } from "@/lib/utils";
+import { useTranslation } from "@/i18n/language-provider";
 import type { Tables } from "@/types/database.types";
 
 type Entry = Tables<"official_activities">;
@@ -25,6 +26,7 @@ export function ActivitiesEditor({
   locked?: boolean;
 }) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -38,7 +40,7 @@ export function ActivitiesEditor({
         toast.error(result.error);
         return;
       }
-      toast.success("Activity removed");
+      toast.success(t("editorForms.activities.toasts.deleted"));
       router.refresh();
     });
   }
@@ -54,7 +56,7 @@ export function ActivitiesEditor({
         <div className="flex items-center gap-2">
           <CalendarDays className="h-4 w-4 text-teal" />
           <h2 className="font-heading text-base font-bold text-navy dark:text-white">
-            Official Activities
+            {t("editorForms.activities.heading")}
           </h2>
         </div>
         {editingId === null && !locked && (
@@ -63,7 +65,7 @@ export function ActivitiesEditor({
             className="flex items-center gap-1.5 rounded-full bg-teal/10 px-3 py-1.5 text-xs font-semibold text-teal hover:bg-teal/20"
           >
             <Plus className="h-3.5 w-3.5" />
-            Add Activity
+            {t("editorForms.activities.addButton")}
           </button>
         )}
       </div>
@@ -79,7 +81,7 @@ export function ActivitiesEditor({
 
         {entries.length === 0 && editingId !== "new" && (
           <p className="py-6 text-center text-sm text-slate">
-            No official activities added yet.
+            {t("editorForms.activities.emptyState")}
           </p>
         )}
 
@@ -124,7 +126,7 @@ export function ActivitiesEditor({
                   onClick={() => setEditingId(entry.id)}
                   disabled={locked}
                   className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-offwhite hover:text-navy dark:hover:text-white disabled:pointer-events-none disabled:opacity-40"
-                  aria-label="Edit"
+                  aria-label={t("common.edit")}
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
@@ -132,7 +134,7 @@ export function ActivitiesEditor({
                   onClick={() => handleDelete(entry.id)}
                   disabled={locked || (pending && deletingId === entry.id)}
                   className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
-                  aria-label="Delete"
+                  aria-label={t("common.delete")}
                 >
                   {pending && deletingId === entry.id ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -164,6 +166,7 @@ function ActivityForm({
     ? updateActivity.bind(null, entry.id, profileId)
     : createActivity.bind(null, profileId);
 
+  const { t } = useTranslation();
   const [state, formAction, pending] = useActionState<ActivityFormState, FormData>(
     action,
     {}
@@ -174,6 +177,10 @@ function ActivityForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.success]);
 
+  const errorMessage = state.errorCode
+    ? t(`editorForms.activities.errors.${state.errorCode}`)
+    : state.error;
+
   return (
     <form
       action={formAction}
@@ -181,31 +188,31 @@ function ActivityForm({
     >
       <div className="flex items-center justify-between">
         <p className="text-xs font-semibold uppercase tracking-wide text-teal">
-          {entry ? "Edit Activity" : "New Activity"}
+          {entry ? t("editorForms.activities.editHeading") : t("editorForms.activities.newHeading")}
         </p>
         <button type="button" onClick={onCancel} className="text-slate hover:text-navy dark:hover:text-white">
           <X className="h-4 w-4" />
         </button>
       </div>
 
-      {state.error && <p className="mt-2 text-xs text-red-600">{state.error}</p>}
+      {errorMessage && <p className="mt-2 text-xs text-red-600">{errorMessage}</p>}
 
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <Field label="Title" name="title" required defaultValue={entry?.title} />
+        <Field label={t("editorForms.activities.fields.title")} name="title" required defaultValue={entry?.title} />
         <Field
-          label="Activity Type"
+          label={t("editorForms.activities.fields.activityType")}
           name="activity_type"
-          placeholder="Summit, Ceremony, Meeting..."
+          placeholder={t("editorForms.activities.fields.activityTypePlaceholder")}
           defaultValue={entry?.activity_type ?? ""}
         />
         <Field
-          label="Organization"
+          label={t("editorForms.activities.fields.organization")}
           name="organization"
           defaultValue={entry?.organization ?? ""}
         />
-        <Field label="Location" name="location" defaultValue={entry?.location ?? ""} />
+        <Field label={t("editorForms.activities.fields.location")} name="location" defaultValue={entry?.location ?? ""} />
         <Field
-          label="Date"
+          label={t("editorForms.activities.fields.date")}
           name="activity_date"
           type="date"
           defaultValue={entry?.activity_date ?? ""}
@@ -214,7 +221,7 @@ function ActivityForm({
 
       <div className="mt-3">
         <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-          Description
+          {t("editorForms.activities.fields.description")}
         </label>
         <textarea
           name="description"
@@ -230,7 +237,7 @@ function ActivityForm({
           onClick={onCancel}
           className="rounded-lg px-4 py-2 text-xs font-semibold text-slate hover:bg-mist/60"
         >
-          Cancel
+          {t("common.cancel")}
         </button>
         <button
           type="submit"
@@ -238,7 +245,7 @@ function ActivityForm({
           className="flex items-center gap-1.5 rounded-lg bg-teal px-4 py-2 text-xs font-semibold text-white hover:bg-aqoonsi disabled:opacity-50"
         >
           {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-          {entry ? "Save Changes" : "Add Activity"}
+          {entry ? t("editorForms.activities.saveChangesButton") : t("editorForms.activities.addButton")}
         </button>
       </div>
     </form>

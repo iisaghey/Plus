@@ -1,4 +1,19 @@
+import admin from "./sections/admin.en";
+import dashboard from "./sections/dashboard.en";
+import editorForms from "./sections/editorForms.en";
+import editorWorkspace from "./sections/editorWorkspace.en";
+import home from "./sections/home.en";
+import profilesPublic from "./sections/profilesPublic.en";
+import publicPages from "./sections/publicPages.en";
+
 const en = {
+  admin,
+  dashboard,
+  editorForms,
+  editorWorkspace,
+  home,
+  profilesPublic,
+  publicPages,
   nav: {
     profiles: "Profiles",
     leaders: "Leaders",
@@ -61,6 +76,8 @@ const en = {
     required: "Required",
     optional: "Optional",
     viewPublicSite: "View Public Site",
+    switchToLightMode: "Switch to light mode",
+    switchToDarkMode: "Switch to dark mode",
   },
   auth: {
     welcomeBack: "Welcome Back",

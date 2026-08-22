@@ -20,6 +20,7 @@ import { renderRichText } from "@/lib/rich-text";
 import { Timeline, type TimelineEntry } from "./timeline";
 import { MediaLightbox, type LightboxItem } from "./media-lightbox";
 import type { Tables } from "@/types/database.types";
+import { useTranslation } from "@/i18n/language-provider";
 
 type Props = {
   bio: Tables<"biographies"> | null;
@@ -50,7 +51,25 @@ const TABS = [
 
 type Tab = (typeof TABS)[number];
 
+// TABS above are internal identifiers used for tab state and comparisons —
+// they must stay in English. TAB_LABEL_KEYS maps each id to its translation
+// key so the rendered button text can be localized independently.
+const TAB_LABEL_KEYS: Record<Tab, string> = {
+  Overview: "profilesPublic.tabs.tabLabels.overview",
+  Biography: "profilesPublic.tabs.tabLabels.biography",
+  Career: "profilesPublic.tabs.tabLabels.career",
+  Positions: "profilesPublic.tabs.tabLabels.positions",
+  Achievements: "profilesPublic.tabs.tabLabels.achievements",
+  Activities: "profilesPublic.tabs.tabLabels.activities",
+  Travel: "profilesPublic.tabs.tabLabels.travel",
+  Speeches: "profilesPublic.tabs.tabLabels.speeches",
+  Media: "profilesPublic.tabs.tabLabels.media",
+  Documents: "profilesPublic.tabs.tabLabels.documents",
+  Timeline: "profilesPublic.tabs.tabLabels.timeline",
+};
+
 export function ProfileTabs(props: Props) {
+  const { t } = useTranslation();
   const [active, setActive] = useState<Tab>("Overview");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -65,16 +84,16 @@ export function ProfileTabs(props: Props) {
   const combinedTimeline: TimelineEntry[] = useMemo(() => {
     type RawEntry = TimelineEntry & { startDate: string | null };
 
-    const fromCareer: RawEntry[] = props.careerTimeline.map((t) => ({
-      id: t.id,
-      year: t.start_date ? new Date(t.start_date).getFullYear().toString() : "",
-      title: t.title,
-      subtitle: t.organization,
-      location: t.location,
-      description: t.description,
-      current: t.is_current,
-      kind: "Career",
-      startDate: t.start_date,
+    const fromCareer: RawEntry[] = props.careerTimeline.map((item) => ({
+      id: item.id,
+      year: item.start_date ? new Date(item.start_date).getFullYear().toString() : "",
+      title: item.title,
+      subtitle: item.organization,
+      location: item.location,
+      description: item.description,
+      current: item.is_current,
+      kind: t("profilesPublic.tabs.timelineKind.career"),
+      startDate: item.start_date,
     }));
     const fromGov: RawEntry[] = props.governmentPositions.map((g) => ({
       id: g.id,
@@ -84,14 +103,14 @@ export function ProfileTabs(props: Props) {
       location: g.country,
       description: g.description,
       current: g.is_current,
-      kind: "Government",
+      kind: t("profilesPublic.tabs.timelineKind.government"),
       startDate: g.start_date,
     }));
 
     return [...fromCareer, ...fromGov]
       .sort((a, b) => (b.startDate ?? "").localeCompare(a.startDate ?? ""))
       .map(({ startDate: _startDate, ...entry }) => entry);
-  }, [props.careerTimeline, props.governmentPositions]);
+  }, [props.careerTimeline, props.governmentPositions, t]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8">
@@ -105,7 +124,7 @@ export function ProfileTabs(props: Props) {
               active === tab ? "text-teal" : "text-slate hover:text-navy dark:hover:text-white"
             )}
           >
-            {tab}
+            {t(TAB_LABEL_KEYS[tab])}
             {active === tab && (
               <span className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-teal" />
             )}
@@ -126,7 +145,7 @@ export function ProfileTabs(props: Props) {
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <h2 className="font-heading text-lg font-bold text-navy dark:text-white">
-                About
+                {t("profilesPublic.tabs.overview.aboutHeading")}
               </h2>
               {props.shortBio || props.bio?.summary ? (
                 <div
@@ -137,14 +156,14 @@ export function ProfileTabs(props: Props) {
                 />
               ) : (
                 <p className="mt-3 leading-relaxed text-slate">
-                  No biography summary published yet.
+                  {t("profilesPublic.tabs.overview.noBioSummary")}
                 </p>
               )}
 
               {props.achievements.length > 0 && (
                 <div className="mt-10">
                   <h3 className="font-heading text-base font-bold text-navy dark:text-white">
-                    Recent Achievements
+                    {t("profilesPublic.tabs.overview.recentAchievements")}
                   </h3>
                   <div className="mt-4 space-y-3">
                     {props.achievements.slice(0, 3).map((a) => (
@@ -173,16 +192,19 @@ export function ProfileTabs(props: Props) {
 
             <div className="space-y-4">
               <StatCard
-                label="Career Milestones"
+                label={t("profilesPublic.tabs.overview.statCareerMilestones")}
                 value={props.careerTimeline.length}
               />
               <StatCard
-                label="Government Positions"
+                label={t("profilesPublic.tabs.overview.statGovernmentPositions")}
                 value={props.governmentPositions.length}
               />
-              <StatCard label="Achievements" value={props.achievements.length} />
               <StatCard
-                label="Media & Documents"
+                label={t("profilesPublic.tabs.overview.statAchievements")}
+                value={props.achievements.length}
+              />
+              <StatCard
+                label={t("profilesPublic.tabs.overview.statMediaDocuments")}
                 value={props.media.length + props.documents.length}
               />
             </div>
@@ -192,7 +214,7 @@ export function ProfileTabs(props: Props) {
         {active === "Biography" && (
           <div className="max-w-3xl">
             <h2 className="font-heading text-lg font-bold text-navy dark:text-white">
-              Biography
+              {t("profilesPublic.tabs.biography.heading")}
             </h2>
             {props.bio?.content ? (
               <div
@@ -200,23 +222,23 @@ export function ProfileTabs(props: Props) {
                 dangerouslySetInnerHTML={{ __html: renderRichText(props.bio.content) }}
               />
             ) : (
-              <EmptyState label="No biography has been published yet." />
+              <EmptyState label={t("profilesPublic.tabs.biography.empty")} />
             )}
           </div>
         )}
 
         {active === "Career" && (
           <ListSection
-            emptyLabel="No career history has been published yet."
+            emptyLabel={t("profilesPublic.tabs.career.empty")}
             items={props.careerTimeline}
-            renderItem={(t) => (
+            renderItem={(item) => (
               <EntryCard
-                key={t.id}
+                key={item.id}
                 icon={Landmark}
-                title={t.title}
-                subtitle={[t.organization, t.location].filter(Boolean).join(" · ")}
-                meta={formatDateRange(t.start_date, t.end_date, t.is_current)}
-                description={t.description}
+                title={item.title}
+                subtitle={[item.organization, item.location].filter(Boolean).join(" · ")}
+                meta={formatDateRange(item.start_date, item.end_date, item.is_current)}
+                description={item.description}
               />
             )}
           />
@@ -224,7 +246,7 @@ export function ProfileTabs(props: Props) {
 
         {active === "Positions" && (
           <ListSection
-            emptyLabel="No government positions have been published yet."
+            emptyLabel={t("profilesPublic.tabs.positions.empty")}
             items={props.governmentPositions}
             renderItem={(p) => (
               <EntryCard
@@ -241,7 +263,7 @@ export function ProfileTabs(props: Props) {
 
         {active === "Achievements" && (
           <ListSection
-            emptyLabel="No achievements have been published yet."
+            emptyLabel={t("profilesPublic.tabs.achievements.empty")}
             items={props.achievements}
             renderItem={(a) => (
               <EntryCard
@@ -259,7 +281,7 @@ export function ProfileTabs(props: Props) {
 
         {active === "Activities" && (
           <ListSection
-            emptyLabel="No official activities have been published yet."
+            emptyLabel={t("profilesPublic.tabs.activities.empty")}
             items={props.activities}
             renderItem={(a) => (
               <EntryCard
@@ -276,16 +298,16 @@ export function ProfileTabs(props: Props) {
 
         {active === "Travel" && (
           <ListSection
-            emptyLabel="No official travel has been published yet."
+            emptyLabel={t("profilesPublic.tabs.travel.empty")}
             items={props.travel}
-            renderItem={(t) => (
+            renderItem={(item) => (
               <EntryCard
-                key={t.id}
+                key={item.id}
                 icon={Plane}
-                title={[t.destination_city, t.destination_country].filter(Boolean).join(", ")}
-                subtitle={[t.purpose, t.delegation].filter(Boolean).join(" · ")}
-                meta={formatDateRange(t.start_date, t.end_date)}
-                description={t.description}
+                title={[item.destination_city, item.destination_country].filter(Boolean).join(", ")}
+                subtitle={[item.purpose, item.delegation].filter(Boolean).join(" · ")}
+                meta={formatDateRange(item.start_date, item.end_date)}
+                description={item.description}
               />
             )}
           />
@@ -293,7 +315,7 @@ export function ProfileTabs(props: Props) {
 
         {active === "Speeches" && (
           <ListSection
-            emptyLabel="No speeches have been published yet."
+            emptyLabel={t("profilesPublic.tabs.speeches.empty")}
             items={props.speeches}
             renderItem={(s) => (
               <EntryCard
@@ -311,7 +333,7 @@ export function ProfileTabs(props: Props) {
         {active === "Media" && (
           <>
             {props.media.length === 0 ? (
-              <EmptyState label="No media has been published yet." />
+              <EmptyState label={t("profilesPublic.tabs.media.empty")} />
             ) : (
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                 {props.media.map((m, i) => (
@@ -360,7 +382,7 @@ export function ProfileTabs(props: Props) {
 
         {active === "Documents" && (
           <ListSection
-            emptyLabel="No documents have been published yet."
+            emptyLabel={t("profilesPublic.tabs.documents.empty")}
             items={props.documents}
             renderItem={(d) => (
               <div
@@ -381,7 +403,7 @@ export function ProfileTabs(props: Props) {
                 </div>
                 {d.verification_status === "verified" && (
                   <span className="shrink-0 rounded-full bg-emerald/10 px-2.5 py-1 text-[10px] font-semibold uppercase text-emerald">
-                    Verified
+                    {t("profilesPublic.tabs.documents.verifiedBadge")}
                   </span>
                 )}
               </div>

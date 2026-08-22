@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { ProfileDirectory } from "@/components/profile/profile-directory";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 export const metadata: Metadata = {
   title: "Leaders",
@@ -9,11 +11,13 @@ export const metadata: Metadata = {
 
 export default async function LeadersPage(props: PageProps<"/leaders">) {
   const searchParams = await props.searchParams;
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
   return (
     <ProfileDirectory
-      label="Leaders"
-      title="Government & Political Leaders"
-      description="Verified digital profiles of government officials and political leaders preserving their leadership history."
+      label={t.profilesPublic.leaders.label}
+      title={t.profilesPublic.leaders.title}
+      description={t.profilesPublic.leaders.description}
       searchParams={searchParams}
       presetCategory="government-official,political-leader"
     />

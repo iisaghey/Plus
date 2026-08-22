@@ -6,8 +6,12 @@ import {
 import { AdminReviewRow } from "@/components/admin/admin-review-row";
 import { PublishedEditReviewRow } from "@/components/admin/published-edit-review-row";
 import { SectionHeader } from "@/components/dashboard/section-header";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 export default async function AdminReviewPage() {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
   const [reviewQueue, publishable, pendingPublishedEdits] = await Promise.all([
     getAdminReviewQueue(),
     getPublishableProfiles(),
@@ -17,18 +21,18 @@ export default async function AdminReviewPage() {
   return (
     <div>
       <SectionHeader
-        title="Review & Approval"
-        subtitle="Editor-approved profiles awaiting your final decision, and approved/verified profiles ready to publish."
+        title={t.admin.review.title}
+        subtitle={t.admin.review.subtitle}
       />
 
       <div className="mt-8">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-slate">
-          Awaiting Admin Decision ({reviewQueue.length})
+          {t.admin.review.awaitingDecision} ({reviewQueue.length})
         </h2>
         <div className="mt-3 space-y-3">
           {reviewQueue.length === 0 ? (
             <p className="rounded-xl border border-dashed border-mist py-10 text-center text-sm text-slate">
-              Nothing awaiting your decision.
+              {t.admin.review.nothingAwaitingDecision}
             </p>
           ) : (
             reviewQueue.map((p) => (
@@ -49,16 +53,15 @@ export default async function AdminReviewPage() {
 
       <div className="mt-10">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-slate">
-          Published Edits Awaiting Review ({pendingPublishedEdits.length})
+          {t.admin.review.publishedEditsAwaitingReview} ({pendingPublishedEdits.length})
         </h2>
         <p className="mt-1 text-xs text-slate">
-          An Editor with permission changed a live profile. It&apos;s off the public site until
-          you approve or reject the changes.
+          {t.admin.review.publishedEditsDescription}
         </p>
         <div className="mt-3 space-y-3">
           {pendingPublishedEdits.length === 0 ? (
             <p className="rounded-xl border border-dashed border-mist py-10 text-center text-sm text-slate">
-              No published-profile edits pending review.
+              {t.admin.review.noPublishedEdits}
             </p>
           ) : (
             pendingPublishedEdits.map((p) => (
@@ -77,12 +80,12 @@ export default async function AdminReviewPage() {
 
       <div className="mt-10">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-slate">
-          Ready to Publish ({publishable.filter((p) => p.workflow_status !== "published").length})
+          {t.admin.review.readyToPublish} ({publishable.filter((p) => p.workflow_status !== "published").length})
         </h2>
         <div className="mt-3 space-y-3">
           {publishable.filter((p) => p.workflow_status !== "published").length === 0 ? (
             <p className="rounded-xl border border-dashed border-mist py-10 text-center text-sm text-slate">
-              Nothing ready to publish.
+              {t.admin.review.nothingReadyToPublish}
             </p>
           ) : (
             publishable

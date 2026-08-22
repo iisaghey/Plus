@@ -6,21 +6,31 @@ import { createClient } from "@/lib/supabase/server";
 import { Reveal } from "@/components/motion/reveal";
 import { StaggerGrid, StaggerItem } from "@/components/motion/stagger-grid";
 import { CinematicBackground } from "@/components/home/cinematic-background";
+import { getServerLocale } from "@/i18n/get-locale";
+import homeEn from "@/i18n/dictionaries/sections/home.en";
+import homeSo from "@/i18n/dictionaries/sections/home.so";
+import homeAr from "@/i18n/dictionaries/sections/home.ar";
+
+const HOME_DICTIONARIES = { en: homeEn, so: homeSo, ar: homeAr };
 
 export async function LeadershipStories() {
   const supabase = await createClient();
-  const { data: bios } = await supabase
-    .from("biographies")
-    .select(
-      `summary, profiles!inner ( slug, full_name, current_position, photo_url, is_public, status, workflow_status, hidden_at, deleted_at )`
-    )
-    .eq("profiles.is_public", true)
-    .eq("profiles.status", "active")
-    .eq("profiles.workflow_status", "published")
-    .is("profiles.hidden_at", null)
-    .is("profiles.deleted_at", null)
-    .not("summary", "is", null)
-    .limit(3);
+  const [{ data: bios }, locale] = await Promise.all([
+    supabase
+      .from("biographies")
+      .select(
+        `summary, profiles!inner ( slug, full_name, current_position, photo_url, is_public, status, workflow_status, hidden_at, deleted_at )`
+      )
+      .eq("profiles.is_public", true)
+      .eq("profiles.status", "active")
+      .eq("profiles.workflow_status", "published")
+      .is("profiles.hidden_at", null)
+      .is("profiles.deleted_at", null)
+      .not("summary", "is", null)
+      .limit(3),
+    getServerLocale(),
+  ]);
+  const t = HOME_DICTIONARIES[locale];
 
   if (!bios || bios.length === 0) return null;
 
@@ -30,10 +40,10 @@ export async function LeadershipStories() {
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <Reveal>
           <SectionLabel light className="mx-auto justify-center">
-            Leadership History
+            {t.leadershipStories.label}
           </SectionLabel>
           <h2 className="mt-3 text-center font-heading text-3xl font-bold text-white sm:text-4xl">
-            Leadership Histories Worth Preserving
+            {t.leadershipStories.heading}
           </h2>
         </Reveal>
 

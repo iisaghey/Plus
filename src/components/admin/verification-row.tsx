@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Check, X, Loader2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { decideVerification } from "@/lib/actions/admin";
+import { useTranslation } from "@/i18n/language-provider";
 
 export function VerificationRow({
   verificationId,
@@ -26,16 +27,17 @@ export function VerificationRow({
   submittedAt: string;
 }) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
 
   function decide(approve: boolean) {
     startTransition(async () => {
       const result = await decideVerification(verificationId, profileId, approve);
       if (result.error) {
-        toast.error(result.error);
+        toast.error(result.errorCode ? t(`admin.errors.${result.errorCode}`) : result.error);
         return;
       }
-      toast.success(approve ? "Profile verified" : "Verification rejected");
+      toast.success(approve ? t("admin.verificationRow.profileVerified") : t("admin.verificationRow.verificationRejected"));
       router.refresh();
     });
   }
@@ -55,13 +57,13 @@ export function VerificationRow({
               href={`/profile/${slug}`}
               target="_blank"
               className="text-slate hover:text-teal"
-              aria-label="View public profile"
+              aria-label={t("admin.verificationRow.viewPublicProfile")}
             >
               <ExternalLink className="h-3.5 w-3.5" />
             </Link>
           </div>
           <p className="truncate text-xs text-slate">
-            {position ?? "No position"} · Submitted {new Date(submittedAt).toLocaleDateString()}
+            {position ?? t("admin.verificationRow.noPosition")} · {t("admin.verificationRow.submitted")} {new Date(submittedAt).toLocaleDateString()}
           </p>
         </div>
       </div>
@@ -72,7 +74,7 @@ export function VerificationRow({
           className="flex h-9 items-center gap-1.5 rounded-full bg-emerald/10 px-4 text-xs font-semibold text-emerald hover:bg-emerald/20 disabled:opacity-50"
         >
           {pending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
-          Verify
+          {t("admin.verificationRow.verify")}
         </button>
         <button
           onClick={() => decide(false)}
@@ -80,7 +82,7 @@ export function VerificationRow({
           className="flex h-9 items-center gap-1.5 rounded-full bg-red-50 px-4 text-xs font-semibold text-red-600 hover:bg-red-100 disabled:opacity-50"
         >
           <X className="h-3.5 w-3.5" />
-          Reject
+          {t("admin.verificationRow.reject")}
         </button>
       </div>
     </div>

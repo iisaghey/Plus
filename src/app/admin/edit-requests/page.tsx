@@ -6,10 +6,14 @@ import {
   EditPermissionRequestRow,
   type EditRequestRowData,
 } from "@/components/admin/edit-permission-request-row";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 export const metadata: Metadata = { title: "Edit Permission Requests" };
 
 export default async function AdminEditRequestsPage() {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
   const { role } = await getStaffContext();
   if (role !== "super_admin") redirect("/admin");
 
@@ -29,7 +33,7 @@ export default async function AdminEditRequestsPage() {
       status: r.status,
       review_notes: r.review_notes,
       created_at: r.created_at,
-      profile_name: profile?.full_name ?? "Unknown profile",
+      profile_name: profile?.full_name ?? t.admin.editRequests.unknownProfile,
       profile_slug: profile?.slug ?? "",
       profile_photo: profile?.photo_url ?? null,
     };
@@ -38,16 +42,16 @@ export default async function AdminEditRequestsPage() {
   return (
     <div>
       <h1 className="font-heading text-2xl font-bold text-navy dark:text-white">
-        Edit Permission Requests
+        {t.admin.editRequests.title}
       </h1>
       <p className="mt-1 text-sm text-slate">
-        Editors requesting permission to change an already-published profile.
+        {t.admin.editRequests.subtitle}
       </p>
 
       <div className="mt-8 space-y-3">
         {rows.length === 0 ? (
           <p className="rounded-xl border border-dashed border-mist py-12 text-center text-sm text-slate">
-            No pending edit permission requests.
+            {t.admin.editRequests.empty}
           </p>
         ) : (
           rows.map((r) => <EditPermissionRequestRow key={r.id} request={r} />)

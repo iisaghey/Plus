@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export type MediaFormState = {
   error?: string;
+  errorCode?: string;
   success?: boolean;
 };
 
@@ -41,8 +42,8 @@ export async function createMediaItem(
 ): Promise<MediaFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.media_type) return { error: "Media type is required." };
-  if (!values.external_url) return { error: "Please upload a file or add a link." };
+  if (!values.media_type) return { error: "Media type is required.", errorCode: "mediaTypeRequired" };
+  if (!values.external_url) return { error: "Please upload a file or add a link.", errorCode: "fileRequired" };
 
   const { count } = await supabase
     .from("media")
@@ -71,8 +72,8 @@ export async function updateMediaItem(
 ): Promise<MediaFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.media_type) return { error: "Media type is required." };
-  if (!values.external_url) return { error: "Please upload a file or add a link." };
+  if (!values.media_type) return { error: "Media type is required.", errorCode: "mediaTypeRequired" };
+  if (!values.external_url) return { error: "Please upload a file or add a link.", errorCode: "fileRequired" };
 
   const { error } = await supabase
     .from("media")

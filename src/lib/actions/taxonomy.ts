@@ -9,7 +9,7 @@ export async function createOrganization(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const type = String(formData.get("type") ?? "").trim() || null;
   const country = String(formData.get("country") ?? "").trim() || null;
-  if (!name) return { error: "Name is required." };
+  if (!name) return { error: "Name is required.", errorCode: "nameRequired" as const };
 
   const { error } = await supabase.from("organizations").insert({ name, type, country });
   if (error) return { error: error.message };
@@ -29,7 +29,7 @@ export async function deleteOrganization(id: string) {
 export async function createCategory(formData: FormData) {
   const supabase = await createClient();
   const name = String(formData.get("name") ?? "").trim();
-  if (!name) return { error: "Name is required." };
+  if (!name) return { error: "Name is required.", errorCode: "nameRequired" as const };
 
   const { error } = await supabase
     .from("categories")

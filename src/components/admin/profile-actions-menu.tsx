@@ -37,6 +37,7 @@ import {
 } from "@/lib/actions/profile-lifecycle";
 import { getProfileResumeData } from "@/lib/actions/resume";
 import { buildResumePdf } from "@/lib/pdf/build-resume-pdf";
+import { useTranslation } from "@/i18n/language-provider";
 
 export type ProfileActionState = {
   id: string;
@@ -59,6 +60,7 @@ export function ProfileActionsMenu({
   canPermanentlyDelete?: boolean;
 }) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState<Confirm>(null);
   const [pending, startTransition] = useTransition();
@@ -104,11 +106,11 @@ export function ProfileActionsMenu({
       const doc = buildResumePdf(data);
       if (mode === "download") {
         doc.save(`${profile.slug}-resume.pdf`);
-        toast.success("Resume downloaded");
+        toast.success(t("admin.profileActionsMenu.resumeDownloaded"));
       } else {
         doc.autoPrint();
         window.open(doc.output("bloburl"), "_blank");
-        toast.success("Opening resume for printing");
+        toast.success(t("admin.profileActionsMenu.openingResumeForPrinting"));
       }
     });
   }
@@ -118,7 +120,7 @@ export function ProfileActionsMenu({
       <button
         onClick={() => setOpen((v) => !v)}
         disabled={pending}
-        aria-label="Profile actions"
+        aria-label={t("admin.profileActionsMenu.ariaLabel")}
         className="flex h-8 w-8 items-center justify-center rounded-lg text-slate hover:bg-offwhite hover:text-navy disabled:opacity-50 dark:hover:text-white"
       >
         {pending ? (
@@ -149,7 +151,7 @@ export function ProfileActionsMenu({
                 className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-navy hover:bg-offwhite dark:text-white"
               >
                 <Eye className="h-3.5 w-3.5" />
-                View Profile
+                {t("admin.profileActionsMenu.viewProfile")}
               </Link>
               <Link
                 href={`/staff/profiles/${profile.id}`}
@@ -157,19 +159,19 @@ export function ProfileActionsMenu({
                 className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-navy hover:bg-offwhite dark:text-white"
               >
                 <Pencil className="h-3.5 w-3.5" />
-                Edit Profile
+                {t("admin.profileActionsMenu.editProfile")}
               </Link>
 
               <div className="my-1 border-t border-mist" />
 
               <MenuButton
                 icon={Download}
-                label="Download Resume (PDF)"
+                label={t("admin.profileActionsMenu.downloadResume")}
                 onClick={() => handleResume("download")}
               />
               <MenuButton
                 icon={Printer}
-                label="Print Resume"
+                label={t("admin.profileActionsMenu.printResume")}
                 onClick={() => handleResume("print")}
               />
 
@@ -179,15 +181,15 @@ export function ProfileActionsMenu({
                 <>
                   <MenuButton
                     icon={Undo2}
-                    label="Restore Profile"
+                    label={t("admin.profileActionsMenu.restoreProfile")}
                     onClick={() =>
-                      run("Profile restored", () => restoreDeletedProfile(profile.id))
+                      run(t("admin.profileActionsMenu.profileRestored"), () => restoreDeletedProfile(profile.id))
                     }
                   />
                   {canPermanentlyDelete && (
                     <MenuButton
                       icon={Flame}
-                      label="Permanently Delete Profile"
+                      label={t("admin.profileActionsMenu.permanentlyDeleteProfile")}
                       danger
                       onClick={() => setConfirm("permanent")}
                     />
@@ -198,25 +200,25 @@ export function ProfileActionsMenu({
                   {isHidden ? (
                     <MenuButton
                       icon={Eye}
-                      label="Unhide Profile"
+                      label={t("admin.profileActionsMenu.unhideProfile")}
                       onClick={() =>
-                        run("Profile unhidden", () => unhideProfile(profile.id))
+                        run(t("admin.profileActionsMenu.profileUnhidden"), () => unhideProfile(profile.id))
                       }
                     />
                   ) : (
                     <MenuButton
                       icon={EyeOff}
-                      label="Hide Profile"
-                      onClick={() => run("Profile hidden", () => hideProfile(profile.id))}
+                      label={t("admin.profileActionsMenu.hideProfile")}
+                      onClick={() => run(t("admin.profileActionsMenu.profileHidden"), () => hideProfile(profile.id))}
                     />
                   )}
 
                   {isPublished ? (
                     <MenuButton
                       icon={Undo2}
-                      label="Unpublish Profile"
+                      label={t("admin.profileActionsMenu.unpublishProfile")}
                       onClick={() =>
-                        run("Profile unpublished", () =>
+                        run(t("admin.profileActionsMenu.profileUnpublished"), () =>
                           publishProfile(profile.id, false)
                         )
                       }
@@ -224,9 +226,9 @@ export function ProfileActionsMenu({
                   ) : (
                     <MenuButton
                       icon={Send}
-                      label="Publish Profile"
+                      label={t("admin.profileActionsMenu.publishProfile")}
                       onClick={() =>
-                        run("Profile published", () => publishProfile(profile.id, true))
+                        run(t("admin.profileActionsMenu.profilePublished"), () => publishProfile(profile.id, true))
                       }
                     />
                   )}
@@ -234,17 +236,17 @@ export function ProfileActionsMenu({
                   {isVerified ? (
                     <MenuButton
                       icon={ShieldOff}
-                      label="Unverify Profile"
+                      label={t("admin.profileActionsMenu.unverifyProfile")}
                       onClick={() =>
-                        run("Profile unverified", () => unverifyProfile(profile.id))
+                        run(t("admin.profileActionsMenu.profileUnverified"), () => unverifyProfile(profile.id))
                       }
                     />
                   ) : (
                     <MenuButton
                       icon={BadgeCheck}
-                      label="Verify Profile"
+                      label={t("admin.profileActionsMenu.verifyProfile")}
                       onClick={() =>
-                        run("Profile verified", () => verifyProfile(profile.id))
+                        run(t("admin.profileActionsMenu.profileVerified"), () => verifyProfile(profile.id))
                       }
                     />
                   )}
@@ -252,17 +254,17 @@ export function ProfileActionsMenu({
                   {isArchived ? (
                     <MenuButton
                       icon={ArchiveRestore}
-                      label="Restore Profile"
+                      label={t("admin.profileActionsMenu.restoreProfile")}
                       onClick={() =>
-                        run("Profile restored", () => restoreArchivedProfile(profile.id))
+                        run(t("admin.profileActionsMenu.profileRestored"), () => restoreArchivedProfile(profile.id))
                       }
                     />
                   ) : (
                     <MenuButton
                       icon={Archive}
-                      label="Archive Profile"
+                      label={t("admin.profileActionsMenu.archiveProfile")}
                       onClick={() =>
-                        run("Profile archived", () => archiveProfile(profile.id))
+                        run(t("admin.profileActionsMenu.profileArchived"), () => archiveProfile(profile.id))
                       }
                     />
                   )}
@@ -271,7 +273,7 @@ export function ProfileActionsMenu({
 
                   <MenuButton
                     icon={Trash2}
-                    label="Delete Profile"
+                    label={t("admin.profileActionsMenu.deleteProfile")}
                     danger
                     onClick={() => setConfirm("delete")}
                   />
@@ -284,22 +286,24 @@ export function ProfileActionsMenu({
 
       <ConfirmModal
         open={confirm === "delete"}
-        title="Delete this profile?"
-        description="Are you sure you want to delete this profile?"
-        confirmLabel="Delete"
+        title={t("admin.profileActionsMenu.deleteConfirmTitle")}
+        description={t("admin.profileActionsMenu.deleteConfirmDescription")}
+        confirmLabel={t("common.delete")}
+        cancelLabel={t("common.cancel")}
         onCancel={() => setConfirm(null)}
         onConfirm={() =>
-          runConfirmed("Profile deleted", () => deleteProfile(profile.id))
+          runConfirmed(t("admin.profileActionsMenu.profileDeleted"), () => deleteProfile(profile.id))
         }
       />
       <ConfirmModal
         open={confirm === "permanent"}
-        title="Permanently delete this profile?"
-        description="Permanently delete this profile and all related data, media, documents, timeline records, and archives? This action cannot be undone."
-        confirmLabel="Permanently Delete"
+        title={t("admin.profileActionsMenu.permanentDeleteConfirmTitle")}
+        description={t("admin.profileActionsMenu.permanentDeleteConfirmDescription")}
+        confirmLabel={t("admin.profileActionsMenu.permanentDeleteConfirmLabel")}
+        cancelLabel={t("common.cancel")}
         onCancel={() => setConfirm(null)}
         onConfirm={() =>
-          runConfirmed("Profile permanently deleted", () =>
+          runConfirmed(t("admin.profileActionsMenu.profilePermanentlyDeleted"), () =>
             permanentlyDeleteProfile(profile.id)
           )
         }
@@ -339,6 +343,7 @@ function ConfirmModal({
   title,
   description,
   confirmLabel,
+  cancelLabel,
   onCancel,
   onConfirm,
 }: {
@@ -346,6 +351,7 @@ function ConfirmModal({
   title: string;
   description: string;
   confirmLabel: string;
+  cancelLabel: string;
   onCancel: () => void;
   onConfirm: () => void;
 }) {
@@ -377,7 +383,7 @@ function ConfirmModal({
                 onClick={onCancel}
                 className="rounded-full px-4 py-2 text-sm font-semibold text-slate hover:bg-mist/60"
               >
-                Cancel
+                {cancelLabel}
               </button>
               <button
                 onClick={onConfirm}

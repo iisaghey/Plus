@@ -7,6 +7,7 @@ import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Reveal } from "@/components/motion/reveal";
+import { useTranslation } from "@/i18n/language-provider";
 
 // Grouped by role, each group ordered most-recent-first. Somalia's
 // transitional-era succession is genuinely contested depending on the
@@ -105,6 +106,7 @@ const SLIDES = [
 const AUTOPLAY_MS = 5500;
 
 export function LeadersCarousel() {
+  const { t } = useTranslation();
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [progress, setProgress] = useState(0); // continuous scrollLeft / slideWidth
@@ -187,9 +189,11 @@ export function LeadersCarousel() {
     <section className="bg-white py-20 dark:bg-offwhite sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <SectionLabel className="mx-auto justify-center">Featured Leaders</SectionLabel>
+          <SectionLabel className="mx-auto justify-center">
+            {t("home.leadersCarousel.label")}
+          </SectionLabel>
           <h2 className="mt-3 font-heading text-3xl font-bold text-navy dark:text-white sm:text-4xl">
-            Leadership on AqoonsiPlus
+            {t("home.leadersCarousel.heading")}
           </h2>
         </Reveal>
       </div>
@@ -261,7 +265,7 @@ export function LeadersCarousel() {
         <button
           type="button"
           onClick={() => scrollToIndex(Math.max(0, active - 1))}
-          aria-label="Previous"
+          aria-label={t("home.leadersCarousel.previous")}
           className="absolute left-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-navy shadow-lg transition-transform hover:scale-105 sm:flex"
         >
           <ChevronLeft className="h-5 w-5" />
@@ -269,7 +273,7 @@ export function LeadersCarousel() {
         <button
           type="button"
           onClick={() => scrollToIndex(Math.min(SLIDES.length - 1, active + 1))}
-          aria-label="Next"
+          aria-label={t("home.leadersCarousel.next")}
           className="absolute right-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-navy shadow-lg transition-transform hover:scale-105 sm:flex"
         >
           <ChevronRight className="h-5 w-5" />
@@ -281,7 +285,7 @@ export function LeadersCarousel() {
               key={slide.src}
               type="button"
               onClick={() => scrollToIndex(i)}
-              aria-label={`Go to slide ${i + 1}`}
+              aria-label={`${t("home.leadersCarousel.goToSlide")} ${i + 1}`}
               className={cn(
                 "h-1.5 rounded-full transition-all duration-300",
                 i === active ? "w-6 bg-teal" : "w-1.5 bg-mist hover:bg-slate/40"

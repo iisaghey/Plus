@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { assignProfileTask } from "@/lib/actions/workflow";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "@/i18n/language-provider";
 
 export function AssignmentRow({
   profileId,
@@ -30,6 +31,7 @@ export function AssignmentRow({
   editorOptions: { user_id: string; email: string | null }[];
 }) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [staffId, setStaffId] = useState(initialStaffId ?? "");
   const [editorId, setEditorId] = useState(initialEditorId ?? "");
   const [deadline, setDeadline] = useState(initialDeadline ?? "");
@@ -47,7 +49,7 @@ export function AssignmentRow({
         toast.error(result.error);
         return;
       }
-      toast.success("Assignment saved");
+      toast.success(t("admin.assignmentRow.saved"));
       router.refresh();
     });
   }
@@ -69,7 +71,7 @@ export function AssignmentRow({
         onChange={(e) => setStaffId(e.target.value)}
         className="rounded-lg border border-mist bg-white dark:bg-offwhite px-2 py-1.5 text-xs text-navy dark:text-white focus:border-teal focus:outline-none"
       >
-        <option value="">No staff</option>
+        <option value="">{t("admin.assignmentRow.noStaff")}</option>
         {staffOptions.map((s) => (
           <option key={s.user_id} value={s.user_id}>
             {s.email}
@@ -81,7 +83,7 @@ export function AssignmentRow({
         onChange={(e) => setEditorId(e.target.value)}
         className="rounded-lg border border-mist bg-white dark:bg-offwhite px-2 py-1.5 text-xs text-navy dark:text-white focus:border-teal focus:outline-none"
       >
-        <option value="">No editor</option>
+        <option value="">{t("admin.assignmentRow.noEditor")}</option>
         {editorOptions.map((ed) => (
           <option key={ed.user_id} value={ed.user_id}>
             {ed.email}
@@ -100,7 +102,7 @@ export function AssignmentRow({
         className="flex h-8 items-center justify-center gap-1.5 rounded-lg bg-navy px-3 text-xs font-semibold text-white hover:bg-royal disabled:opacity-50"
       >
         {pending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
-        Save
+        {t("common.save")}
       </button>
     </div>
   );

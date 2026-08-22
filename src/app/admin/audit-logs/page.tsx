@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { DataTable, DataTableHead, DataTableBody, EmptyRow } from "@/components/dashboard/data-table";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 const STATUS_KEYS = ["status", "workflow_status", "verification_status"] as const;
 
@@ -25,6 +27,8 @@ function describeChange(previous: unknown, next: unknown): string {
 }
 
 export default async function AdminAuditLogsPage() {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
   const supabase = await createClient();
   const { data } = await supabase
     .from("audit_logs")
@@ -63,22 +67,22 @@ export default async function AdminAuditLogsPage() {
   return (
     <div>
       <SectionHeader
-        title="Audit Logs"
-        subtitle="Every important action, traceable to the person who performed it."
+        title={t.admin.auditLogs.title}
+        subtitle={t.admin.auditLogs.subtitle}
       />
 
       <div className="mt-8">
         <DataTable minWidth={920}>
           <DataTableHead>
-            <th className="px-4 py-3">When</th>
-            <th className="px-4 py-3">Actor</th>
-            <th className="px-4 py-3">Action</th>
-            <th className="px-4 py-3">Profile Affected</th>
-            <th className="px-4 py-3">Status Change</th>
+            <th className="px-4 py-3">{t.admin.auditLogs.colWhen}</th>
+            <th className="px-4 py-3">{t.admin.auditLogs.colActor}</th>
+            <th className="px-4 py-3">{t.admin.auditLogs.colAction}</th>
+            <th className="px-4 py-3">{t.admin.auditLogs.colProfileAffected}</th>
+            <th className="px-4 py-3">{t.admin.auditLogs.colStatusChange}</th>
           </DataTableHead>
           <DataTableBody>
             {logs.length === 0 ? (
-              <EmptyRow colSpan={5}>No audit events yet.</EmptyRow>
+              <EmptyRow colSpan={5}>{t.admin.auditLogs.empty}</EmptyRow>
             ) : (
               logs.map((log) => (
                 <tr key={log.id}>
@@ -90,7 +94,7 @@ export default async function AdminAuditLogsPage() {
                       {(log.actor_id && actorMap.get(log.actor_id)) ?? "—"}
                     </span>
                     <span className="ml-1 capitalize text-slate/70">
-                      ({log.actor_role?.replace(/_/g, " ") ?? "unknown"})
+                      ({log.actor_role?.replace(/_/g, " ") ?? t.admin.auditLogs.unknownRole})
                     </span>
                   </td>
                   <td className="px-4 py-3 font-medium text-navy dark:text-white">

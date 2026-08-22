@@ -20,6 +20,7 @@ import {
   Quote,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/i18n/language-provider";
 
 export function RichTextEditor({
   name,
@@ -71,6 +72,8 @@ export function RichTextEditor({
 }
 
 function Toolbar({ editor }: { editor: Editor | null }) {
+  const { t } = useTranslation();
+
   if (!editor) {
     return <div className="h-[41px] border-b border-mist bg-offwhite" />;
   }
@@ -78,70 +81,70 @@ function Toolbar({ editor }: { editor: Editor | null }) {
   return (
     <div className="flex flex-wrap items-center gap-0.5 border-b border-mist bg-offwhite px-1.5 py-1.5">
       <ToolbarButton
-        label="Bold"
+        label={t("editorWorkspace.richTextEditor.bold")}
         icon={Bold}
         active={editor.isActive("bold")}
         onClick={() => editor.chain().focus().toggleBold().run()}
       />
       <ToolbarButton
-        label="Italic"
+        label={t("editorWorkspace.richTextEditor.italic")}
         icon={Italic}
         active={editor.isActive("italic")}
         onClick={() => editor.chain().focus().toggleItalic().run()}
       />
       <ToolbarButton
-        label="Underline"
+        label={t("editorWorkspace.richTextEditor.underline")}
         icon={UnderlineIcon}
         active={editor.isActive("underline")}
         onClick={() => editor.chain().focus().toggleUnderline().run()}
       />
       <Divider />
       <ToolbarButton
-        label="Heading"
+        label={t("editorWorkspace.richTextEditor.heading")}
         icon={Heading2}
         active={editor.isActive("heading", { level: 2 })}
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
       />
       <ToolbarButton
-        label="Subheading"
+        label={t("editorWorkspace.richTextEditor.subheading")}
         icon={Heading3}
         active={editor.isActive("heading", { level: 3 })}
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
       />
       <ToolbarButton
-        label="Quote"
+        label={t("editorWorkspace.richTextEditor.quote")}
         icon={Quote}
         active={editor.isActive("blockquote")}
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
       />
       <Divider />
       <ToolbarButton
-        label="Bullet list"
+        label={t("editorWorkspace.richTextEditor.bulletList")}
         icon={List}
         active={editor.isActive("bulletList")}
         onClick={() => editor.chain().focus().toggleBulletList().run()}
       />
       <ToolbarButton
-        label="Numbered list"
+        label={t("editorWorkspace.richTextEditor.numberedList")}
         icon={ListOrdered}
         active={editor.isActive("orderedList")}
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
       />
       <Divider />
       <ToolbarButton
-        label="Align left"
+        label={t("editorWorkspace.richTextEditor.alignLeft")}
         icon={AlignLeft}
         active={editor.isActive({ textAlign: "left" })}
         onClick={() => editor.chain().focus().setTextAlign("left").run()}
       />
       <ToolbarButton
-        label="Align center"
+        label={t("editorWorkspace.richTextEditor.alignCenter")}
         icon={AlignCenter}
         active={editor.isActive({ textAlign: "center" })}
         onClick={() => editor.chain().focus().setTextAlign("center").run()}
       />
       <ToolbarButton
-        label="Align right"
+        label={t("editorWorkspace.richTextEditor.alignRight")}
         icon={AlignRight}
         active={editor.isActive({ textAlign: "right" })}
         onClick={() => editor.chain().focus().setTextAlign("right").run()}

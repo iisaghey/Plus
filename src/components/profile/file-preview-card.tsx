@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FileText, Music, Trash2, RefreshCcw, Loader2, ExternalLink, Maximize2 } from "lucide-react";
 import { toast } from "sonner";
 import { getSignedUrl } from "@/lib/supabase/upload";
+import { useTranslation } from "@/i18n/language-provider";
 
 export type FileKind = "photo" | "video" | "document" | "audio";
 
@@ -37,6 +38,7 @@ export function FilePreviewCard({
   /** Optional extra content rendered below the preview (e.g. a title field). */
   children?: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [resolving, setResolving] = useState(false);
   const ext = fileName?.split(".").pop()?.toUpperCase();
@@ -48,7 +50,7 @@ export function FilePreviewCard({
       const signedUrl = await getSignedUrl(bucket, path);
       window.open(signedUrl, "_blank", "noopener,noreferrer");
     } catch {
-      toast.error("Couldn't open file");
+      toast.error(t("editorWorkspace.filePreview.couldNotOpenFile"));
     } finally {
       setResolving(false);
     }
@@ -64,7 +66,7 @@ export function FilePreviewCard({
               <button
                 type="button"
                 onClick={onPreviewClick}
-                aria-label="View full screen"
+                aria-label={t("editorWorkspace.filePreview.viewFullScreen")}
                 className="absolute inset-0 z-0"
               />
             )}
@@ -77,7 +79,7 @@ export function FilePreviewCard({
               <button
                 type="button"
                 onClick={onPreviewClick}
-                aria-label="View full screen"
+                aria-label={t("editorWorkspace.filePreview.viewFullScreen")}
                 className="absolute bottom-1.5 left-1.5 flex h-6 w-6 items-center justify-center rounded bg-white/90 text-navy hover:bg-white"
               >
                 <Maximize2 className="h-3 w-3" />
@@ -107,7 +109,7 @@ export function FilePreviewCard({
             {!url && (
               <span className="flex items-center gap-1 text-[10px] font-semibold text-teal">
                 <ExternalLink className="h-2.5 w-2.5" />
-                View
+                {t("editorWorkspace.filePreview.view")}
               </span>
             )}
           </button>
@@ -120,7 +122,7 @@ export function FilePreviewCard({
                 type="button"
                 onClick={() => inputRef.current?.click()}
                 className="flex h-6 w-6 items-center justify-center rounded bg-white/90 text-navy hover:bg-white"
-                aria-label="Replace file"
+                aria-label={t("editorWorkspace.filePreview.replaceFile")}
               >
                 <RefreshCcw className="h-3 w-3" />
               </button>
@@ -141,7 +143,7 @@ export function FilePreviewCard({
             onClick={onRemove}
             disabled={removing}
             className="flex h-6 w-6 items-center justify-center rounded bg-white/90 text-red-600 hover:bg-white disabled:opacity-50"
-            aria-label="Remove file"
+            aria-label={t("editorWorkspace.filePreview.removeFile")}
           >
             {removing ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
           </button>
@@ -150,7 +152,7 @@ export function FilePreviewCard({
 
       <div className="p-2.5">
         <p className="truncate text-xs font-semibold text-navy dark:text-white">
-          {fileName ?? "Untitled"}
+          {fileName ?? t("editorWorkspace.filePreview.untitled")}
         </p>
         {fileSize && <p className="text-[11px] text-slate">{fileSize}</p>}
         {children}

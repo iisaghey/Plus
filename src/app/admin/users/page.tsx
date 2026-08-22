@@ -4,6 +4,8 @@ import { getAllUsers } from "@/lib/data/admin";
 import { TeamMemberRow } from "@/components/admin/team-member-row";
 import { SectionHeader } from "@/components/dashboard/section-header";
 import type { Enums } from "@/types/database.types";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 const ALL_ROLES: Enums<"app_role">[] = [
   "profile_owner",
@@ -19,14 +21,19 @@ const ALL_ROLES: Enums<"app_role">[] = [
 // option the backend will reject.
 const ADMIN_ASSIGNABLE_ROLES: Enums<"app_role">[] = ["profile_owner", "staff", "editor"];
 
-const TABS = [
-  { key: "all", label: "All" },
-  { key: "admin", label: "Admins" },
-] as const;
+const TAB_KEYS = ["all", "admin"] as const;
 
 export default async function AdminUsersPage(
   props: PageProps<"/admin/users">
 ) {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
+
+  const TABS = [
+    { key: "all", label: t.admin.users.tabs.all },
+    { key: "admin", label: t.admin.users.tabs.admins },
+  ] as const;
+
   // Defense in depth: gated in the layout too, but a page that changes
   // roles must never rely solely on a hidden nav link.
   const { role } = await getStaffContext();
@@ -35,8 +42,8 @@ export default async function AdminUsersPage(
 
   const searchParams = await props.searchParams;
   const rawRole = typeof searchParams.role === "string" ? searchParams.role : "all";
-  const roleFilter: (typeof TABS)[number]["key"] = TABS.some((t) => t.key === rawRole)
-    ? (rawRole as (typeof TABS)[number]["key"])
+  const roleFilter: (typeof TAB_KEYS)[number] = TAB_KEYS.includes(rawRole as (typeof TAB_KEYS)[number])
+    ? (rawRole as (typeof TAB_KEYS)[number])
     : "all";
 
   const allUsers = await getAllUsers();
@@ -48,11 +55,11 @@ export default async function AdminUsersPage(
   return (
     <div>
       <SectionHeader
-        title="Users"
+        title={t.admin.users.title}
         subtitle={
           isSuperAdmin
-            ? "Every account on the platform. Changing a role here takes effect immediately."
-            : "Every account on the platform. Assigning Admin or Super Admin requires Super Admin."
+            ? t.admin.users.subtitleSuperAdmin
+            : t.admin.users.subtitleAdmin
         }
         tabs={
           isSuperAdmin

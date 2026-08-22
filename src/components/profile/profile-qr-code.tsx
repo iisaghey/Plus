@@ -6,6 +6,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
 import { AnimatePresence, motion } from "framer-motion";
 import { DURATION, EASE } from "@/lib/motion";
+import { useTranslation } from "@/i18n/language-provider";
 
 export function ProfileQrCode({
   slug,
@@ -16,6 +17,7 @@ export function ProfileQrCode({
   fullName: string;
   canManageQr: boolean;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const url =
@@ -56,19 +58,21 @@ export function ProfileQrCode({
       return;
     }
     await navigator.clipboard.writeText(url);
-    toast.success("Profile link copied to clipboard");
+    toast.success(t("profilesPublic.qrCode.linkCopied"));
   }
 
   function handlePrint() {
     const svg = wrapperRef.current?.innerHTML;
     const printWindow = window.open("", "_blank", "width=420,height=520");
     if (!printWindow || !svg) return;
+    const printDocTitle = t("profilesPublic.qrCode.printDocTitle").replace("{name}", fullName);
+    const printCaption = t("profilesPublic.qrCode.printCaption").replace("{name}", fullName);
     printWindow.document.write(`
       <html>
-        <head><title>${fullName} — AqoonsiPlus QR</title></head>
+        <head><title>${printDocTitle}</title></head>
         <body style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;">
           ${svg}
-          <p style="margin-top:16px;font-size:14px;color:#0F172A;">Scan to view ${fullName}'s verified profile</p>
+          <p style="margin-top:16px;font-size:14px;color:#0F172A;">${printCaption}</p>
         </body>
       </html>
     `);
@@ -82,7 +86,7 @@ export function ProfileQrCode({
       <button
         onClick={() => setOpen(true)}
         className="flex h-10 w-10 items-center justify-center rounded-full border border-mist text-slate hover:border-teal hover:text-teal"
-        aria-label="Show QR code"
+        aria-label={t("profilesPublic.qrCode.showAriaLabel")}
       >
         <QrCode className="h-4 w-4" />
       </button>
@@ -107,12 +111,12 @@ export function ProfileQrCode({
             >
               <div className="flex items-center justify-between">
                 <p className="font-heading text-sm font-bold text-navy dark:text-white">
-                  Scan to View Verified Profile
+                  {t("profilesPublic.qrCode.modalHeading")}
                 </p>
                 <button
                   onClick={() => setOpen(false)}
                   className="text-slate hover:text-navy dark:hover:text-white"
-                  aria-label="Close"
+                  aria-label={t("common.close")}
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -139,7 +143,7 @@ export function ProfileQrCode({
                     className="flex flex-col items-center gap-1 rounded-xl border border-mist py-2.5 text-xs font-medium text-navy dark:text-white hover:border-teal hover:text-teal"
                   >
                     <Download className="h-4 w-4" />
-                    Download
+                    {t("profilesPublic.qrCode.download")}
                   </button>
                 )}
                 <button
@@ -147,7 +151,7 @@ export function ProfileQrCode({
                   className="flex flex-col items-center gap-1 rounded-xl border border-mist py-2.5 text-xs font-medium text-navy dark:text-white hover:border-teal hover:text-teal"
                 >
                   <QrCode className="h-4 w-4" />
-                  Share
+                  {t("profilesPublic.qrCode.share")}
                 </button>
                 {canManageQr && (
                   <button
@@ -155,13 +159,13 @@ export function ProfileQrCode({
                     className="flex flex-col items-center gap-1 rounded-xl border border-mist py-2.5 text-xs font-medium text-navy dark:text-white hover:border-teal hover:text-teal"
                   >
                     <Printer className="h-4 w-4" />
-                    Print
+                    {t("profilesPublic.qrCode.print")}
                   </button>
                 )}
               </div>
               {!canManageQr && (
                 <p className="mt-3 text-[11px] text-slate">
-                  Download and print are available to Admins and Super Admins only.
+                  {t("profilesPublic.qrCode.adminOnlyNote")}
                 </p>
               )}
             </motion.div>

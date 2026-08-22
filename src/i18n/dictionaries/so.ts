@@ -1,6 +1,20 @@
 import type { Dictionary } from "./en";
+import admin from "./sections/admin.so";
+import dashboard from "./sections/dashboard.so";
+import editorForms from "./sections/editorForms.so";
+import editorWorkspace from "./sections/editorWorkspace.so";
+import home from "./sections/home.so";
+import profilesPublic from "./sections/profilesPublic.so";
+import publicPages from "./sections/publicPages.so";
 
 const so: Dictionary = {
+  admin,
+  dashboard,
+  editorForms,
+  editorWorkspace,
+  home,
+  profilesPublic,
+  publicPages,
   nav: {
     profiles: "Profaylada",
     leaders: "Hoggaamiyeyaasha",
@@ -63,6 +77,8 @@ const so: Dictionary = {
     required: "Waajib",
     optional: "Ikhtiyaari",
     viewPublicSite: "Fiiri Bogga Dadweynaha",
+    switchToLightMode: "U beddel muuqaalka iftiinka",
+    switchToDarkMode: "U beddel muuqaalka mugdiga",
   },
   auth: {
     welcomeBack: "Soo Dhawoow Mar Kale",

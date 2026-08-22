@@ -9,16 +9,18 @@ import { SocialLinksFields } from "@/components/profile/profile-form";
 import { createClient } from "@/lib/supabase/client";
 import { DURATION, EASE } from "@/lib/motion";
 import type { ProfileFormState } from "@/lib/actions/profile";
+import { useTranslation } from "@/i18n/language-provider";
 
 type Option = { id: string; name: string };
 
 export function StaffDraftForm({
   action,
-  triggerLabel = "New Draft",
+  triggerLabel,
 }: {
   action: (state: ProfileFormState, formData: FormData) => Promise<ProfileFormState>;
   triggerLabel?: string;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [categories, setCategories] = useState<Option[]>([]);
@@ -54,7 +56,7 @@ export function StaffDraftForm({
     <>
       <Button variant="primary" size="sm" onClick={() => setOpen(true)}>
         <Plus className="h-3.5 w-3.5" />
-        {triggerLabel}
+        {triggerLabel ?? t("dashboard.staffDraftForm.newDraft")}
       </Button>
 
       <AnimatePresence>
@@ -77,12 +79,12 @@ export function StaffDraftForm({
           >
             <div className="flex items-center justify-between">
               <h2 className="font-heading text-lg font-bold text-navy dark:text-white">
-                Create New Profile
+                {t("dashboard.staffDraftForm.modalTitle")}
               </h2>
               <button
                 onClick={() => setOpen(false)}
                 className="text-slate hover:text-navy dark:hover:text-white"
-                aria-label="Close"
+                aria-label={t("common.close")}
               >
                 <X className="h-4 w-4" />
               </button>
@@ -97,44 +99,62 @@ export function StaffDraftForm({
             <form action={formAction} className="mt-4 space-y-5">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <TextField
-                  label="Full Name"
+                  label={t("dashboard.staffDraftForm.fullName")}
                   name="full_name"
                   required
                   value={fullName}
                   onChange={setFullName}
                 />
-                <TextField label="Preferred Title" name="preferred_title" placeholder="Dr., Eng., Hon..." />
-                <TextField label="Profession" name="profession" />
-                <TextField label="Current Position" name="current_position" />
+                <TextField
+                  label={t("dashboard.staffDraftForm.preferredTitle")}
+                  name="preferred_title"
+                  placeholder={t("dashboard.staffDraftForm.preferredTitlePlaceholder")}
+                />
+                <TextField label={t("dashboard.staffDraftForm.profession")} name="profession" />
+                <TextField label={t("dashboard.staffDraftForm.currentPosition")} name="current_position" />
                 <SelectField
-                  label="Category"
+                  label={t("dashboard.staffDraftForm.category")}
                   name="category_id"
                   options={categories.map((c) => ({ value: c.id, label: c.name }))}
                 />
                 <SelectField
-                  label="Organization"
+                  label={t("dashboard.staffDraftForm.organization")}
                   name="organization_id"
                   options={organizations.map((o) => ({ value: o.id, label: o.name }))}
                 />
-                <TextField label="Country" name="country" />
-                <TextField label="Location" name="location" placeholder="City, Country" />
-                <TextField label="Nationality" name="nationality" />
-                <TextField label="Email" name="email" type="email" />
-                <TextField label="Phone" name="phone" type="tel" placeholder="+252..." />
-                <TextField label="Website" name="website" type="url" placeholder="https://" />
+                <TextField label={t("dashboard.staffDraftForm.country")} name="country" />
+                <TextField
+                  label={t("dashboard.staffDraftForm.location")}
+                  name="location"
+                  placeholder={t("dashboard.staffDraftForm.locationPlaceholder")}
+                />
+                <TextField label={t("dashboard.staffDraftForm.nationality")} name="nationality" />
+                <TextField label={t("dashboard.staffDraftForm.email")} name="email" type="email" />
+                <TextField
+                  label={t("dashboard.staffDraftForm.phone")}
+                  name="phone"
+                  type="tel"
+                  placeholder={t("dashboard.staffDraftForm.phonePlaceholder")}
+                />
+                <TextField
+                  label={t("dashboard.staffDraftForm.website")}
+                  name="website"
+                  type="url"
+                  placeholder="https://"
+                />
               </div>
 
               <SocialLinksFields socialLinks={{}} />
 
               <div>
                 <label className="text-xs font-semibold uppercase tracking-wide text-slate">
-                  Short Biography
+                  {t("dashboard.staffDraftForm.shortBio")}
                 </label>
                 <textarea
                   name="short_bio"
                   rows={3}
                   className="mt-1.5 w-full rounded-xl border border-mist px-4 py-2.5 text-sm text-ink focus:border-teal focus:outline-none"
-                  placeholder="A brief summary that appears on the profile card…"
+                  placeholder={t("dashboard.staffDraftForm.shortBioPlaceholder")}
                 />
               </div>
 
@@ -142,21 +162,21 @@ export function StaffDraftForm({
                 <div>
                   <ImageUploadField
                     name="photo_url"
-                    label="Profile Photo *"
+                    label={t("dashboard.staffDraftForm.profilePhotoLabel")}
                     bucket="profile-photos"
                     profileId={userId}
                     onUploaded={setPhotoUrl}
                   />
                   {!photoUrl && (
                     <p className="mt-1.5 text-xs text-slate">
-                      A profile photo is required to create the profile.
+                      {t("dashboard.staffDraftForm.photoRequiredHint")}
                     </p>
                   )}
                 </div>
               ) : (
                 <div className="flex items-center gap-2 text-xs text-slate">
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  Preparing photo upload…
+                  {t("dashboard.staffDraftForm.preparingUpload")}
                 </div>
               )}
 
@@ -166,11 +186,11 @@ export function StaffDraftForm({
                   onClick={() => setOpen(false)}
                   className="rounded-full px-4 py-2 text-sm font-semibold text-slate hover:bg-mist/60"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
                 <Button type="submit" variant="primary" size="md" disabled={!canSubmit}>
                   {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Create Profile
+                  {t("dashboard.staffDraftForm.createProfileSubmit")}
                 </Button>
               </div>
             </form>
@@ -228,6 +248,7 @@ function SelectField({
   name: string;
   options: { value: string; label: string }[];
 }) {
+  const { t } = useTranslation();
   return (
     <div>
       <label className="text-xs font-semibold uppercase tracking-wide text-slate">
@@ -238,7 +259,7 @@ function SelectField({
         defaultValue=""
         className="mt-1.5 w-full rounded-xl border border-mist bg-white dark:bg-offwhite px-4 py-2.5 text-sm text-ink focus:border-teal focus:outline-none"
       >
-        <option value="">None</option>
+        <option value="">{t("dashboard.staffDraftForm.none")}</option>
         {options.map((o) => (
           <option key={o.value} value={o.value}>
             {o.label}

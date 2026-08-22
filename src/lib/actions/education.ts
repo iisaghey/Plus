@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export type EducationFormState = {
   error?: string;
+  errorCode?: string;
   success?: boolean;
 };
 
@@ -40,7 +41,7 @@ export async function createEducation(
 ): Promise<EducationFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.institution) return { error: "Institution is required." };
+  if (!values.institution) return { error: "Institution is required.", errorCode: "institutionRequired" };
 
   const isCurrent = formData.get("is_current") === "on";
 
@@ -72,7 +73,7 @@ export async function updateEducation(
 ): Promise<EducationFormState> {
   const supabase = await createClient();
   const values = readFields(formData);
-  if (!values.institution) return { error: "Institution is required." };
+  if (!values.institution) return { error: "Institution is required.", errorCode: "institutionRequired" };
 
   const isCurrent = formData.get("is_current") === "on";
 

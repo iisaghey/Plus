@@ -2,23 +2,27 @@ import type { Metadata } from "next";
 import { getPendingVerifications } from "@/lib/data/admin";
 import { VerificationRow } from "@/components/admin/verification-row";
 import { SectionHeader } from "@/components/dashboard/section-header";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 export const metadata: Metadata = { title: "Verification Queue" };
 
 export default async function VerificationQueuePage() {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
   const items = await getPendingVerifications();
 
   return (
     <div>
       <SectionHeader
-        title="Verification Requests"
-        subtitle="Profiles submitted for identity and information verification."
+        title={t.admin.verification.title}
+        subtitle={t.admin.verification.subtitle}
       />
 
       <div className="mt-8 space-y-3">
         {items.length === 0 ? (
           <p className="rounded-xl border border-dashed border-mist py-12 text-center text-sm text-slate">
-            No verification requests pending.
+            {t.admin.verification.empty}
           </p>
         ) : (
           items.map((item) => {

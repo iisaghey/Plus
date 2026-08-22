@@ -28,22 +28,27 @@ import {
   Images,
   ShieldCheck,
 } from "lucide-react";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 const ICON_CLASS = "h-4 w-4";
-
-const STEPS: WizardStepDef[] = [
-  { id: "identity", label: "Personal & Contact", icon: <IdCard className={ICON_CLASS} />, sections: ["identity", "contact", "social"] },
-  { id: "background", label: "Biography & Education", icon: <BookOpenText className={ICON_CLASS} />, sections: ["biography", "education"] },
-  { id: "career", label: "Career & Positions", icon: <Landmark className={ICON_CLASS} />, sections: ["career", "positions"] },
-  { id: "recognition", label: "Achievements & Activities", icon: <Trophy className={ICON_CLASS} />, sections: ["achievements", "activities", "travel"] },
-  { id: "speeches", label: "Speeches", icon: <Mic className={ICON_CLASS} />, sections: ["speeches"] },
-  { id: "media", label: "Media & Documents", icon: <Images className={ICON_CLASS} />, sections: ["media", "documents"] },
-  { id: "review", label: "Review", icon: <ShieldCheck className={ICON_CLASS} />, sections: ["review"] },
-];
 
 export default async function EditorProfileEditPage(
   props: PageProps<"/editor/profiles/[id]">
 ) {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
+
+  const STEPS: WizardStepDef[] = [
+    { id: "identity", label: t.editorWorkspace.profileEdit.stepIdentity, icon: <IdCard className={ICON_CLASS} />, sections: ["identity", "contact", "social"] },
+    { id: "background", label: t.editorWorkspace.profileEdit.stepBackground, icon: <BookOpenText className={ICON_CLASS} />, sections: ["biography", "education"] },
+    { id: "career", label: t.editorWorkspace.profileEdit.stepCareer, icon: <Landmark className={ICON_CLASS} />, sections: ["career", "positions"] },
+    { id: "recognition", label: t.editorWorkspace.profileEdit.stepRecognition, icon: <Trophy className={ICON_CLASS} />, sections: ["achievements", "activities", "travel"] },
+    { id: "speeches", label: t.editorWorkspace.profileEdit.stepSpeeches, icon: <Mic className={ICON_CLASS} />, sections: ["speeches"] },
+    { id: "media", label: t.editorWorkspace.profileEdit.stepMedia, icon: <Images className={ICON_CLASS} />, sections: ["media", "documents"] },
+    { id: "review", label: t.editorWorkspace.profileEdit.stepReview, icon: <ShieldCheck className={ICON_CLASS} />, sections: ["review"] },
+  ];
+
   const { id } = await props.params;
   const supabase = await createClient();
   const {
@@ -157,8 +162,8 @@ export default async function EditorProfileEditPage(
       </div>
       <p className="mt-2 text-sm text-slate">
         {isPublished
-          ? "This profile is live. Editors need Super Admin permission to change a published profile."
-          : "As an editor you can edit this profile directly at this stage."}
+          ? t.editorWorkspace.profileEdit.publishedNotice
+          : t.editorWorkspace.profileEdit.draftNotice}
       </p>
 
       {isEditorRole && isPublished && (
@@ -186,7 +191,7 @@ export default async function EditorProfileEditPage(
       {profile.workflow_status === "submitted" && (
         <div className="mt-6">
           <h2 className="text-xs font-semibold uppercase tracking-wide text-slate">
-            Editorial Decision
+            {t.editorWorkspace.profileEdit.editorialDecision}
           </h2>
           <div className="mt-3">
             <EditorDecisionRow
@@ -213,7 +218,7 @@ export default async function EditorProfileEditPage(
               profile={profile}
               categories={categories ?? []}
               organizations={organizations ?? []}
-              submitLabel="Save Changes"
+              submitLabel={t.editorWorkspace.profileEdit.saveChanges}
               locked={locked}
             />
           </ProfileWizardStep>

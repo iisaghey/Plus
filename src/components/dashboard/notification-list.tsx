@@ -7,6 +7,7 @@ import { Bell, Circle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/types/database.types";
 import { StaggerGrid, StaggerItem } from "@/components/motion/stagger-grid";
+import { useTranslation } from "@/i18n/language-provider";
 
 export function NotificationList({
   notifications,
@@ -15,6 +16,7 @@ export function NotificationList({
 }) {
   const router = useRouter();
   const [, startTransition] = useTransition();
+  const { t } = useTranslation();
 
   function markRead(id: string) {
     startTransition(async () => {
@@ -28,7 +30,7 @@ export function NotificationList({
     return (
       <div className="rounded-2xl border border-dashed border-mist py-16 text-center">
         <Bell className="mx-auto h-8 w-8 text-slate/40" />
-        <p className="mt-3 text-sm text-slate">No notifications yet.</p>
+        <p className="mt-3 text-sm text-slate">{t("dashboard.notificationList.empty")}</p>
       </div>
     );
   }

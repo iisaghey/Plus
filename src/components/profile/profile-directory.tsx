@@ -2,6 +2,8 @@ import { SectionLabel } from "@/components/ui/section-label";
 import { ProfileFilterBar } from "@/components/profile/profile-filter-bar";
 import { ProfileCard } from "@/components/profile/profile-card";
 import { searchProfiles, getFilterOptions } from "@/lib/data/profiles";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 export async function ProfileDirectory({
   label,
@@ -27,10 +29,12 @@ export async function ProfileDirectory({
     sort: toStr(searchParams.sort),
   };
 
-  const [profiles, { categories, countries }] = await Promise.all([
+  const [profiles, { categories, countries }, locale] = await Promise.all([
     searchProfiles(params),
     getFilterOptions(),
+    getServerLocale(),
   ]);
+  const t = getDictionary(locale);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
@@ -49,16 +53,19 @@ export async function ProfileDirectory({
       </div>
 
       <p className="mt-6 text-sm text-slate">
-        {profiles.length} {profiles.length === 1 ? "profile" : "profiles"} found
+        {profiles.length}{" "}
+        {profiles.length === 1
+          ? t.profilesPublic.directory.resultsCountSingular
+          : t.profilesPublic.directory.resultsCountPlural}
       </p>
 
       {profiles.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-dashed border-mist py-20 text-center">
           <p className="font-heading text-lg font-semibold text-navy dark:text-white">
-            No profiles match your search
+            {t.profilesPublic.directory.emptyTitle}
           </p>
           <p className="mt-2 text-sm text-slate">
-            Try adjusting your filters or search terms.
+            {t.profilesPublic.directory.emptyDescription}
           </p>
         </div>
       ) : (

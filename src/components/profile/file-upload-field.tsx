@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Upload, Loader2, X, FileText, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { uploadPrivateFile, getSignedUrl } from "@/lib/supabase/upload";
+import { useTranslation } from "@/i18n/language-provider";
 
 const MAX_SIZE_BYTES = 15 * 1024 * 1024;
 
@@ -20,6 +21,7 @@ export function FileUploadField({
   bucket: string;
   profileId: string;
 }) {
+  const { t } = useTranslation();
   const [path, setPath] = useState(defaultValue ?? "");
   const [uploading, setUploading] = useState(false);
   const [viewing, setViewing] = useState(false);
@@ -30,7 +32,7 @@ export function FileUploadField({
     if (!file) return;
 
     if (file.size > MAX_SIZE_BYTES) {
-      toast.error("File must be under 15MB.");
+      toast.error(t("editorWorkspace.fileUpload.maxSizeError"));
       return;
     }
 
@@ -38,9 +40,9 @@ export function FileUploadField({
     try {
       const { path: storedPath } = await uploadPrivateFile(bucket, profileId, file);
       setPath(storedPath);
-      toast.success("File uploaded");
+      toast.success(t("editorWorkspace.fileUpload.uploadedToast"));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upload failed");
+      toast.error(err instanceof Error ? err.message : t("editorWorkspace.fileUpload.uploadFailedToast"));
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -53,7 +55,7 @@ export function FileUploadField({
       const url = await getSignedUrl(bucket, path);
       window.open(url, "_blank", "noopener,noreferrer");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not open file");
+      toast.error(err instanceof Error ? err.message : t("editorWorkspace.fileUpload.couldNotOpenFile"));
     } finally {
       setViewing(false);
     }
@@ -81,7 +83,9 @@ export function FileUploadField({
             ) : (
               <Upload className="h-3.5 w-3.5" />
             )}
-            {path ? "Replace" : "Upload"} File
+            {path
+              ? t("editorWorkspace.fileUpload.replaceFileButton")
+              : t("editorWorkspace.fileUpload.uploadFileButton")}
           </button>
           <div className="flex items-center gap-2">
             {path && !uploading && (
@@ -96,7 +100,7 @@ export function FileUploadField({
                 ) : (
                   <Eye className="h-3 w-3" />
                 )}
-                View
+                {t("editorWorkspace.fileUpload.view")}
               </button>
             )}
             {path && !uploading && (
@@ -106,7 +110,7 @@ export function FileUploadField({
                 className="flex items-center gap-1 text-xs text-slate hover:text-red-600"
               >
                 <X className="h-3 w-3" />
-                Remove
+                {t("editorWorkspace.fileUpload.remove")}
               </button>
             )}
           </div>

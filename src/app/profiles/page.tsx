@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { ProfileDirectory } from "@/components/profile/profile-directory";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 export const metadata: Metadata = {
   title: "Browse Profiles",
@@ -9,11 +11,13 @@ export const metadata: Metadata = {
 
 export default async function ProfilesPage(props: PageProps<"/profiles">) {
   const searchParams = await props.searchParams;
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
   return (
     <ProfileDirectory
-      label="Browse Profiles"
-      title="All Digital Profiles"
-      description="Search and filter verified profiles of leaders, professionals, and public figures across every category."
+      label={t.profilesPublic.profilesList.label}
+      title={t.profilesPublic.profilesList.title}
+      description={t.profilesPublic.profilesList.description}
       searchParams={searchParams}
     />
   );

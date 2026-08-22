@@ -12,29 +12,43 @@ import { DataTable, DataTableHead, DataTableBody, EmptyRow } from "@/components/
 import { Pagination } from "@/components/dashboard/pagination";
 import { Badge } from "@/components/ui/badge";
 import { WORKFLOW_STATUS_VARIANT, workflowStatusLabel } from "@/lib/workflow";
+import { getServerLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 export const metadata: Metadata = { title: "All Profiles" };
 
-const TABS: { key: ProfileLifecycleFilter; label: string }[] = [
-  { key: "all", label: "All" },
-  { key: "published", label: "Published" },
-  { key: "verified", label: "Verified" },
-  { key: "draft", label: "Draft" },
-  { key: "hidden", label: "Hidden" },
-  { key: "archived", label: "Archived" },
-  { key: "trash", label: "Trash" },
+const TAB_KEYS: ProfileLifecycleFilter[] = [
+  "all",
+  "published",
+  "verified",
+  "draft",
+  "hidden",
+  "archived",
+  "trash",
 ];
 
 export default async function AdminAllProfilesPage(
   props: PageProps<"/admin/profiles">
 ) {
+  const locale = await getServerLocale();
+  const t = getDictionary(locale);
   const { role } = await getStaffContext();
   if (role !== "super_admin" && role !== "admin") redirect("/admin");
   const isSuperAdmin = role === "super_admin";
 
+  const TABS: { key: ProfileLifecycleFilter; label: string }[] = [
+    { key: "all", label: t.admin.profiles.tabs.all },
+    { key: "published", label: t.admin.profiles.tabs.published },
+    { key: "verified", label: t.admin.profiles.tabs.verified },
+    { key: "draft", label: t.admin.profiles.tabs.draft },
+    { key: "hidden", label: t.admin.profiles.tabs.hidden },
+    { key: "archived", label: t.admin.profiles.tabs.archived },
+    { key: "trash", label: t.admin.profiles.tabs.trash },
+  ];
+
   const searchParams = await props.searchParams;
   const rawFilter = typeof searchParams.filter === "string" ? searchParams.filter : "all";
-  const filter: ProfileLifecycleFilter = TABS.some((t) => t.key === rawFilter)
+  const filter: ProfileLifecycleFilter = TAB_KEYS.includes(rawFilter as ProfileLifecycleFilter)
     ? (rawFilter as ProfileLifecycleFilter)
     : "all";
 
@@ -43,11 +57,11 @@ export default async function AdminAllProfilesPage(
   return (
     <div>
       <SectionHeader
-        title="All Profiles"
+        title={t.admin.profiles.title}
         subtitle={
           isSuperAdmin
-            ? "Complete lifecycle control over every profile on the platform."
-            : "Complete lifecycle control over every profile on the platform. Permanently deleting a profile requires Super Admin."
+            ? t.admin.profiles.subtitleSuperAdmin
+            : t.admin.profiles.subtitleAdmin
         }
         tabs={TABS.map((tab) => ({
           key: tab.key,
@@ -71,14 +85,14 @@ export default async function AdminAllProfilesPage(
           }
         >
           <DataTableHead>
-            <th className="px-4 py-3">Profile</th>
-            <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3">Last Updated</th>
-            <th className="px-4 py-3 text-right">Actions</th>
+            <th className="px-4 py-3">{t.admin.profiles.colProfile}</th>
+            <th className="px-4 py-3">{t.admin.profiles.colStatus}</th>
+            <th className="px-4 py-3">{t.admin.profiles.colLastUpdated}</th>
+            <th className="px-4 py-3 text-right">{t.admin.profiles.colActions}</th>
           </DataTableHead>
           <DataTableBody>
             {profiles.length === 0 ? (
-              <EmptyRow colSpan={4}>No profiles in this view.</EmptyRow>
+              <EmptyRow colSpan={4}>{t.admin.profiles.empty}</EmptyRow>
             ) : (
               profiles.map((p) => (
                 <tr key={p.id}>
@@ -100,7 +114,7 @@ export default async function AdminAllProfilesPage(
                           {p.full_name}
                         </p>
                         <p className="truncate text-xs text-slate">
-                          {p.current_position ?? "No position"}
+                          {p.current_position ?? t.admin.profiles.noPosition}
                         </p>
                       </div>
                     </div>
@@ -111,16 +125,16 @@ export default async function AdminAllProfilesPage(
                         {workflowStatusLabel(p.workflow_status)}
                       </Badge>
                       {p.verification_status === "verified" && (
-                        <Badge variant="verified" size="sm">Verified</Badge>
+                        <Badge variant="verified" size="sm">{t.admin.profiles.badgeVerified}</Badge>
                       )}
                       {p.hidden_at && (
-                        <Badge variant="pending" size="sm">Hidden</Badge>
+                        <Badge variant="pending" size="sm">{t.admin.profiles.badgeHidden}</Badge>
                       )}
                       {p.status === "archived" && (
-                        <Badge variant="neutral" size="sm">Archived</Badge>
+                        <Badge variant="neutral" size="sm">{t.admin.profiles.badgeArchived}</Badge>
                       )}
                       {p.deleted_at && (
-                        <Badge variant="solid-navy" size="sm">In Trash</Badge>
+                        <Badge variant="solid-navy" size="sm">{t.admin.profiles.badgeInTrash}</Badge>
                       )}
                     </div>
                   </td>
