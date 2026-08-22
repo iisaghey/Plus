@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Enums } from "@/types/database.types";
+import { ProfileTranslator } from "@/lib/translate";
 
 const VERIFICATION_STATUSES: Enums<"verification_status">[] = [
   "unverified",
@@ -192,7 +193,7 @@ export async function getOrganizations() {
   return data ?? [];
 }
 
-export async function getProfileBySlug(slug: string) {
+export async function getProfileBySlug(slug: string, locale: string = "en") {
   const supabase = await createClient();
   const { data: profile } = await supabase
     .from("profiles")
@@ -276,6 +277,32 @@ export async function getProfileBySlug(slug: string) {
       .eq("profile_id", profile.id)
       .maybeSingle(),
   ]);
+
+  const translator = new ProfileTranslator(locale);
+  if (translator.active) {
+    translator.text(profile, "short_bio", "current_position");
+    translator.richText(biography, "summary");
+    translator.richText(biography, "content");
+    for (const entry of careerTimeline ?? []) {
+      translator.text(entry, "title", "organization", "description");
+    }
+    for (const entry of governmentPositions ?? []) {
+      translator.text(entry, "position_title", "institution", "description");
+    }
+    for (const entry of achievements ?? []) {
+      translator.text(entry, "title", "issuing_organization", "description");
+    }
+    for (const entry of activities ?? []) {
+      translator.text(entry, "title", "organization", "description");
+    }
+    for (const entry of travel ?? []) {
+      translator.text(entry, "purpose", "description");
+    }
+    for (const entry of speeches ?? []) {
+      translator.text(entry, "title", "event", "summary", "full_text");
+    }
+    await translator.run();
+  }
 
   return {
     profile,

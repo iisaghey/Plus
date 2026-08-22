@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProfileBySlug } from "@/lib/data/profiles";
 import { getStaffContext } from "@/lib/auth/staff";
+import { getServerLocale } from "@/i18n/get-locale";
 import { ProfileHeader } from "@/components/profile/profile-header";
 import { ProfileTabs } from "@/components/profile/profile-tabs";
 
@@ -48,8 +49,9 @@ export default async function ProfilePage(
   props: PageProps<"/profile/[slug]">
 ) {
   const { slug } = await props.params;
+  const locale = await getServerLocale();
   const [data, { role }] = await Promise.all([
-    getProfileBySlug(slug),
+    getProfileBySlug(slug, locale),
     getStaffContext(),
   ]);
   if (!data) notFound();
