@@ -120,6 +120,8 @@ const profilesPublic = {
     },
     media: {
       empty: "لم يتم نشر أي وسائط بعد.",
+      photosHeading: "الصور",
+      videosHeading: "مقاطع الفيديو",
     },
     documents: {
       empty: "لم يتم نشر أي مستندات بعد.",

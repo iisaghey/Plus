@@ -120,6 +120,8 @@ const profilesPublic = {
     },
     media: {
       empty: "No media has been published yet.",
+      photosHeading: "Photos",
+      videosHeading: "Videos",
     },
     documents: {
       empty: "No documents have been published yet.",

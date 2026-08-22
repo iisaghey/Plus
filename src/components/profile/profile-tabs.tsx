@@ -81,6 +81,16 @@ export function ProfileTabs(props: Props) {
     description: m.caption,
   }));
 
+  // Grouped for the Media tab's Photos/Videos split, keeping each item's
+  // original index so lightboxIndex still points at the right entry in
+  // lightboxItems regardless of which visual group it renders in.
+  const mediaWithIndex = props.media.map((item, index) => ({ item, index }));
+  const photoItems = mediaWithIndex.filter(({ item }) => item.media_type === "photo");
+  const videoItems = mediaWithIndex.filter(({ item }) => item.media_type === "video");
+  const otherItems = mediaWithIndex.filter(
+    ({ item }) => item.media_type !== "photo" && item.media_type !== "video"
+  );
+
   const combinedTimeline: TimelineEntry[] = useMemo(() => {
     type RawEntry = TimelineEntry & { startDate: string | null };
 
@@ -335,40 +345,38 @@ export function ProfileTabs(props: Props) {
             {props.media.length === 0 ? (
               <EmptyState label={t("profilesPublic.tabs.media.empty")} />
             ) : (
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                {props.media.map((m, i) => (
-                  <button
-                    key={m.id}
-                    onClick={() => setLightboxIndex(i)}
-                    className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-mist text-left"
-                  >
-                    {m.media_type === "photo" && m.external_url ? (
-                      <Image
-                        src={m.external_url}
-                        alt={m.title ?? ""}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    ) : m.media_type === "video" && m.external_url ? (
-                      <>
-                        <VideoThumbnail src={m.external_url} />
-                        <div className="absolute inset-0 flex items-center justify-center bg-navy/20 transition-colors group-hover:bg-navy/40">
-                          <PlayCircle className="h-9 w-9 text-white drop-shadow" />
-                        </div>
-                      </>
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center bg-navy">
-                        {m.media_type === "audio" && <Music className="h-8 w-8 text-white/80" />}
-                        {m.media_type === "document" && <FileText className="h-8 w-8 text-white/80" />}
-                      </div>
-                    )}
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy/80 to-transparent p-3">
-                      <p className="line-clamp-1 text-xs font-medium text-white">
-                        {m.title}
-                      </p>
+              <div className="space-y-10">
+                {photoItems.length > 0 && (
+                  <div>
+                    <h3 className="font-heading text-sm font-bold text-navy dark:text-white">
+                      {t("profilesPublic.tabs.media.photosHeading")}
+                    </h3>
+                    <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                      {photoItems.map(({ item: m, index: i }) => (
+                        <MediaTile key={m.id} media={m} onClick={() => setLightboxIndex(i)} />
+                      ))}
                     </div>
-                  </button>
-                ))}
+                  </div>
+                )}
+                {videoItems.length > 0 && (
+                  <div>
+                    <h3 className="font-heading text-sm font-bold text-navy dark:text-white">
+                      {t("profilesPublic.tabs.media.videosHeading")}
+                    </h3>
+                    <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                      {videoItems.map(({ item: m, index: i }) => (
+                        <MediaTile key={m.id} media={m} onClick={() => setLightboxIndex(i)} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {otherItems.length > 0 && (
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                    {otherItems.map(({ item: m, index: i }) => (
+                      <MediaTile key={m.id} media={m} onClick={() => setLightboxIndex(i)} />
+                    ))}
+                  </div>
+                )}
               </div>
             )}
             <MediaLightbox
@@ -415,6 +423,39 @@ export function ProfileTabs(props: Props) {
         </motion.div>
       </AnimatePresence>
     </div>
+  );
+}
+
+function MediaTile({ media: m, onClick }: { media: Tables<"media">; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-mist text-left"
+    >
+      {m.media_type === "photo" && m.external_url ? (
+        <Image
+          src={m.external_url}
+          alt={m.title ?? ""}
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      ) : m.media_type === "video" && m.external_url ? (
+        <>
+          <VideoThumbnail src={m.external_url} />
+          <div className="absolute inset-0 flex items-center justify-center bg-navy/20 transition-colors group-hover:bg-navy/40">
+            <PlayCircle className="h-9 w-9 text-white drop-shadow" />
+          </div>
+        </>
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center bg-navy">
+          {m.media_type === "audio" && <Music className="h-8 w-8 text-white/80" />}
+          {m.media_type === "document" && <FileText className="h-8 w-8 text-white/80" />}
+        </div>
+      )}
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy/80 to-transparent p-3">
+        <p className="line-clamp-1 text-xs font-medium text-white">{m.title}</p>
+      </div>
+    </button>
   );
 }
 

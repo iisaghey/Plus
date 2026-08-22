@@ -120,6 +120,8 @@ const profilesPublic = {
     },
     media: {
       empty: "Wali lama daabicin warbaahin.",
+      photosHeading: "Sawirrada",
+      videosHeading: "Muuqaallada",
     },
     documents: {
       empty: "Wali lama daabicin dukumeentiyo.",
