@@ -16,6 +16,7 @@ import {
   Landmark,
 } from "lucide-react";
 import { cn, formatDateRange, formatMonthYear } from "@/lib/utils";
+import { renderRichText } from "@/lib/rich-text";
 import { Timeline, type TimelineEntry } from "./timeline";
 import { MediaLightbox, type LightboxItem } from "./media-lightbox";
 import type { Tables } from "@/types/database.types";
@@ -127,9 +128,18 @@ export function ProfileTabs(props: Props) {
               <h2 className="font-heading text-lg font-bold text-navy dark:text-white">
                 About
               </h2>
-              <p className="mt-3 leading-relaxed text-slate">
-                {props.shortBio ?? props.bio?.summary ?? "No biography summary published yet."}
-              </p>
+              {props.shortBio || props.bio?.summary ? (
+                <div
+                  className="rich-text-content mt-3"
+                  dangerouslySetInnerHTML={{
+                    __html: renderRichText(props.shortBio ?? props.bio?.summary),
+                  }}
+                />
+              ) : (
+                <p className="mt-3 leading-relaxed text-slate">
+                  No biography summary published yet.
+                </p>
+              )}
 
               {props.achievements.length > 0 && (
                 <div className="mt-10">
@@ -185,13 +195,10 @@ export function ProfileTabs(props: Props) {
               Biography
             </h2>
             {props.bio?.content ? (
-              <div className="mt-4 space-y-4">
-                {props.bio.content.split("\n\n").map((para, i) => (
-                  <p key={i} className="leading-relaxed text-slate">
-                    {para}
-                  </p>
-                ))}
-              </div>
+              <div
+                className="rich-text-content mt-4"
+                dangerouslySetInnerHTML={{ __html: renderRichText(props.bio.content) }}
+              />
             ) : (
               <EmptyState label="No biography has been published yet." />
             )}

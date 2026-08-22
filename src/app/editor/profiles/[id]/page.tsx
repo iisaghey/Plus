@@ -116,6 +116,7 @@ export default async function EditorProfileEditPage(
       ])
     : [{ data: null }, { data: null }];
 
+  // eslint-disable-next-line react-hooks/purity -- request-scoped expiry check in a Server Component, not memoized client render
   const now = Date.now();
   const grantIsActive =
     activeGrant &&

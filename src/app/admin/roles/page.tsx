@@ -35,7 +35,7 @@ export default async function AdminRolesPage() {
       <p className="mt-4 text-xs text-slate">
         Roles marked <em>(future)</em> — like Verifier — have no permissions
         assigned yet. Adding rows here is enough to activate a new role
-        without a schema change, per the platform's permission-based design.
+        without a schema change, per the platform&apos;s permission-based design.
       </p>
     </div>
   );

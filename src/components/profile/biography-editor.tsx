@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import { Loader2, BookOpen, Check } from "lucide-react";
 import { toast } from "sonner";
 import { saveBiography, type BiographyFormState } from "@/lib/actions/biography";
+import { RichTextEditor } from "@/components/profile/rich-text-editor";
 import type { Tables } from "@/types/database.types";
 
 export function BiographyEditor({
@@ -21,15 +22,25 @@ export function BiographyEditor({
     {}
   );
   const [justSaved, setJustSaved] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+  const [prevSuccess, setPrevSuccess] = useState(false);
+
+  if (state.success && !prevSuccess) {
+    setPrevSuccess(true);
+    setJustSaved(true);
+  }
 
   useEffect(() => {
     if (state.success) {
       toast.success("Biography saved");
-      setJustSaved(true);
-      const timer = setTimeout(() => setJustSaved(false), 2000);
-      return () => clearTimeout(timer);
     }
   }, [state.success]);
+
+  useEffect(() => {
+    if (!justSaved) return;
+    const timer = setTimeout(() => setJustSaved(false), 2000);
+    return () => clearTimeout(timer);
+  }, [justSaved]);
 
   return (
     <div className="rounded-2xl border border-mist p-6">
@@ -52,32 +63,38 @@ export function BiographyEditor({
             Summary
             <span className="text-teal"> *</span>
           </label>
-          <textarea
-            name="summary"
-            rows={2}
-            required
-            defaultValue={biography?.summary ?? ""}
-            placeholder="A short summary shown at the top of the Biography tab…"
-            className="mt-1.5 w-full rounded-lg border border-mist px-3 py-2 text-sm text-ink focus:border-teal focus:outline-none"
-          />
+          <div className="mt-1.5">
+            <RichTextEditor
+              key={`summary-${resetKey}`}
+              name="summary"
+              defaultValue={biography?.summary}
+              placeholder="A short summary shown at the top of the Biography tab…"
+              minHeight={60}
+              disabled={locked}
+            />
+          </div>
         </div>
 
         <div>
           <label className="text-xs font-semibold uppercase tracking-wide text-slate">
             Full Biography
           </label>
-          <textarea
-            name="content"
-            rows={8}
-            defaultValue={biography?.content ?? ""}
-            placeholder="Write the full biography…"
-            className="mt-1.5 w-full rounded-lg border border-mist px-3 py-2 text-sm text-ink focus:border-teal focus:outline-none"
-          />
+          <div className="mt-1.5">
+            <RichTextEditor
+              key={`content-${resetKey}`}
+              name="content"
+              defaultValue={biography?.content}
+              placeholder="Write the full biography…"
+              minHeight={220}
+              disabled={locked}
+            />
+          </div>
         </div>
 
         <div className="flex justify-end gap-2">
           <button
-            type="reset"
+            type="button"
+            onClick={() => setResetKey((k) => k + 1)}
             disabled={pending}
             className="rounded-lg px-4 py-2 text-xs font-semibold text-slate hover:bg-mist/60 disabled:opacity-50"
           >

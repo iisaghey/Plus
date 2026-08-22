@@ -21,12 +21,12 @@ export function AnimatedCounter({
   const reduceMotion = useReducedMotion();
   const [display, setDisplay] = useState(0);
 
+  if (isInView && reduceMotion && display !== value) {
+    setDisplay(value);
+  }
+
   useEffect(() => {
-    if (!isInView) return;
-    if (reduceMotion) {
-      setDisplay(value);
-      return;
-    }
+    if (!isInView || reduceMotion) return;
     const controls = animate(0, value, {
       duration,
       ease: [0.22, 1, 0.36, 1],

@@ -42,7 +42,7 @@ export default async function StaffDashboardPage() {
             Staff Dashboard
           </h1>
           <p className="mt-1 text-sm text-slate">
-            Profiles assigned to you, and drafts you're building.
+            Profiles assigned to you, and drafts you&apos;re building.
           </p>
         </div>
         <StaffDraftForm action={createStaffDraft} />
