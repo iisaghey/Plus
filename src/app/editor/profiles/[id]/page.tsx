@@ -157,7 +157,7 @@ export default async function EditorProfileEditPage(
           {profile.full_name}
         </h1>
         <Badge variant={WORKFLOW_STATUS_VARIANT[profile.workflow_status]} size="sm">
-          {workflowStatusLabel(profile.workflow_status)}
+          {workflowStatusLabel(profile.workflow_status, t.common.workflowStatus)}
         </Badge>
       </div>
       <p className="mt-2 text-sm text-slate">

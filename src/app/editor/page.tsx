@@ -138,7 +138,7 @@ export default async function EditorDashboardPage() {
               >
                 <p className="text-sm font-medium text-navy dark:text-white">{p.full_name}</p>
                 <Badge variant={WORKFLOW_STATUS_VARIANT[p.workflow_status]} size="sm">
-                  {workflowStatusLabel(p.workflow_status)}
+                  {workflowStatusLabel(p.workflow_status, t.common.workflowStatus)}
                 </Badge>
               </div>
             ))}

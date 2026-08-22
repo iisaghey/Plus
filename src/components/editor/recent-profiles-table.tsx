@@ -79,7 +79,7 @@ export async function RecentProfilesTable({
                   </td>
                   <td className="px-4 py-3">
                     <Badge variant={WORKFLOW_STATUS_VARIANT[p.workflow_status]} size="sm">
-                      {workflowStatusLabel(p.workflow_status)}
+                      {workflowStatusLabel(p.workflow_status, t.common.workflowStatus)}
                     </Badge>
                   </td>
                   <td className="px-4 py-3 text-xs text-slate">

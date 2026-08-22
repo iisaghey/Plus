@@ -38,7 +38,7 @@ export function RoleSidebar({
     <div className="flex h-full flex-col rounded-2xl bg-navy p-4 shadow-lg shadow-navy/20">
       <Logo light surface="dark" className="px-1" />
       <span className="mt-4 inline-flex w-fit items-center rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/80 ring-1 ring-white/15">
-        {roleLabel} Panel
+        {roleLabel} {t("sidebar.panelSuffix")}
       </span>
 
       <nav className="mt-5 flex flex-1 flex-col gap-1">
@@ -54,13 +54,13 @@ export function RoleSidebar({
             <span
               key={label}
               className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium text-white/30"
-              title="Coming soon"
+              title={t("sidebar.comingSoon")}
             >
               <span className="flex items-center gap-2.5">
                 {icon}
                 {label}
               </span>
-              <span className="text-[9px] font-bold uppercase tracking-wide">Soon</span>
+              <span className="text-[9px] font-bold uppercase tracking-wide">{t("sidebar.soon")}</span>
             </span>
           ) : (
             <Link

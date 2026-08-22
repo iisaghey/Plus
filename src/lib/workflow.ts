@@ -32,6 +32,9 @@ export const WORKFLOW_STATUS_VARIANT: Record<
   rejected: "neutral",
 };
 
-export function workflowStatusLabel(status: WorkflowStatus) {
-  return status.replace(/_/g, " ");
+export function workflowStatusLabel(
+  status: WorkflowStatus,
+  labels?: Record<WorkflowStatus, string>
+) {
+  return labels?.[status] ?? status.replace(/_/g, " ");
 }

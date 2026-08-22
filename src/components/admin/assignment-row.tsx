@@ -62,7 +62,7 @@ export function AssignmentRow({
         </Link>
         <div className="mt-1">
           <Badge variant="neutral" size="sm">
-            {workflowStatus.replace(/_/g, " ")}
+            {t(`common.workflowStatus.${workflowStatus}`)}
           </Badge>
         </div>
       </div>

@@ -66,7 +66,7 @@ export async function ProfileReviewStep({
             size="md"
             className="mt-3"
           >
-            {profile.verification_status}
+            {t.common.verificationStatus[profile.verification_status]}
           </Badge>
         </div>
 

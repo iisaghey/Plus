@@ -39,7 +39,7 @@ export function TeamMemberRow({
         toast.error(result.errorCode ? t(`admin.errors.${result.errorCode}`) : result.error);
         return;
       }
-      toast.success(`${t("admin.teamMemberRow.roleUpdatedTo")} ${newRole.replace("_", " ")}`);
+      toast.success(`${t("admin.teamMemberRow.roleUpdatedTo")} ${t(`common.appRole.${newRole}`)}`);
       router.refresh();
     });
   }
@@ -50,7 +50,7 @@ export function TeamMemberRow({
         <p className="truncate text-sm font-medium text-navy dark:text-white">{email ?? t("admin.teamMemberRow.unknown")}</p>
         {accountStatus && accountStatus !== "approved" && (
           <Badge variant={accountStatus === "pending" ? "pending" : "neutral"} size="sm">
-            {accountStatus}
+            {t(`common.accountStatus.${accountStatus}`)}
           </Badge>
         )}
       </div>
@@ -65,13 +65,13 @@ export function TeamMemberRow({
           >
             {assignableRoles.map((r) => (
               <option key={r} value={r}>
-                {r.replace("_", " ")}
+                {t(`common.appRole.${r}`)}
               </option>
             ))}
           </select>
         ) : (
           <Badge variant="neutral" size="sm" title={t("admin.teamMemberRow.noPermissionTitle")}>
-            {role.replace("_", " ")}
+            {t(`common.appRole.${role}`)}
           </Badge>
         )}
       </div>

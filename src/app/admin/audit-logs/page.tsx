@@ -6,7 +6,11 @@ import { getDictionary } from "@/i18n/get-dictionary";
 
 const STATUS_KEYS = ["status", "workflow_status", "verification_status"] as const;
 
-function describeChange(previous: unknown, next: unknown): string {
+function describeChange(
+  previous: unknown,
+  next: unknown,
+  fieldLabels: Record<(typeof STATUS_KEYS)[number], string>
+): string {
   const before = (previous ?? {}) as Record<string, unknown>;
   const after = (next ?? {}) as Record<string, unknown>;
 
@@ -16,7 +20,7 @@ function describeChange(previous: unknown, next: unknown): string {
       const from = before[key];
       const to = after[key];
       if (from !== to) {
-        changes.push(`${key.replace(/_/g, " ")}: ${from ?? "—"} → ${to ?? "—"}`);
+        changes.push(`${fieldLabels[key]}: ${from ?? "—"} → ${to ?? "—"}`);
       }
     }
   }
@@ -94,11 +98,11 @@ export default async function AdminAuditLogsPage() {
                       {(log.actor_id && actorMap.get(log.actor_id)) ?? "—"}
                     </span>
                     <span className="ml-1 capitalize text-slate/70">
-                      ({log.actor_role?.replace(/_/g, " ") ?? t.admin.auditLogs.unknownRole})
+                      ({(log.actor_role && t.admin.auditLogs.roles[log.actor_role as keyof typeof t.admin.auditLogs.roles]) ?? log.actor_role?.replace(/_/g, " ") ?? t.admin.auditLogs.unknownRole})
                     </span>
                   </td>
                   <td className="px-4 py-3 font-medium text-navy dark:text-white">
-                    {log.action.replace(/_/g, " ")}
+                    {t.admin.auditLogs.actions[log.action as keyof typeof t.admin.auditLogs.actions] ?? log.action.replace(/_/g, " ")}
                   </td>
                   <td className="px-4 py-3 text-xs text-slate">
                     {log.entity_type === "profile"
@@ -108,7 +112,7 @@ export default async function AdminAuditLogsPage() {
                       : `${log.entity_type} · ${log.entity_id?.slice(0, 8) ?? "—"}`}
                   </td>
                   <td className="max-w-xs truncate px-4 py-3 text-xs text-slate">
-                    {describeChange(log.previous_value, log.new_value)}
+                    {describeChange(log.previous_value, log.new_value, t.admin.auditLogs.fields)}
                   </td>
                 </tr>
               ))

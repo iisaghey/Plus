@@ -93,7 +93,7 @@ export default async function StaffDashboardPage() {
                 </div>
               </div>
               <Badge variant={STATUS_VARIANT[p.workflow_status] ?? "neutral"} size="sm">
-                {p.workflow_status.replace(/_/g, " ")}
+                {t.common.workflowStatus[p.workflow_status] ?? p.workflow_status.replace(/_/g, " ")}
               </Badge>
             </Link>
           ))

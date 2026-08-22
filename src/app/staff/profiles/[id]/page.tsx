@@ -117,7 +117,7 @@ export default async function StaffEditProfilePage(
           {profile.full_name}
         </h1>
         <Badge variant="neutral" size="sm">
-          {profile.workflow_status.replace(/_/g, " ")}
+          {t.common.workflowStatus[profile.workflow_status] ?? profile.workflow_status.replace(/_/g, " ")}
         </Badge>
       </div>
       <p className="mt-2 text-sm text-slate">

@@ -6,6 +6,7 @@ import editorWorkspace from "./sections/editorWorkspace.so";
 import home from "./sections/home.so";
 import profilesPublic from "./sections/profilesPublic.so";
 import publicPages from "./sections/publicPages.so";
+import sidebar from "./sections/sidebar.so";
 
 const so: Dictionary = {
   admin,
@@ -15,6 +16,7 @@ const so: Dictionary = {
   home,
   profilesPublic,
   publicPages,
+  sidebar,
   nav: {
     profiles: "Profaylada",
     leaders: "Hoggaamiyeyaasha",
@@ -79,6 +81,40 @@ const so: Dictionary = {
     viewPublicSite: "Fiiri Bogga Dadweynaha",
     switchToLightMode: "U beddel muuqaalka iftiinka",
     switchToDarkMode: "U beddel muuqaalka mugdiga",
+    workflowStatus: {
+      draft: "Qabyo-qoraal",
+      in_progress: "Socda",
+      submitted: "La Gudbiyay",
+      under_review: "Dib u Eegis",
+      changes_required: "Wax ka Beddel Waa Loo Baahan Yahay",
+      editor_approved: "Tafatiruhu Ansixiyay",
+      admin_review: "Dib u Eegista Maamulaha",
+      approved: "La Ansixiyay",
+      verified: "La Xaqiijiyay",
+      published: "La Daabacay",
+      suspended: "La Joojiyay",
+      archived: "Kaydsan",
+      rejected: "La Diiday",
+    },
+    appRole: {
+      super_admin: "Sare Maamule",
+      admin: "Maamule",
+      editor: "Tafatire",
+      verifier: "Xaqiijiye",
+      profile_owner: "Milkiilaha Profaylka",
+      staff: "Shaqaale",
+    },
+    accountStatus: {
+      pending: "Sugaya",
+      approved: "La Ansixiyay",
+      rejected: "La Diiday",
+    },
+    verificationStatus: {
+      unverified: "Aan la Xaqiijin",
+      pending: "Sugaya",
+      verified: "La Xaqiijiyay",
+      rejected: "La Diiday",
+    },
   },
   auth: {
     welcomeBack: "Soo Dhawoow Mar Kale",

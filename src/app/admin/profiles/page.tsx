@@ -122,7 +122,7 @@ export default async function AdminAllProfilesPage(
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">
                       <Badge variant={WORKFLOW_STATUS_VARIANT[p.workflow_status]} size="sm">
-                        {workflowStatusLabel(p.workflow_status)}
+                        {workflowStatusLabel(p.workflow_status, t.common.workflowStatus)}
                       </Badge>
                       {p.verification_status === "verified" && (
                         <Badge variant="verified" size="sm">{t.admin.profiles.badgeVerified}</Badge>

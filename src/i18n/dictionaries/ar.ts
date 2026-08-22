@@ -6,6 +6,7 @@ import editorWorkspace from "./sections/editorWorkspace.ar";
 import home from "./sections/home.ar";
 import profilesPublic from "./sections/profilesPublic.ar";
 import publicPages from "./sections/publicPages.ar";
+import sidebar from "./sections/sidebar.ar";
 
 const ar: Dictionary = {
   admin,
@@ -15,6 +16,7 @@ const ar: Dictionary = {
   home,
   profilesPublic,
   publicPages,
+  sidebar,
   nav: {
     profiles: "الملفات الشخصية",
     leaders: "القادة",
@@ -79,6 +81,40 @@ const ar: Dictionary = {
     viewPublicSite: "عرض الموقع العام",
     switchToLightMode: "التبديل إلى الوضع الفاتح",
     switchToDarkMode: "التبديل إلى الوضع الداكن",
+    workflowStatus: {
+      draft: "مسودة",
+      in_progress: "قيد التنفيذ",
+      submitted: "تم الإرسال",
+      under_review: "قيد المراجعة",
+      changes_required: "تتطلب تعديلات",
+      editor_approved: "وافق عليه المحرر",
+      admin_review: "مراجعة الإدارة",
+      approved: "تمت الموافقة",
+      verified: "موثّق",
+      published: "منشور",
+      suspended: "معلّق",
+      archived: "مؤرشف",
+      rejected: "مرفوض",
+    },
+    appRole: {
+      super_admin: "مسؤول عام",
+      admin: "مسؤول",
+      editor: "محرر",
+      verifier: "موثِّق",
+      profile_owner: "صاحب الملف الشخصي",
+      staff: "موظف",
+    },
+    accountStatus: {
+      pending: "قيد الانتظار",
+      approved: "مقبول",
+      rejected: "مرفوض",
+    },
+    verificationStatus: {
+      unverified: "غير موثّق",
+      pending: "قيد الانتظار",
+      verified: "موثّق",
+      rejected: "مرفوض",
+    },
   },
   auth: {
     welcomeBack: "مرحبًا بعودتك",

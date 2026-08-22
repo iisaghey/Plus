@@ -5,6 +5,7 @@ import editorWorkspace from "./sections/editorWorkspace.en";
 import home from "./sections/home.en";
 import profilesPublic from "./sections/profilesPublic.en";
 import publicPages from "./sections/publicPages.en";
+import sidebar from "./sections/sidebar.en";
 
 const en = {
   admin,
@@ -14,6 +15,7 @@ const en = {
   home,
   profilesPublic,
   publicPages,
+  sidebar,
   nav: {
     profiles: "Profiles",
     leaders: "Leaders",
@@ -78,6 +80,40 @@ const en = {
     viewPublicSite: "View Public Site",
     switchToLightMode: "Switch to light mode",
     switchToDarkMode: "Switch to dark mode",
+    workflowStatus: {
+      draft: "Draft",
+      in_progress: "In Progress",
+      submitted: "Submitted",
+      under_review: "Under Review",
+      changes_required: "Changes Required",
+      editor_approved: "Editor Approved",
+      admin_review: "Admin Review",
+      approved: "Approved",
+      verified: "Verified",
+      published: "Published",
+      suspended: "Suspended",
+      archived: "Archived",
+      rejected: "Rejected",
+    },
+    appRole: {
+      super_admin: "Super Admin",
+      admin: "Admin",
+      editor: "Editor",
+      verifier: "Verifier",
+      profile_owner: "Profile Owner",
+      staff: "Staff",
+    },
+    accountStatus: {
+      pending: "Pending",
+      approved: "Approved",
+      rejected: "Rejected",
+    },
+    verificationStatus: {
+      unverified: "Unverified",
+      pending: "Pending",
+      verified: "Verified",
+      rejected: "Rejected",
+    },
   },
   auth: {
     welcomeBack: "Welcome Back",
